@@ -6,7 +6,9 @@ import com.github.axet.androidlibrary.app.SuperUser;
 
 import org.apache.commons.io.IOUtils;
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
@@ -16,7 +18,9 @@ import java.util.regex.Pattern;
 //
 public class MixerPaths {
     public static final String TAG = MixerPaths.class.getSimpleName();
-    public static final String PATH = SuperUser.SYSTEM + "/etc/mixer_paths.xml";
+
+    public static final Pattern NAME = Pattern.compile("^mixer_paths.*\\.xml");
+    public static final String PATH = findMixerPaths();
 
     public static final String TRUE = "1";
     public static final String FALSE = "0";
@@ -24,6 +28,25 @@ public class MixerPaths {
     public static Pattern P = Pattern.compile("VOC_REC.*value=\"(\\d+)\"");
 
     String xml;
+
+    public static String findMixerPaths() {
+        for (String d : new String[]{SuperUser.SYSTEM + "/etc/", "/etc"}) {
+            File f = new File(d);
+            File[] ff = f.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    Matcher m = NAME.matcher(name.toLowerCase());
+                    if (m.find())
+                        return true;
+                    return false;
+                }
+            });
+            if (ff == null || ff.length == 0)
+                return null;
+            return ff[0].getAbsolutePath();
+        }
+        return null;
+    }
 
     public MixerPaths() {
         load();
@@ -57,6 +80,10 @@ public class MixerPaths {
     public boolean isCompatible() {
         if (!SuperUser.isRooted())
             return false;
+        return isSupported();
+    }
+
+    public boolean isSupported() {
         if (xml == null || xml.isEmpty())
             return false;
         Matcher m = P.matcher(xml);

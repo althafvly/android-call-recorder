@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -32,6 +31,7 @@ import android.widget.TextView;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.app.MainApplication;
 import com.github.axet.callrecorder.app.Storage;
+import com.github.axet.callrecorder.services.RecordingService;
 
 public class RecentCallActivity extends AppCompatActivity {
 
@@ -303,6 +303,11 @@ public class RecentCallActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+    }
+
     void update() {
         int p = c / 100;
 
@@ -386,4 +391,5 @@ public class RecentCallActivity extends AppCompatActivity {
         });
         builder.show();
     }
+
 }
