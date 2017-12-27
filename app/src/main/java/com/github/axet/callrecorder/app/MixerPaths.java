@@ -55,7 +55,8 @@ public class MixerPaths {
     public void load() {
         try {
             xml = null;
-            xml = IOUtils.toString(new FileReader(PATH));
+            if (PATH != null)
+                xml = IOUtils.toString(new FileReader(PATH));
         } catch (IOException e) {
             Log.d(TAG, "Unable to read mixers", e);
         }
