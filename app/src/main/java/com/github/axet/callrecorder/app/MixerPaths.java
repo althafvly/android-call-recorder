@@ -49,14 +49,15 @@ public class MixerPaths {
     }
 
     public MixerPaths() {
+        if (PATH == null)
+            return;
         load();
     }
 
     public void load() {
         try {
             xml = null;
-            if (PATH != null)
-                xml = IOUtils.toString(new FileReader(PATH));
+            xml = IOUtils.toString(new FileReader(PATH));
         } catch (IOException e) {
             Log.d(TAG, "Unable to read mixers", e);
         }
