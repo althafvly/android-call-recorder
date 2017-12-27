@@ -40,23 +40,24 @@ public class MixerPaths {
                     return m.find();
                 }
             });
-            if (ff == null || ff.length == 0)
-                return null;
-            Arrays.sort(ff);
-            return ff[0].getAbsolutePath();
+            if (ff != null && ff.length > 0) {
+                Arrays.sort(ff);
+                return ff[0].getAbsolutePath();
+            }
         }
         return null;
     }
 
     public MixerPaths() {
+        if (PATH == null)
+            return;
         load();
     }
 
     public void load() {
         try {
             xml = null;
-            if (PATH != null)
-                xml = IOUtils.toString(new FileReader(PATH));
+            xml = IOUtils.toString(new FileReader(PATH));
         } catch (IOException e) {
             Log.d(TAG, "Unable to read mixers", e);
         }
