@@ -20,26 +20,24 @@ import java.util.regex.Pattern;
 public class MixerPaths {
     public static final String TAG = MixerPaths.class.getSimpleName();
 
-    public static final Pattern MIXER_PATHS = Pattern.compile("^mixer_paths.*\\.xml");
+    public static final Pattern MIXER_PATHS = Pattern.compile(SuperUser.wildcard("mixer_paths*.xml"));
     public static final Pattern VOC_REC = Pattern.compile("VOC_REC.*value=\"(\\d+)\"");
 
-    public static final String PATH = findMixerPaths();
+    public static final String PATH = find(new String[]{SuperUser.SYSTEM + SuperUser.ETC, SuperUser.ETC}, MIXER_PATHS);
 
     public static final String TRUE = "1";
     public static final String FALSE = "0";
 
     String xml;
 
-    public static String findMixerPaths() {
-        for (String d : new String[]{SuperUser.SYSTEM + "/etc", "/etc"}) {
+    public static String find(String[] dd, final Pattern p) {
+        for (String d : dd) {
             File f = new File(d);
             File[] ff = f.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
-                    Matcher m = MIXER_PATHS.matcher(name.toLowerCase());
-                    if (m.find())
-                        return true;
-                    return false;
+                    Matcher m = p.matcher(name.toLowerCase());
+                    return m.find();
                 }
             });
             if (ff == null || ff.length == 0)
@@ -66,7 +64,7 @@ public class MixerPaths {
     public void save() {
         String args = "";
         args += SuperUser.REMOUNT_SYSTEM + "\n";
-        args += MessageFormat.format(SuperUser.SUCAT, PATH, xml.trim()) + "\n";
+        args += MessageFormat.format(SuperUser.CAT_TO, PATH, xml.trim()) + "\n";
         SuperUser.su(args);
     }
 
