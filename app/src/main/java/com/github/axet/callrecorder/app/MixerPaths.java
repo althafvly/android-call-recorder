@@ -40,10 +40,10 @@ public class MixerPaths {
                     return m.find();
                 }
             });
-            if (ff == null || ff.length == 0)
-                return null;
-            Arrays.sort(ff);
-            return ff[0].getAbsolutePath();
+            if (ff != null && ff.length > 0) {
+                Arrays.sort(ff);
+                return ff[0].getAbsolutePath();
+            }
         }
         return null;
     }
