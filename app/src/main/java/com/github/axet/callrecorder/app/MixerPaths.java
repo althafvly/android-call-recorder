@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,30 +20,29 @@ import java.util.regex.Pattern;
 public class MixerPaths {
     public static final String TAG = MixerPaths.class.getSimpleName();
 
-    public static final Pattern NAME = Pattern.compile("^mixer_paths.*\\.xml");
-    public static final String PATH = findMixerPaths();
+    public static final Pattern MIXER_PATHS = Pattern.compile(SuperUser.wildcard("mixer_paths*.xml"));
+    public static final Pattern VOC_REC = Pattern.compile("VOC_REC.*value=\"(\\d+)\"");
+
+    public static final String PATH = find(new String[]{SuperUser.SYSTEM + SuperUser.ETC, SuperUser.ETC}, MIXER_PATHS);
 
     public static final String TRUE = "1";
     public static final String FALSE = "0";
 
-    public static Pattern P = Pattern.compile("VOC_REC.*value=\"(\\d+)\"");
-
     String xml;
 
-    public static String findMixerPaths() {
-        for (String d : new String[]{SuperUser.SYSTEM + "/etc/", "/etc"}) {
+    public static String find(String[] dd, final Pattern p) {
+        for (String d : dd) {
             File f = new File(d);
             File[] ff = f.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
-                    Matcher m = NAME.matcher(name.toLowerCase());
-                    if (m.find())
-                        return true;
-                    return false;
+                    Matcher m = p.matcher(name.toLowerCase());
+                    return m.find();
                 }
             });
             if (ff == null || ff.length == 0)
                 return null;
+            Arrays.sort(ff);
             return ff[0].getAbsolutePath();
         }
         return null;
@@ -55,7 +55,8 @@ public class MixerPaths {
     public void load() {
         try {
             xml = null;
-            xml = IOUtils.toString(new FileReader(PATH));
+            if (PATH != null)
+                xml = IOUtils.toString(new FileReader(PATH));
         } catch (IOException e) {
             Log.d(TAG, "Unable to read mixers", e);
         }
@@ -64,7 +65,7 @@ public class MixerPaths {
     public void save() {
         String args = "";
         args += SuperUser.REMOUNT_SYSTEM + "\n";
-        args += MessageFormat.format(SuperUser.SUCAT, PATH, xml.trim()) + "\n";
+        args += MessageFormat.format(SuperUser.CAT_TO, PATH + SuperUser.SU1, xml.trim());
         SuperUser.su(args);
     }
 
@@ -86,7 +87,7 @@ public class MixerPaths {
     public boolean isSupported() {
         if (xml == null || xml.isEmpty())
             return false;
-        Matcher m = P.matcher(xml);
+        Matcher m = VOC_REC.matcher(xml);
         if (m.find()) {
             return true;
         }
@@ -94,7 +95,7 @@ public class MixerPaths {
     }
 
     public boolean isEnabled() {
-        Matcher m = P.matcher(xml);
+        Matcher m = VOC_REC.matcher(xml);
         while (m.find()) {
             String v = m.group(1);
             if (!v.equals(TRUE))
@@ -104,7 +105,7 @@ public class MixerPaths {
     }
 
     public void setEnabled(boolean b) {
-        Matcher m = P.matcher(xml);
+        Matcher m = VOC_REC.matcher(xml);
         StringBuffer sb = new StringBuffer(xml.length());
         while (m.find()) {
             m.appendReplacement(sb, m.group().replaceFirst(Pattern.quote(m.group(1)), b ? TRUE : FALSE));
