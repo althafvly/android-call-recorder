@@ -78,5 +78,6 @@ public class MixerPathsPreferenceCompat extends SwitchPreferenceCompat {
         super.onClick();
         boolean b = isChecked();
         save(getContext(), b);
+        onResume(); // update checkbox
     }
 }
