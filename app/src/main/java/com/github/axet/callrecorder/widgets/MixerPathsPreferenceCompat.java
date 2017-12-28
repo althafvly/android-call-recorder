@@ -21,7 +21,7 @@ public class MixerPathsPreferenceCompat extends SwitchPreferenceCompat {
             Toast.makeText(context, R.string.mixer_paths_done, Toast.LENGTH_SHORT).show();
         } catch (RuntimeException e) {
             Log.d(TAG, "uanble to patch", e);
-            Toast.makeText(context, context.getString(R.string.mixer_paths_failed) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getString(R.string.mixer_paths_failed) + ": " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
