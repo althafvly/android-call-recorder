@@ -64,7 +64,7 @@ public class MixerPaths {
     }
 
     public void save() {
-        SuperUser.Command args = new SuperUser.Command();
+        SuperUser.Commands args = new SuperUser.Commands();
         args.add(SuperUser.REMOUNT_SYSTEM);
         args.add(MessageFormat.format(SuperUser.CAT_TO, PATH, xml.trim()));
         SuperUser.su(args).must();
