@@ -648,6 +648,11 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 Runnable save = new Runnable() {
                     @Override
                     public void run() {
+                        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(RecordingService.this);
+                        SharedPreferences.Editor edit = shared.edit();
+                        edit.putString(MainApplication.PREFERENCE_LAST, Storage.getDocumentName(fly.targetUri));
+                        edit.commit();
+
                         MainApplication.setContact(RecordingService.this, info.targetUri, info.contactId);
                         MainApplication.setCall(RecordingService.this, info.targetUri, info.call);
                         MainActivity.last(RecordingService.this);
@@ -821,6 +826,11 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     Runnable save = new Runnable() {
                         @Override
                         public void run() {
+                            final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(RecordingService.this);
+                            SharedPreferences.Editor edit = shared.edit();
+                            edit.putString(MainApplication.PREFERENCE_LAST, Storage.getDocumentName(info.targetUri));
+                            edit.commit();
+
                             MainApplication.setContact(RecordingService.this, info.targetUri, info.contactId);
                             MainApplication.setCall(RecordingService.this, info.targetUri, info.call);
                             MainActivity.last(RecordingService.this);
