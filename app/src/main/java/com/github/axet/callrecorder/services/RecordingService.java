@@ -39,6 +39,7 @@ import com.github.axet.audiolibrary.encoders.Encoder;
 import com.github.axet.audiolibrary.encoders.EncoderInfo;
 import com.github.axet.audiolibrary.encoders.Factory;
 import com.github.axet.audiolibrary.encoders.FileEncoder;
+import com.github.axet.audiolibrary.encoders.OnFlyEncoding;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.activities.MainActivity;
 import com.github.axet.callrecorder.activities.RecentCallActivity;
@@ -48,12 +49,15 @@ import com.github.axet.callrecorder.app.Storage;
 
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * RecordingActivity more likly to be removed from memory when paused then service. Notification button
@@ -74,6 +78,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     public static String STOP_BUTTON = RecordingService.class.getCanonicalName() + ".STOP_BUTTON";
 
     Sound sound;
+    AtomicBoolean interrupt = new AtomicBoolean();
     Thread thread;
     Storage storage;
     RecordingReceiver receiver;
@@ -611,11 +616,15 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         source = recorder.getAudioSource();
 
         final Thread old = thread;
+        final AtomicBoolean oldb = interrupt;
+
+        interrupt = new AtomicBoolean(false);
 
         thread = new Thread("RecordingThread") {
             @Override
             public void run() {
                 if (old != null) {
+                    oldb.set(true);
                     old.interrupt();
                     try {
                         old.join();
@@ -625,7 +634,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     }
                 }
 
-                // android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
+                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
 
                 try {
                     long start = System.currentTimeMillis();
@@ -639,7 +648,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
                     boolean stableRefresh = false;
 
-                    while (!Thread.currentThread().isInterrupted()) {
+                    while (!interrupt.get()) {
                         final int readSize = recorder.read(buffer, 0, buffer.length);
                         if (readSize < 0) {
                             return;
@@ -752,11 +761,14 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             });
             recorder.prepare();
             final Thread old = thread;
+            final AtomicBoolean oldb = interrupt;
 
+            interrupt = new AtomicBoolean(false);
             thread = new MediaRecorderThread() {
                 @Override
                 public void run() {
                     if (old != null) {
+                        oldb.set(true);
                         old.interrupt();
                         try {
                             old.join();
@@ -789,7 +801,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                         Thread.sleep(2000);
                         recorder.start();
                         start = true;
-                        while (!Thread.currentThread().isInterrupted()) {
+                        while (!interrupt.get()) {
                             Thread.sleep(1000);
                             samplesTime += 1000 * sampleRate / 1000; // per 1 second
                             MainActivity.showProgress(RecordingService.this, true, phone, samplesTime / sampleRate, null);
@@ -824,92 +836,42 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     }
 
     void encoding(final File in, final Uri uri, final Runnable done, final Success success) {
-        final File out;
+        final OnFlyEncoding fly = new OnFlyEncoding(storage, uri, getInfo());
 
-        final String s = uri.getScheme();
-        if (s.equals(ContentResolver.SCHEME_CONTENT)) {
-            out = storage.getTempEncoding();
-        } else if (s.equals(ContentResolver.SCHEME_FILE)) {
-            File f = Storage.getFile(uri);
-            File parent = f.getParentFile();
-            if (!parent.exists() && !parent.mkdirs()) { // in case if it were manually deleted
-                throw new RuntimeException("Unable to create: " + parent);
-            }
-            out = f;
-        } else {
-            throw new RuntimeException("unknown uri");
-        }
-
-        EncoderInfo info = getInfo();
-
-        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
-        String ext = shared.getString(MainApplication.PREFERENCE_ENCODING, "");
-
-        Encoder e = Factory.getEncoder(this, ext, info, out); // create out file
-
-        encoder = new FileEncoder(this, in, e);
+        encoder = new FileEncoder(this, in, fly);
 
         final Runnable save = new Runnable() {
             @Override
             public void run() {
-                final Uri t;
-                if (Build.VERSION.SDK_INT >= 21 && s.equals(ContentResolver.SCHEME_CONTENT)) {
-                    try {
-                        Uri root = Storage.getDocumentTreeUri(uri);
-                        t = storage.move(out, root, Storage.getDocumentChildPath(uri));
-                    } catch (RuntimeException e) {
-                        Storage.delete(out); // delete tmp encoding file
-                        try {
-                            storage.delete(uri); // delete SAF encoding file
-                        } catch (RuntimeException ee) {
-                            Log.d(TAG, "unable to delete target uri", e); // ignore, not even created?
-                        }
-                        Post(e);
-                        handle.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                done.run();
-                            }
-                        });
-                        return;
-                    }
-                } else {
-                    t = Uri.fromFile(out);
-                }
                 Storage.delete(in); // delete raw recording
 
-                handle.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        MainActivity.showProgress(RecordingService.this, false, phone, samplesTime / sampleRate, false);
+                MainActivity.showProgress(RecordingService.this, false, phone, samplesTime / sampleRate, false);
 
-                        SharedPreferences.Editor edit = shared.edit();
-                        edit.putString(MainApplication.PREFERENCE_LAST, Storage.getDocumentName(uri));
-                        edit.commit();
+                final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(RecordingService.this);
+                SharedPreferences.Editor edit = shared.edit();
+                edit.putString(MainApplication.PREFERENCE_LAST, Storage.getDocumentName(fly.targetUri));
+                edit.commit();
 
-                        success.run(t);
-                        done.run();
-                        encodingNext();
-                    }
-                });
+                success.run(fly.targetUri);
+                done.run();
+                encodingNext();
             }
         };
 
-        encoder.run(new Runnable() { // progress
+        encoder.run(new Runnable() {
             @Override
-            public void run() {
+            public void run() {  // progress
                 MainActivity.setProgress(RecordingService.this, encoder.getProgress());
             }
-        }, new Runnable() { // success only call, done
+        }, new Runnable() {
             @Override
-            public void run() {
-                Thread thread = new Thread(save); // network on main thread if SAF is remote
-                thread.start();
+            public void run() {  // success only call, done
+                save.run();
             }
-        }, new Runnable() { // error
+        }, new Runnable() {
             @Override
-            public void run() {
-                Storage.delete(out);
+            public void run() { // error
+                storage.delete(fly.targetUri);
                 MainActivity.showProgress(RecordingService.this, false, phone, samplesTime / sampleRate, false);
                 Error(encoder.getException());
                 done.run();
@@ -972,7 +934,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
     void stopRecording() {
         if (thread != null) {
-            thread.interrupt();
+            interrupt.set(true);
             try {
                 thread.join();
             } catch (InterruptedException e) {
