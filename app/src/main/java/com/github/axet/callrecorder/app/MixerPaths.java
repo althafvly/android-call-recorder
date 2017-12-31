@@ -64,10 +64,10 @@ public class MixerPaths {
     }
 
     public void save() {
-        String args = "";
-        args += SuperUser.REMOUNT_SYSTEM + "\n";
-        args += MessageFormat.format(SuperUser.CAT_TO, PATH + SuperUser.SU1, xml.trim());
-        SuperUser.su(args);
+        SuperUser.Commands args = new SuperUser.Commands();
+        args.add(SuperUser.REMOUNT_SYSTEM);
+        args.add(MessageFormat.format(SuperUser.CAT_TO, PATH, xml.trim()));
+        SuperUser.su(args).must();
     }
 
     public void save(boolean b) {
