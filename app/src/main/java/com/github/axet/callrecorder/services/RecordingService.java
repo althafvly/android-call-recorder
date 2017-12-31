@@ -609,8 +609,9 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     }
 
     void startAudioRecorder(int[] ss, int i) {
-        final RawSamples rs = new RawSamples(storage.getTempRecording());
-        rs.open(samplesTime);
+        final CallInfo info = new CallInfo(targetUri, phone, contact, contactId, call, now);
+
+        final OnFlyEncoding fly = new OnFlyEncoding(storage, info.targetUri, getInfo());
 
         final AudioRecord recorder = Sound.createAudioRecorder(this, sampleRate, ss, i);
         source = recorder.getAudioSource();
@@ -636,6 +637,24 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
                 android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
 
+                Runnable done = new Runnable() {
+                    @Override
+                    public void run() {
+                        deleteOld();
+                        showNotificationAlarm(false);
+                    }
+                };
+
+                Runnable save = new Runnable() {
+                    @Override
+                    public void run() {
+                        MainApplication.setContact(RecordingService.this, info.targetUri, info.contactId);
+                        MainApplication.setCall(RecordingService.this, info.targetUri, info.call);
+                        MainActivity.last(RecordingService.this);
+                        showDone(info.targetUri);
+                    }
+                };
+
                 try {
                     long start = System.currentTimeMillis();
                     recorder.startRecording();
@@ -651,7 +670,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     while (!interrupt.get()) {
                         final int readSize = recorder.read(buffer, 0, buffer.length);
                         if (readSize < 0) {
-                            return;
+                            break;
                         }
                         long end = System.currentTimeMillis();
 
@@ -664,7 +683,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                         if (stableRefresh || diff >= samples) {
                             stableRefresh = true;
 
-                            rs.write(buffer, 0, readSize);
+                            fly.encode(buffer, 0, readSize);
 
                             samplesTime += samples;
                             samplesTimeCount += samples;
@@ -675,13 +694,26 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                         }
                     }
                 } catch (final RuntimeException e) {
+                    storage.delete(fly.targetUri);
                     Post(e);
+                    return; // no save
                 } finally {
-                    if (rs != null)
-                        rs.close();
+                    handle.post(done);
+
                     if (recorder != null)
                         recorder.release();
+
+                    if (fly != null) {
+                        try {
+                            fly.close();
+                        } catch (RuntimeException e) {
+                            storage.delete(fly.targetUri);
+                            Post(e);
+                            return; // no save
+                        }
+                    }
                 }
+                handle.post(save);
             }
         };
         thread.start();
@@ -807,6 +839,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                             MainActivity.showProgress(RecordingService.this, true, phone, samplesTime / sampleRate, null);
                         }
                     } catch (RuntimeException e) {
+                        storage.delete(info.targetUri);
                         Post(e);
                         return; // no save
                     } catch (InterruptedException e) {
