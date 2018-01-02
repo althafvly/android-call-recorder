@@ -126,8 +126,6 @@
     <string name="mixer_paths_failed">Unable to configure system mixer</string>
 
     <string name="pref_storage_title">Storage Path</string>
-    <string name="pref_source_title">Recording Source</string>
-    <string name="pref_source_summary">Select source for better quality</string>
     <string name="pref_rate_title">Sample Rate</string>
     <string name="pref_encoding_title">Encoding</string>
     <string name="pref_encoding_summary">Output file formats (.wav, .m4a, ...)</string>

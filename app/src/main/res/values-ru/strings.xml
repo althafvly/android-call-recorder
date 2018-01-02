@@ -78,8 +78,6 @@
     <string name="save_button">Сохранить</string>
 
     <string name="pref_storage_title">Папка для хранения</string>
-    <string name="pref_source_title">Источник</string>
-    <string name="pref_source_summary">Источник записи</string>
     <string name="pref_rate_title">Частота записи</string>
     <string name="pref_encoding_title">Кодировка</string>
     <string name="pref_encoding_summary">Формат выходного файла (.wav, .m4a, ...)</string>

@@ -78,8 +78,6 @@
     <string name="mixer_paths_failed">Unable to configure system mixer</string>
 
     <string name="pref_storage_title">ストレージのパス</string>
-    <string name="pref_source_title">音源</string>
-    <string name="pref_source_summary">最良の品質の音源を選択してください</string>
     <string name="pref_rate_title">サンプルレート</string>
     <string name="pref_encoding_title">エンコーディング</string>
     <string name="pref_encoding_summary">出力ファイルフォーマット (.wav, .m4a, ...)</string>
