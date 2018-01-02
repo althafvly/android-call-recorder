@@ -15,7 +15,7 @@
             android:key="source"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:summary="@string/pref_source_summary"
+            android:summary=""
             android:title="@string/pref_source_title" />
 
         <ListPreference
