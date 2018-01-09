@@ -3,6 +3,7 @@ package com.github.axet.callrecorder.app;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 
 import com.github.axet.callrecorder.R;
@@ -30,8 +31,9 @@ public class MainApplication extends com.github.axet.audiolibrary.app.MainApplic
         if (!defaultValueSp.getBoolean(PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES, false)) {
             PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
             MixerPaths m = new MixerPaths();
-            if (m.isSupported() && !m.isEnabled()) {
-                SharedPreferences.Editor e = defaultValueSp.edit();
+            if (!m.isSupported() || !m.isEnabled()) {
+                SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor e = shared.edit();
                 e.putString(MainApplication.PREFERENCE_ENCODING, Storage.EXT_3GP);
                 e.commit();
             }
