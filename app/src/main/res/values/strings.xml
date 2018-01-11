@@ -7,6 +7,8 @@
         <item>Mic</item>
         <item>System Default</item>
         <item>VoIP</item>
+        <item>Voice Recognition</item>
+        <item>Camcoder</item>
         <item>System RAW</item>
     </string-array>
 
@@ -16,6 +18,8 @@
         <item>1</item>
         <item>0</item>
         <item>7</item>
+        <item>6</item>
+        <item>5</item>
         <item>9</item>
     </string-array>
 
