@@ -590,6 +590,8 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 MediaRecorder.AudioSource.VOICE_COMMUNICATION, // mic source VOIP
                 MediaRecorder.AudioSource.MIC, // mic
                 MediaRecorder.AudioSource.DEFAULT, // mic
+                MediaRecorder.AudioSource.VOICE_RECOGNITION,
+                MediaRecorder.AudioSource.CAMCORDER,
                 MediaRecorder.AudioSource.UNPROCESSED,
         };
         int i = Integer.valueOf(shared.getString(MainApplication.PREFERENCE_SOURCE, "-1"));

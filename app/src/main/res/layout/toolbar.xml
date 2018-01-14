@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="?attr/search_rating_bg"
+            android:background="?attr/toolbar_icon_bg"
             android:button="@android:color/transparent"
             android:clickable="false"
             android:gravity="center"
@@ -24,7 +24,7 @@
             android:tint="?attr/colorAccent" />
 
         <TextView
-            style="@style/tops_style_light"
+            style="@style/toolbar_icon_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="?attr/search_rating_bg"
+            android:background="?attr/toolbar_icon_bg"
             android:clickable="false"
             android:gravity="center"
             android:src="@drawable/ic_star_black_24dp"
@@ -51,7 +51,7 @@
 
         <TextView
             android:id="@+id/search_header_toolbar_tops_name"
-            style="@style/tops_style_light"
+            style="@style/toolbar_icon_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -71,14 +71,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="?attr/search_rating_bg"
+            android:background="?attr/toolbar_icon_bg"
             android:clickable="false"
             android:gravity="center"
             android:src="@drawable/ic_call_received_black_24dp"
             android:tint="?attr/colorAccent" />
 
         <TextView
-            style="@style/tops_style_light"
+            style="@style/toolbar_icon_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -97,14 +97,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="?attr/search_rating_bg"
+            android:background="?attr/toolbar_icon_bg"
             android:clickable="false"
             android:gravity="center"
             android:src="@drawable/ic_call_made_black_24dp"
             android:tint="?attr/colorAccent" />
 
         <TextView
-            style="@style/tops_style_light"
+            style="@style/toolbar_icon_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -123,14 +123,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="?attr/search_rating_bg"
+            android:background="?attr/toolbar_icon_bg"
             android:clickable="false"
             android:gravity="center"
             android:src="@drawable/ic_sort_black_24dp"
             android:tint="?attr/colorAccent" />
 
         <TextView
-            style="@style/tops_style_light"
+            style="@style/toolbar_icon_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -149,14 +149,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="?attr/search_rating_bg"
+            android:background="?attr/toolbar_icon_bg"
             android:clickable="false"
             android:gravity="center"
             android:src="@drawable/ic_sort_black_24dp"
             android:tint="?attr/colorAccent" />
 
         <TextView
-            style="@style/tops_style_light"
+            style="@style/toolbar_icon_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

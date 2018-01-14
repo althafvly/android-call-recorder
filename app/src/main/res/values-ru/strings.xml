@@ -7,7 +7,9 @@
         <item>Микрофон</item>
         <item>Системный выбор</item>
         <item>VoIP</item>
-        <item>Системный необработанный</item>
+        <item>Voice Recognition</item>
+        <item>Camcoder</item>
+        <item>Необработанный</item>
     </string-array>
 
     <string-array name="themes_text">
