@@ -502,6 +502,10 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 return getString(R.string.source_default);
             case MediaRecorder.AudioSource.UNPROCESSED:
                 return "(RAW)";
+            case MediaRecorder.AudioSource.VOICE_RECOGNITION:
+                return "(VOICE_RECOGNITION)";
+            case MediaRecorder.AudioSource.CAMCORDER:
+                return "(Camcoder)";
             default:
                 return "";
         }
@@ -588,10 +592,10 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         int[] ss = new int[]{
                 MediaRecorder.AudioSource.VOICE_CALL,
                 MediaRecorder.AudioSource.VOICE_COMMUNICATION, // mic source VOIP
-                MediaRecorder.AudioSource.MIC, // mic
-                MediaRecorder.AudioSource.DEFAULT, // mic
                 MediaRecorder.AudioSource.VOICE_RECOGNITION,
                 MediaRecorder.AudioSource.CAMCORDER,
+                MediaRecorder.AudioSource.MIC, // mic
+                MediaRecorder.AudioSource.DEFAULT, // mic
                 MediaRecorder.AudioSource.UNPROCESSED,
         };
         int i = Integer.valueOf(shared.getString(MainApplication.PREFERENCE_SOURCE, "-1"));
