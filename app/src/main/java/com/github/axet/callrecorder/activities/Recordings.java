@@ -64,12 +64,13 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
         return v;
     }
 
-    protected boolean filter(Uri f) {
+    @Override
+    protected boolean filter(Storage.RecordingUri f) {
         boolean include = super.filter(f);
         if (include) {
             if (!toolbarFilterIn && !toolbarFilterOut)
                 return true;
-            String call = MainApplication.getCall(getContext(), f);
+            String call = MainApplication.getCall(getContext(), f.uri);
             if (call == null || call.isEmpty())
                 return false;
             if (toolbarFilterIn)

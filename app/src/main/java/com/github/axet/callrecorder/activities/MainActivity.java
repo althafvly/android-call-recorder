@@ -15,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -286,6 +287,30 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         m.setIntent(ii);
         if (!StorageProvider.isFolderCallable(this, ii, StorageProvider.getAuthority()))
             m.setVisible(false);
+
+        MenuItem search = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) search.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchView.clearFocus();
+                recordings.search(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                recordings.searchClose();
+                return true;
+            }
+        });
+
         return true;
     }
 
