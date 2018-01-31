@@ -53,7 +53,7 @@ import java.util.List;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends AppCompatSettingsThemeActivity implements SharedPreferences.OnSharedPreferenceChangeListener, PreferenceFragmentCompat.OnPreferenceDisplayDialogCallback {
+public class SettingsActivity extends AppCompatSettingsThemeActivity implements PreferenceFragmentCompat.OnPreferenceDisplayDialogCallback {
 
     public static final int RESULT_FILE = 1;
 
@@ -149,9 +149,6 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
 
         setupActionBar();
 
-        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
-        shared.registerOnSharedPreferenceChangeListener(this);
-
         f = new GeneralPreferenceFragment();
         getSupportFragmentManager().beginTransaction().replace(android.R.id.content, f).commit();
     }
@@ -199,6 +196,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        super.onSharedPreferenceChanged(sharedPreferences, key);
         if (key.equals(MainApplication.PREFERENCE_STORAGE)) {
             Storage.migrateLocalStorageDialog(this, handler, new Storage(this));
         }
@@ -207,9 +205,6 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
-        shared.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
