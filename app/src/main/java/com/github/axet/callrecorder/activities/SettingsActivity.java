@@ -23,6 +23,8 @@ import android.support.v7.preference.PreferenceScreen;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.github.axet.androidlibrary.widgets.AppCompatSettingsThemeActivity;
+import com.github.axet.androidlibrary.widgets.AppCompatThemeActivity;
 import com.github.axet.androidlibrary.widgets.NameFormatPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.OpenFileDialog;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
@@ -51,7 +53,7 @@ import java.util.List;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener, PreferenceFragmentCompat.OnPreferenceDisplayDialogCallback {
+public class SettingsActivity extends AppCompatSettingsThemeActivity implements PreferenceFragmentCompat.OnPreferenceDisplayDialogCallback {
 
     public static final int RESULT_FILE = 1;
 
@@ -100,9 +102,14 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
         }
     };
 
-
-    int getAppTheme() {
+    @Override
+    public int getAppTheme() {
         return MainApplication.getTheme(this, R.style.RecThemeLight, R.style.RecThemeDark);
+    }
+
+    @Override
+    public String getAppThemeKey() {
+        return MainApplication.PREFERENCE_THEME;
     }
 
     /**
@@ -141,9 +148,6 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
         super.onCreate(savedInstanceState);
 
         setupActionBar();
-
-        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
-        shared.registerOnSharedPreferenceChangeListener(this);
 
         f = new GeneralPreferenceFragment();
         getSupportFragmentManager().beginTransaction().replace(android.R.id.content, f).commit();
@@ -192,11 +196,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(MainApplication.PREFERENCE_THEME)) {
-            finish();
-            startActivity(new Intent(this, SettingsActivity.class));
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        }
+        super.onSharedPreferenceChanged(sharedPreferences, key);
         if (key.equals(MainApplication.PREFERENCE_STORAGE)) {
             Storage.migrateLocalStorageDialog(this, handler, new Storage(this));
         }
@@ -205,9 +205,6 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
-        shared.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override

@@ -15,7 +15,6 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
@@ -33,6 +32,7 @@ import android.widget.Toast;
 
 import com.github.axet.androidlibrary.services.StorageProvider;
 import com.github.axet.androidlibrary.widgets.AboutPreferenceCompat;
+import com.github.axet.androidlibrary.widgets.AppCompatThemeActivity;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.app.MainApplication;
@@ -41,7 +41,7 @@ import com.github.axet.callrecorder.app.Storage;
 import com.github.axet.callrecorder.services.RecordingService;
 import com.github.axet.callrecorder.widgets.MixerPathsPreferenceCompat;
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatThemeActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     public final static String TAG = MainActivity.class.getSimpleName();
 
     public static String SHOW_PROGRESS = MainActivity.class.getCanonicalName() + ".SHOW_PROGRESS";
@@ -83,8 +83,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     Storage storage;
     ListView list;
     Handler handler = new Handler();
-
-    int themeId;
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -135,18 +133,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         context.startActivity(i);
     }
 
-    public void setAppTheme(int id) {
-        super.setTheme(id);
-        themeId = id;
-    }
-
-    int getAppTheme() {
+    @Override
+    public int getAppTheme() {
         return MainApplication.getTheme(this, R.style.RecThemeLight_NoActionBar, R.style.RecThemeDark_NoActionBar);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setAppTheme(getAppTheme());
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
@@ -370,12 +363,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-
-        if (themeId != getAppTheme()) {
-            finish();
-            MainActivity.startActivity(this);
-            return;
-        }
 
         invalidateOptionsMenu();
 

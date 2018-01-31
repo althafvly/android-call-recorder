@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class MixerPaths {
     public static final String TAG = MixerPaths.class.getSimpleName();
 
-    public static final Pattern MIXER_PATHS = Pattern.compile(SuperUser.wildcard("mixer_paths*.xml"));
+    public static final Pattern MIXER_PATHS = Pattern.compile(Storage.wildcard("mixer_paths*.xml"));
     public static final Pattern VOC_REC = Pattern.compile("VOC_REC.*value=\"(\\d+)\"");
 
     public static final String PATH = find(new String[]{SuperUser.SYSTEM + SuperUser.ETC, SuperUser.ETC}, MIXER_PATHS);
