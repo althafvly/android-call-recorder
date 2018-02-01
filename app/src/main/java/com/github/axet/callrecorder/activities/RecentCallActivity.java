@@ -80,10 +80,6 @@ public class RecentCallActivity extends AppCompatActivity {
         return new Rect(loc[0], loc[1], loc[0] + v.getWidth(), loc[1] + v.getHeight());
     }
 
-    public void setAppTheme(int id) {
-        super.setTheme(id);
-    }
-
     int getAppTheme() {
         return MainApplication.getTheme(this, R.style.AppThemeDialogLight, R.style.Theme_AppCompat_DayNight_Dialog);
     }
