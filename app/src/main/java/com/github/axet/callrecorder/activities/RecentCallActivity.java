@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.WindowCallbackWrapper;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -158,15 +159,10 @@ public class RecentCallActivity extends AppCompatActivity {
                 showLocked(w);
 
                 final Window.Callback c = w.getCallback();
-                w.setCallback(new Window.Callback() {
+                w.setCallback(new WindowCallbackWrapper(c) {
                     @Override
                     public boolean dispatchKeyEvent(KeyEvent event) {
                         onUserInteraction();
-                        return c.dispatchKeyEvent(event);
-                    }
-
-                    @Override
-                    public boolean dispatchKeyShortcutEvent(KeyEvent event) {
                         return c.dispatchKeyEvent(event);
                     }
 
@@ -176,115 +172,6 @@ public class RecentCallActivity extends AppCompatActivity {
                         if (rect.contains((int) event.getRawX(), (int) event.getRawY()))
                             onUserInteraction();
                         return c.dispatchTouchEvent(event);
-                    }
-
-                    @Override
-                    public boolean dispatchTrackballEvent(MotionEvent event) {
-                        return c.dispatchTrackballEvent(event);
-                    }
-
-                    @Override
-                    @TargetApi(12)
-                    public boolean dispatchGenericMotionEvent(MotionEvent event) {
-                        return c.dispatchGenericMotionEvent(event);
-                    }
-
-                    @Override
-                    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
-                        return c.dispatchPopulateAccessibilityEvent(event);
-                    }
-
-                    @Nullable
-                    @Override
-                    public View onCreatePanelView(int featureId) {
-                        return c.onCreatePanelView(featureId);
-                    }
-
-                    @Override
-                    public boolean onCreatePanelMenu(int featureId, Menu menu) {
-                        return c.onCreatePanelMenu(featureId, menu);
-                    }
-
-                    @Override
-                    public boolean onPreparePanel(int featureId, View view, Menu menu) {
-                        return c.onPreparePanel(featureId, view, menu);
-                    }
-
-                    @Override
-                    public boolean onMenuOpened(int featureId, Menu menu) {
-                        return c.onMenuOpened(featureId, menu);
-                    }
-
-                    @Override
-                    public boolean onMenuItemSelected(int featureId, MenuItem item) {
-                        return c.onMenuItemSelected(featureId, item);
-                    }
-
-                    @Override
-                    public void onWindowAttributesChanged(WindowManager.LayoutParams attrs) {
-                        c.onWindowAttributesChanged(attrs);
-                    }
-
-                    @Override
-                    public void onContentChanged() {
-                        c.onContentChanged();
-                    }
-
-                    @Override
-                    public void onWindowFocusChanged(boolean hasFocus) {
-                        c.onWindowFocusChanged(hasFocus);
-                    }
-
-                    @Override
-                    public void onAttachedToWindow() {
-                        c.onAttachedToWindow();
-                    }
-
-                    @Override
-                    public void onDetachedFromWindow() {
-                        c.onDetachedFromWindow();
-                    }
-
-                    @Override
-                    public void onPanelClosed(int featureId, Menu menu) {
-                        c.onPanelClosed(featureId, menu);
-                    }
-
-                    @Override
-                    public boolean onSearchRequested() {
-                        return c.onSearchRequested();
-                    }
-
-                    @Override
-                    @TargetApi(23)
-                    public boolean onSearchRequested(SearchEvent searchEvent) {
-                        return c.onSearchRequested(searchEvent);
-                    }
-
-                    @Nullable
-                    @Override
-                    @TargetApi(11)
-                    public ActionMode onWindowStartingActionMode(ActionMode.Callback callback) {
-                        return c.onWindowStartingActionMode(callback);
-                    }
-
-                    @Nullable
-                    @Override
-                    @TargetApi(23)
-                    public ActionMode onWindowStartingActionMode(ActionMode.Callback callback, int type) {
-                        return c.onWindowStartingActionMode(callback, type);
-                    }
-
-                    @Override
-                    @TargetApi(11)
-                    public void onActionModeStarted(ActionMode mode) {
-                        c.onActionModeStarted(mode);
-                    }
-
-                    @Override
-                    @TargetApi(11)
-                    public void onActionModeFinished(ActionMode mode) {
-                        c.onActionModeFinished(mode);
                     }
                 });
 
