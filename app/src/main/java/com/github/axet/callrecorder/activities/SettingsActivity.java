@@ -209,8 +209,8 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
 
     @Override
     public void onBackPressed() {
-        MainActivity.startActivity(this);
         finish();
+        MainActivity.startActivity(this);
     }
 
     @Override
