@@ -1,4 +1,4 @@
-package com.github.axet.callrecorder.activities;
+package com.github.axet.callrecorder.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,8 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.github.axet.callrecorder.R;
-import com.github.axet.callrecorder.app.MainApplication;
-import com.github.axet.callrecorder.app.Storage;
 
 import java.util.TreeSet;
 
@@ -131,4 +129,3 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
         toolbarFilterOut = shared.getBoolean(MainApplication.PREFERENCE_FILTER_OUT, false);
     }
 }
-
