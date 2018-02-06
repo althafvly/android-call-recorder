@@ -343,7 +343,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                     String url = SURVERY_URL;
                     url = url.replaceAll("%MANUFACTURER%", Build.MANUFACTURER);
                     url = url.replaceAll("%MODEL%", android.os.Build.MODEL);
-                    url = url.replaceAll("%OSVERSION%", System.getProperty("os.version") + " " + Build.VERSION.RELEASE);
+                    url = url.replaceAll("%OSVERSION%", System.getProperty("os.version") + ", Android: " + Build.VERSION.RELEASE);
                     try {
                         PackageManager pm = getPackageManager();
                         PackageInfo pInfo = pm.getPackageInfo(getPackageName(), 0);
