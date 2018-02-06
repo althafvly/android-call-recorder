@@ -36,7 +36,7 @@ To collection information about current devices support / failing with call reco
 
 Get results from:
   
-  * https://drive.google.com/open?id=1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk
+  * https://docs.google.com/forms/d/e/1FAIpQLSdNWW4nmCXTrGFKbd_9_bPrxwlrfyPyzKtRESsGeaKist06VA/viewanalytics
 
 # Contributors
 
