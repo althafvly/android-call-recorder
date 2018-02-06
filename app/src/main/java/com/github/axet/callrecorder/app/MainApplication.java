@@ -2,11 +2,16 @@ package com.github.axet.callrecorder.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 
 import com.github.axet.callrecorder.R;
+
+import java.util.Locale;
 
 public class MainApplication extends com.github.axet.audiolibrary.app.MainApplication {
     public static final String PREFERENCE_DELETE = "delete";
@@ -71,5 +76,40 @@ public class MainApplication extends com.github.axet.audiolibrary.app.MainApplic
         SharedPreferences.Editor editor = shared.edit();
         editor.putString(p, id);
         editor.commit();
+    }
+
+    public static String getString(Context context, Locale locale, int id, Object... formatArgs) {
+        return getStringNewRes(context, locale, id, formatArgs);
+    }
+
+    public static String getStringNewRes(Context context, Locale locale, int id, Object... formatArgs) {
+        Resources res;
+        Configuration conf = new Configuration(context.getResources().getConfiguration());
+        if (Build.VERSION.SDK_INT >= 17)
+            conf.setLocale(locale);
+        else
+            conf.locale = locale;
+        res = new Resources(context.getAssets(), context.getResources().getDisplayMetrics(), conf);
+        String str;
+        if (formatArgs.length == 0)
+            str = res.getString(id);
+        else
+            str = res.getString(id, formatArgs);
+        new Resources(context.getAssets(), context.getResources().getDisplayMetrics(), context.getResources().getConfiguration()); // restore side effect
+        return str;
+    }
+
+    public static String[] getStrings(Context context, Locale locale, int id) {
+        Resources res;
+        Configuration conf = new Configuration(context.getResources().getConfiguration());
+        if (Build.VERSION.SDK_INT >= 17)
+            conf.setLocale(locale);
+        else
+            conf.locale = locale;
+        res = new Resources(context.getAssets(), context.getResources().getDisplayMetrics(), conf);
+        String[] str;
+        str = res.getStringArray(id);
+        new Resources(context.getAssets(), context.getResources().getDisplayMetrics(), context.getResources().getConfiguration()); // restore side effect
+        return str;
     }
 }
