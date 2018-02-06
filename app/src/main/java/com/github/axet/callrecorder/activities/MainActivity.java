@@ -48,6 +48,7 @@ import com.github.axet.callrecorder.app.Storage;
 import com.github.axet.callrecorder.services.RecordingService;
 import com.github.axet.callrecorder.widgets.MixerPathsPreferenceCompat;
 
+import java.lang.reflect.Method;
 import java.sql.Array;
 import java.util.Arrays;
 import java.util.Locale;
@@ -343,7 +344,12 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                     String url = SURVERY_URL;
                     url = url.replaceAll("%MANUFACTURER%", Build.MANUFACTURER);
                     url = url.replaceAll("%MODEL%", android.os.Build.MODEL);
-                    url = url.replaceAll("%OSVERSION%", System.getProperty("os.version") + ", Android: " + Build.VERSION.RELEASE);
+                    String ver = System.getProperty("os.version") + ", ";
+                    String cm = MainApplication.getprop("ro.cm.version");
+                    if (cm != null && !cm.isEmpty())
+                        ver += cm + ", ";
+                    ver += "Android: " + Build.VERSION.RELEASE;
+                    url = url.replaceAll("%OSVERSION%", ver);
                     try {
                         PackageManager pm = getPackageManager();
                         PackageInfo pInfo = pm.getPackageInfo(getPackageName(), 0);
