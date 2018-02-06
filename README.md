@@ -28,6 +28,16 @@ If you want to translate 'Call Recorder' to your language  please read this:
 
 ![shot](/docs/shot.png)
 
+# Survey reports
+
+To collection information about current devices support / failing with call recording you can follow the url:
+
+  * https://goo.gl/forms/WFC6Q0OWeZkOHG0o1
+
+Get results from:
+  
+  * https://drive.google.com/open?id=1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk
+
 # Contributors
 
   * japaness translation thanks to @naofumi
