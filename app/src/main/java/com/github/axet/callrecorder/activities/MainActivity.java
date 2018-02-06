@@ -1,14 +1,19 @@
 package com.github.axet.callrecorder.activities;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -30,6 +35,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.axet.androidlibrary.app.SuperUser;
 import com.github.axet.androidlibrary.services.StorageProvider;
 import com.github.axet.androidlibrary.widgets.AboutPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.AppCompatThemeActivity;
@@ -42,12 +48,18 @@ import com.github.axet.callrecorder.app.Storage;
 import com.github.axet.callrecorder.services.RecordingService;
 import com.github.axet.callrecorder.widgets.MixerPathsPreferenceCompat;
 
+import java.sql.Array;
+import java.util.Arrays;
+import java.util.Locale;
+
 public class MainActivity extends AppCompatThemeActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     public final static String TAG = MainActivity.class.getSimpleName();
 
     public static String SHOW_PROGRESS = MainActivity.class.getCanonicalName() + ".SHOW_PROGRESS";
     public static String SET_PROGRESS = MainActivity.class.getCanonicalName() + ".SET_PROGRESS";
     public static String SHOW_LAST = MainActivity.class.getCanonicalName() + ".SHOW_LAST";
+
+    public static String SURVERY_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdNWW4nmCXTrGFKbd_9_bPrxwlrfyPyzKtRESsGeaKist06VA/viewform?usp=pp_url&entry.1823308770=%MANUFACTURER%&entry.856269988=%MODEL%&entry.2054570575=%OSVERSION%&entry.1549394127=%ROOT%&entry.2121261645=%BASEBAND%&entry.648583455=%ENCODER%&entry.1739416324=%SOURCE%&entry.1221822567=%QUALITY%&entry.533092626=%INSTALLED%&entry.992467367=%VERSION%";
 
     public static final int RESULT_CALL = 1;
 
@@ -322,8 +334,63 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
             return true;
         }
 
+        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+
         if (id == R.id.action_about) {
-            AboutPreferenceCompat.showDialog(this, R.raw.about);
+            final Runnable survey = new Runnable() {
+                @Override
+                public void run() {
+                    String url = SURVERY_URL;
+                    url = url.replaceAll("%MANUFACTURER%", Build.MANUFACTURER);
+                    url = url.replaceAll("%MODEL%", android.os.Build.MODEL);
+                    url = url.replaceAll("%OSVERSION%", Build.VERSION.RELEASE);
+                    try {
+                        PackageManager pm = getPackageManager();
+                        PackageInfo pInfo = pm.getPackageInfo(getPackageName(), 0);
+                        String version = pInfo.versionName;
+                        url = url.replaceAll("%VERSION%", version);
+                    } catch (PackageManager.NameNotFoundException e) {
+                        Log.d(TAG, "unable to get version", e);
+                    }
+                    url = url.replaceAll("%ROOT%", SuperUser.isRooted() ? "Yes" : "No");
+                    url = url.replaceAll("%BASEBAND%", Build.VERSION.SDK_INT < 14 ? Build.RADIO : Build.getRadioVersion());
+                    String encoder = shared.getString(MainApplication.PREFERENCE_ENCODING, "-1");
+                    if (encoder.equals("3gp") || encoder.equals("aac"))
+                        encoder = "3gp, aac";
+                    else
+                        encoder = "ogg, wav, flac, m4a, mp3, opus";
+                    url = url.replaceAll("%ENCODER%", encoder);
+                    String source = shared.getString(MainApplication.PREFERENCE_SOURCE, "-1");
+                    String[] vv = MainApplication.getStrings(MainActivity.this, new Locale("en"), R.array.source_values);
+                    String[] ss = MainApplication.getStrings(MainActivity.this, new Locale("en"), R.array.source_text);
+                    int i = Arrays.asList(vv).indexOf(source);
+                    url = url.replaceAll("%SOURCE%", ss[i]);
+                    url = url.replaceAll("%QUALITY%", "");
+                    boolean system = (getApplicationInfo().flags & ApplicationInfo.FLAG_SYSTEM) == ApplicationInfo.FLAG_SYSTEM;
+                    url = url.replaceAll("%INSTALLED%", system ? "System Preinstalled" : "User Installed");
+                    AboutPreferenceCompat.openUrl(MainActivity.this, url);
+                }
+            };
+            AlertDialog.Builder b = AboutPreferenceCompat.buildDialog(this, R.raw.about);
+            b.setNeutralButton(R.string.send_survey, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            final AlertDialog d = b.create();
+            d.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    Button b = d.getButton(DialogInterface.BUTTON_NEUTRAL);
+                    b.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            survey.run();
+                        }
+                    });
+                }
+            });
+            d.show();
             return true;
         }
 
