@@ -1,5 +1,6 @@
 package com.github.axet.callrecorder.app;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -8,9 +9,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
+import android.util.Log;
 
 import com.github.axet.callrecorder.R;
 
+import java.lang.reflect.Method;
 import java.util.Locale;
 
 public class MainApplication extends com.github.axet.audiolibrary.app.MainApplication {
@@ -28,6 +31,18 @@ public class MainApplication extends com.github.axet.audiolibrary.app.MainApplic
 
     public static final String CALL_OUT = "out";
     public static final String CALL_IN = "in";
+
+    @SuppressLint("PrivateApi")
+    public static String getprop(String key) {
+        try {
+            Class klass = Class.forName("android.os.SystemProperties");
+            Method method = klass.getMethod("get", String.class);
+            return (String) method.invoke(null, key);
+        } catch (Exception e) {
+            Log.d(TAG, "no system prop", e);
+            return null;
+        }
+    }
 
     @Override
     public void onCreate() {
