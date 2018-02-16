@@ -33,6 +33,7 @@
         android:background="?attr/round_corners"
         android:elevation="6dp"
         android:minWidth="250dp"
+        android:clickable="true"
         android:orientation="horizontal">
 
         <android.support.design.widget.FloatingActionButton
@@ -42,6 +43,7 @@
             android:layout_gravity="center"
             android:src="@drawable/ic_stop_black_24dp"
             android:tint="@android:color/white"
+            android:visibility="invisible"
             app:borderWidth="0dp" />
 
         <TextView
@@ -60,7 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_pause_black_24dp"
+        android:src="@drawable/ic_stop_black_24dp"
         android:tint="@android:color/white" />
 
 </android.support.design.widget.CoordinatorLayout>
