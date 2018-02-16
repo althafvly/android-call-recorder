@@ -526,7 +526,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         if (!show) {
-            notificationManager.cancel(NOTIFICATION_RECORDING_ICON);
+            stopForeground(true);
         } else {
             PendingIntent main = PendingIntent.getService(this, 0,
                     new Intent(this, RecordingService.class).setAction(SHOW_ACTIVITY),
@@ -553,7 +553,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 view.setViewVisibility(R.id.notification_pause, View.GONE);
             } else {
                 view.setViewVisibility(R.id.notification_pause, View.VISIBLE);
-                view.setImageViewResource(R.id.notification_pause, recording ? R.drawable.ic_pause_black_24dp : R.drawable.ic_play_arrow_black_24dp);
+                view.setImageViewResource(R.id.notification_pause, recording ? R.drawable.ic_stop_black_24dp : R.drawable.ic_play_arrow_black_24dp);
             }
             view.setViewVisibility(R.id.notification_record, View.GONE);
 
@@ -568,14 +568,13 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     .setSmallIcon(R.drawable.ic_mic_24dp)
                     .setContent(view);
 
-            if (Build.VERSION.SDK_INT < 11) {
+            if (Build.VERSION.SDK_INT < 11)
                 builder.setContentIntent(main);
-            }
 
             if (Build.VERSION.SDK_INT >= 21)
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-            notificationManager.notify(NOTIFICATION_RECORDING_ICON, builder.build());
+            startForeground(NOTIFICATION_RECORDING_ICON, builder.build());
         }
     }
 
@@ -1030,6 +1029,8 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     void encodingNext() {
         handle.removeCallbacks(encodingNext); // clean next
         if (encoder != null) // can be called twice, exit if alreay encoding
+            return;
+        if (thread != null) // currently recorindg
             return;
         final File inFile = storage.getTempNextRecording();
         if (inFile == null)

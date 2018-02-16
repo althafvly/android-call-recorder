@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RecordingService.pauseButton(MainActivity.this);
+                RecordingService.stopButton(MainActivity.this);
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }
@@ -589,12 +589,12 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
             text = text.trim();
             status.setText(text);
             fab.setVisibility(show ? View.VISIBLE : View.GONE);
-            fab_stop.setVisibility(View.VISIBLE);
+            fab_stop.setVisibility(View.INVISIBLE);
         }
         if (recording == null) {
             fab.setVisibility(View.GONE);
         } else if (recording) {
-            fab.setImageResource(R.drawable.ic_pause_black_24dp);
+            fab.setImageResource(R.drawable.ic_stop_black_24dp);
         } else {
             fab.setImageResource(R.drawable.ic_play_arrow_black_24dp);
         }
