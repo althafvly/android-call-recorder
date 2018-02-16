@@ -35,7 +35,6 @@ import android.widget.Toast;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.audiolibrary.app.RawSamples;
 import com.github.axet.audiolibrary.app.Sound;
-import com.github.axet.audiolibrary.encoders.Encoder;
 import com.github.axet.audiolibrary.encoders.EncoderInfo;
 import com.github.axet.audiolibrary.encoders.Factory;
 import com.github.axet.audiolibrary.encoders.FileEncoder;
@@ -49,8 +48,6 @@ import com.github.axet.callrecorder.app.Storage;
 
 import java.io.File;
 import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -852,6 +849,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                             Thread.sleep(1000);
                             samplesTime += 1000 * sampleRate / 1000; // per 1 second
                             MainActivity.showProgress(RecordingService.this, true, phone, samplesTime / sampleRate, null);
+                            System.gc();
                         }
                     } catch (RuntimeException e) {
                         storage.delete(info.targetUri);
@@ -862,8 +860,12 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     } finally {
                         handle.post(done);
                         if (start) {
-                            recorder.stop();
-                            recorder.reset();
+                            try {
+                                recorder.stop();
+                            } catch (RuntimeException e) { // https://stackoverflow.com/questions/16221866
+                                storage.delete(info.targetUri);
+                                Post(e);
+                            }
                         }
                         recorder.release();
                     }
