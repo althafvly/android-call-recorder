@@ -1,5 +1,6 @@
 package com.github.axet.callrecorder.services;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -77,6 +78,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     Sound sound;
     AtomicBoolean interrupt = new AtomicBoolean();
     Thread thread;
+    Notification notification;
     Storage storage;
     RecordingReceiver receiver;
     PhoneStateReceiver state;
@@ -511,19 +513,17 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     public void showNotificationAlarm(boolean show) {
         Boolean recording; // recording active == true (play (true) == pause button)
         if (thread != null) {
-            if (thread instanceof MediaRecorderThread)
-                recording = null; // MediaRecorder has no support for pause, hide pause button
-            else
-                recording = true; // AudioRecord support for pause
+            recording = true;
         } else {
             recording = false;
         }
         MainActivity.showProgress(RecordingService.this, show, phone, samplesTime / sampleRate, recording);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         if (!show) {
             stopForeground(true);
+            notification = null;
         } else {
             PendingIntent main = PendingIntent.getService(this, 0,
                     new Intent(this, RecordingService.class).setAction(SHOW_ACTIVITY),
@@ -571,7 +571,12 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             if (Build.VERSION.SDK_INT >= 21)
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-            startForeground(NOTIFICATION_RECORDING_ICON, builder.build());
+            Notification n = builder.build();
+            if (notification == null)
+                startForeground(NOTIFICATION_RECORDING_ICON, n);
+            else
+                nm.notify(NOTIFICATION_RECORDING_ICON, n);
+            notification = n;
         }
     }
 
