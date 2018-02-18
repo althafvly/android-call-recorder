@@ -232,6 +232,8 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                     sw1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if (isChecked)
+                                sw1.setClickable(false);
                             update();
                         }
                     });
@@ -239,6 +241,8 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                     sw2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if (isChecked)
+                                sw2.setClickable(false);
                             update();
                         }
                     });
@@ -247,6 +251,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                             if (isChecked) {
+                                sw3.setClickable(false);
                                 if (OptimizationPreferenceCompat.needWarning(context)) // upgrade
                                     OptimizationPreferenceCompat.showWarning(context);
                             }
@@ -264,6 +269,8 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                         sw4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                             @Override
                             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                if (isChecked)
+                                    sw4.setClickable(false);
                                 m.load();
                                 if (isChecked && !m.isEnabled())
                                     MixerPathsPreferenceCompat.show(MainActivity.this);
