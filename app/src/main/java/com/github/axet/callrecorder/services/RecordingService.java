@@ -350,7 +350,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
         List<Uri> list = new ArrayList<>();
 
-        String[] ee = Factory.getEncodingValues(this);
+        String[] ee = Storage.getEncodingValues(this);
         Uri path = storage.getStoragePath();
         String s = path.getScheme();
         if (Build.VERSION.SDK_INT >= 21 && s.startsWith(ContentResolver.SCHEME_CONTENT)) {
