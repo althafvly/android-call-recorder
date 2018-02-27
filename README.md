@@ -28,6 +28,12 @@ If you want to translate 'Call Recorder' to your language  please read this:
 
 ![shot](/docs/shot.png)
 
+# Survey Results
+
+User filled survey results.
+
+  * https://docs.google.com/spreadsheets/d/1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk/edit?usp=sharing
+
 # Contributors
 
   * japaness translation thanks to @naofumi
