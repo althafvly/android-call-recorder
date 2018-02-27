@@ -28,15 +28,11 @@ If you want to translate 'Call Recorder' to your language  please read this:
 
 ![shot](/docs/shot.png)
 
-# Survey reports
+# Survey Results
 
-To collection information about current devices support / failing with call recording you can follow the url:
+User filled survey results from app About menu.
 
-  * https://goo.gl/forms/WFC6Q0OWeZkOHG0o1
-
-Get results from:
-  
-  * https://docs.google.com/forms/d/e/1FAIpQLSdNWW4nmCXTrGFKbd_9_bPrxwlrfyPyzKtRESsGeaKist06VA/viewanalytics
+  * https://docs.google.com/spreadsheets/d/1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk/edit?usp=sharing
 
 # Contributors
 
