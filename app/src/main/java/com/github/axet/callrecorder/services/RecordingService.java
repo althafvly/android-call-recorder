@@ -40,6 +40,8 @@ import com.github.axet.audiolibrary.encoders.EncoderInfo;
 import com.github.axet.audiolibrary.encoders.Factory;
 import com.github.axet.audiolibrary.encoders.FileEncoder;
 import com.github.axet.audiolibrary.encoders.OnFlyEncoding;
+import com.github.axet.audiolibrary.filters.AmplifierFilter;
+import com.github.axet.audiolibrary.filters.VoiceFilter;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.activities.MainActivity;
 import com.github.axet.callrecorder.activities.RecentCallActivity;
@@ -898,10 +900,10 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         encoder = new FileEncoder(this, in, fly);
 
         if (shared.getBoolean(MainApplication.PREFERENCE_VOICE, false))
-            encoder.filters.add(new com.github.axet.audiolibrary.filters.VoiceFilter(getInfo()));
-        float amp = shared.getFloat(MainApplication.PREFERENCE_VOLUME, 0);
+            encoder.filters.add(new VoiceFilter(getInfo()));
+        float amp = shared.getFloat(MainApplication.PREFERENCE_VOLUME, 1);
         if (amp != 1)
-            encoder.filters.add(new com.github.axet.audiolibrary.filters.AmplifierFilter(amp));
+            encoder.filters.add(new AmplifierFilter(amp));
 
         final Runnable save = new Runnable() {
             @Override
