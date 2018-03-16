@@ -67,6 +67,19 @@
             android:title="@string/pref_delete_title" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_filters">
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="voice"
+            android:summary="@string/pref_voice_summary"
+            android:title="@string/pref_voice_title" />
+        <com.github.axet.androidlibrary.widgets.SeekBarPreference
+            android:defaultValue="0"
+            android:key="volume"
+            android:summary=""
+            android:title="@string/pref_volume_title" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_advanced">
         <com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat
             android:defaultValue="false"

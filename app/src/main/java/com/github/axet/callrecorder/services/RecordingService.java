@@ -893,7 +893,15 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     void encoding(final File in, final Uri uri, final Runnable done, final Success success) {
         final OnFlyEncoding fly = new OnFlyEncoding(storage, uri, getInfo());
 
+        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(RecordingService.this);
+
         encoder = new FileEncoder(this, in, fly);
+
+        if (shared.getBoolean(MainApplication.PREFERENCE_VOICE, false))
+            encoder.filters.add(new com.github.axet.audiolibrary.filters.VoiceFilter(getInfo().hz));
+        float amp = shared.getFloat(MainApplication.PREFERENCE_VOLUME, 0);
+        if (amp > 0)
+            encoder.filters.add(new com.github.axet.audiolibrary.filters.AmplifierFilter(1 + amp));
 
         final Runnable save = new Runnable() {
             @Override
@@ -902,7 +910,6 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
                 MainActivity.showProgress(RecordingService.this, false, phone, samplesTime / sampleRate, false);
 
-                final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(RecordingService.this);
                 SharedPreferences.Editor edit = shared.edit();
                 edit.putString(MainApplication.PREFERENCE_LAST, Storage.getDocumentName(fly.targetUri));
                 edit.commit();
