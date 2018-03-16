@@ -28,6 +28,7 @@ import com.github.axet.androidlibrary.widgets.AppCompatThemeActivity;
 import com.github.axet.androidlibrary.widgets.NameFormatPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.OpenFileDialog;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
+import com.github.axet.androidlibrary.widgets.SeekBarPreference;
 import com.github.axet.androidlibrary.widgets.StoragePathPreferenceCompat;
 import com.github.axet.audiolibrary.encoders.Factory;
 import com.github.axet.callrecorder.R;
@@ -81,7 +82,9 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             String stringValue = value.toString();
             String key = preference.getKey();
 
-            if (preference instanceof NameFormatPreferenceCompat) {
+            if (preference instanceof SeekBarPreference) {
+                preference.setSummary(((SeekBarPreference) preference).format(Float.valueOf(stringValue)));
+            } else if (preference instanceof NameFormatPreferenceCompat) {
                 preference.setSummary(((NameFormatPreferenceCompat) preference).getFormatted(stringValue));
             } else if (preference instanceof ListPreference) {
                 // For list preferences, look up the correct display value in
@@ -139,7 +142,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
+                        .getAll().get(preference.getKey()));
     }
 
     @Override
@@ -219,6 +222,10 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             NameFormatPreferenceCompat.show(caller, pref.getKey());
             return true;
         }
+        if (pref instanceof SeekBarPreference) {
+            SeekBarPreference.show(caller, pref.getKey());
+            return true;
+        }
         return false;
     }
 
@@ -268,6 +275,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_CHANNELS));
             bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_DELETE));
             bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_SOURCE));
+            bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_VOLUME));
 
             StoragePathPreferenceCompat s = (StoragePathPreferenceCompat) manager.findPreference(MainApplication.PREFERENCE_STORAGE);
             s.setStorage(new Storage(getContext()));
