@@ -31,6 +31,7 @@ import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.SeekBarPreference;
 import com.github.axet.androidlibrary.widgets.StoragePathPreferenceCompat;
 import com.github.axet.audiolibrary.encoders.Factory;
+import com.github.axet.audiolibrary.widgets.RecordingVolumePreference;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.app.MainApplication;
 import com.github.axet.callrecorder.app.MixerPaths;
@@ -83,7 +84,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             String key = preference.getKey();
 
             if (preference instanceof SeekBarPreference) {
-                preference.setSummary(((SeekBarPreference) preference).format(Float.valueOf(stringValue)));
+                preference.setSummary(((SeekBarPreference) preference).format((Float) value));
             } else if (preference instanceof NameFormatPreferenceCompat) {
                 preference.setSummary(((NameFormatPreferenceCompat) preference).getFormatted(stringValue));
             } else if (preference instanceof ListPreference) {
@@ -223,7 +224,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             return true;
         }
         if (pref instanceof SeekBarPreference) {
-            SeekBarPreference.show(caller, pref.getKey());
+            RecordingVolumePreference.show(caller, pref.getKey());
             return true;
         }
         return false;

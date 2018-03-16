@@ -30,6 +30,7 @@ public class MainApplication extends com.github.axet.audiolibrary.app.MainApplic
     public static final String PREFERENCE_MIXERPATHS = "mixer_paths";
     public static final String PREFERENCE_VOICE = "voice";
     public static final String PREFERENCE_VOLUME = "volume";
+    public static final String PREFERENCE_VERSION = "version";
 
     public static final String CALL_OUT = "out";
     public static final String CALL_IN = "in";
@@ -59,7 +60,27 @@ public class MainApplication extends com.github.axet.audiolibrary.app.MainApplic
                 e.putString(MainApplication.PREFERENCE_ENCODING, Storage.EXT_3GP);
                 e.commit();
             }
+            SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor edit = shared.edit();
+            edit.putInt(PREFERENCE_VERSION, 1);
+            edit.commit();
+        } else { // second start, check version
+            SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
+            switch (shared.getInt(PREFERENCE_VERSION, 0)) {
+                case 0:
+                    version_0_to_1();
+                    break;
+            }
         }
+        setTheme(getUserTheme());
+    }
+
+    void version_0_to_1() {
+        SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor edit = shared.edit();
+        edit.putInt(PREFERENCE_VERSION, 1);
+        edit.putFloat(PREFERENCE_VOLUME, shared.getFloat(PREFERENCE_VOLUME, 0) + 1); // update volume from 0..1 to 0..1..4
+        edit.commit();
     }
 
     @Override
