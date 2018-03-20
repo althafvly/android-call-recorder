@@ -37,3 +37,4 @@ User filled survey results from app About menu.
 # Contributors
 
   * japaness translation thanks to @naofumi
+  * greek tralsation thanks to @cryoranger
