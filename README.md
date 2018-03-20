@@ -38,3 +38,4 @@ User filled survey results from app About menu.
 
   * japaness translation thanks to @naofumi
   * greek tralsation thanks to @cryoranger
+  * german tralstaion thanks to @aenaehcwh
