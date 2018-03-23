@@ -850,7 +850,6 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
                     boolean start = false;
                     try {
-                        Thread.sleep(2000);
                         recorder.start();
                         start = true;
                         while (!interrupt.get()) {
