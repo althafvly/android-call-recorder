@@ -351,11 +351,11 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                     String url = SURVERY_URL;
                     url = url.replaceAll("%MANUFACTURER%", Build.MANUFACTURER);
                     url = url.replaceAll("%MODEL%", android.os.Build.MODEL);
-                    String ver = System.getProperty("os.version") + ", ";
+                    String ver = "Android: " + Build.VERSION.RELEASE;
                     String cm = MainApplication.getprop("ro.cm.version");
                     if (cm != null && !cm.isEmpty())
-                        ver += cm + ", ";
-                    ver += "Android: " + Build.VERSION.RELEASE;
+                        ver += ", " + cm;
+                    ver += ", " + System.getProperty("os.version");
                     url = url.replaceAll("%OSVERSION%", ver);
                     try {
                         PackageManager pm = getPackageManager();
