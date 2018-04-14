@@ -269,7 +269,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             }
 
             OptimizationPreferenceCompat optimization = (OptimizationPreferenceCompat) manager.findPreference(MainApplication.PREFERENCE_OPTIMIZATION);
-            optimization.enable(RecordingService.class);
+            optimization.enable(RecordingService.class, MainApplication.PREFERENCE_SERVICE);
 
             bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_RATE));
             bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_THEME));

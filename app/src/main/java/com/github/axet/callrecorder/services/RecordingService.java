@@ -303,7 +303,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         super.onCreate();
         Log.d(TAG, "onCreate");
 
-        optimization = new OptimizationPreferenceCompat.ServiceReceiver(this, getClass()) {
+        optimization = new OptimizationPreferenceCompat.ServiceReceiver(this, getClass(), MainApplication.PREFERENCE_SERVICE) {
             @Override
             public void check() {
             }

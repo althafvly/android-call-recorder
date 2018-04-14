@@ -252,8 +252,8 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                             if (isChecked) {
                                 sw3.setClickable(false);
-                                if (OptimizationPreferenceCompat.needWarning(context)) // upgrade
-                                    OptimizationPreferenceCompat.showWarning(context);
+                                if (OptimizationPreferenceCompat.needWarning(context, MainApplication.PREFERENCE_WARNING)) // upgrade
+                                    OptimizationPreferenceCompat.showWarning(context, MainApplication.PREFERENCE_WARNING);
                             }
                             update();
                         }

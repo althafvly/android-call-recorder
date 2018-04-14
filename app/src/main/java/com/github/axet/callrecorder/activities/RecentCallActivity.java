@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -71,12 +72,12 @@ public class RecentCallActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         // enable popup keyboard while locked
         w.addFlags(android.view.WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        w.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        if (Build.VERSION.SDK_INT >= 21)
+            w.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
     }
 
-    public static Rect getOnScreenRect(Window w) {
+    public static Rect getOnScreenRect(View v) {
         int[] loc = new int[2];
-        View v = w.getDecorView();
         v.getLocationOnScreen(loc);
         return new Rect(loc[0], loc[1], loc[0] + v.getWidth(), loc[1] + v.getHeight());
     }
@@ -168,7 +169,7 @@ public class RecentCallActivity extends AppCompatActivity {
 
                     @Override
                     public boolean dispatchTouchEvent(MotionEvent event) {
-                        Rect rect = getOnScreenRect(w);
+                        Rect rect = getOnScreenRect(w.getDecorView());
                         if (rect.contains((int) event.getRawX(), (int) event.getRawY()))
                             onUserInteraction();
                         return c.dispatchTouchEvent(event);
