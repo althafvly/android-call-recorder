@@ -269,7 +269,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             }
 
             OptimizationPreferenceCompat optimization = (OptimizationPreferenceCompat) manager.findPreference(MainApplication.PREFERENCE_OPTIMIZATION);
-            optimization.enable(RecordingService.class, MainApplication.PREFERENCE_SERVICE);
+            optimization.enable(RecordingService.class);
 
             bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_RATE));
             bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_THEME));
@@ -296,7 +296,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         public void onResume() {
             super.onResume();
             OptimizationPreferenceCompat optimization = (OptimizationPreferenceCompat) findPreference(MainApplication.PREFERENCE_OPTIMIZATION);
-            optimization.onResume();
+            optimization.onResume(MainApplication.PREFERENCE_OPTIMIZATION_WARNING);
             MixerPathsPreferenceCompat mix = (MixerPathsPreferenceCompat) findPreference(MainApplication.PREFERENCE_MIXERPATHS);
             mix.onResume();
         }

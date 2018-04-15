@@ -21,6 +21,8 @@ public class MainApplication extends com.github.axet.audiolibrary.app.MainApplic
     public static final String PREFERENCE_FORMAT = "format";
     public static final String PREFERENCE_CALL = "call";
     public static final String PREFERENCE_OPTIMIZATION = "optimization";
+    public static final String PREFERENCE_OPTIMIZATION_WARNING = "optimization_warning";
+    public static final String PREFERENCE_NEXT = "next";
     public static final String PREFERENCE_SERVICE = "optimization_service";
     public static final String PREFERENCE_WARNING = "optimization_warning";
     public static final String PREFERENCE_DETAILS_CONTACT = "_contact";

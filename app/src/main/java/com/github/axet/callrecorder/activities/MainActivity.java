@@ -158,6 +158,9 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
         setContentView(R.layout.activity_main);
 
+        if (OptimizationPreferenceCompat.needKillWarning(this, MainApplication.PREFERENCE_NEXT))
+            OptimizationPreferenceCompat.buildKilledWarning(this, true).show();
+
         progressText = findViewById(R.id.progress_text);
         progressEmpty = findViewById(R.id.progress_empty);
 

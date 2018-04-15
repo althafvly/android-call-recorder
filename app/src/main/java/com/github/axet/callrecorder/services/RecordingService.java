@@ -307,6 +307,18 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             @Override
             public void check() {
             }
+
+            @Override
+            public void register() {
+                super.register();
+                OptimizationPreferenceCompat.setKillCheck(RecordingService.this, next, MainApplication.PREFERENCE_NEXT);
+            }
+
+            @Override
+            public void unregister() {
+                super.unregister();
+                OptimizationPreferenceCompat.setKillCheck(RecordingService.this, 0, MainApplication.PREFERENCE_NEXT);
+            }
         };
 
         receiver = new RecordingReceiver();
