@@ -303,9 +303,21 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         super.onCreate();
         Log.d(TAG, "onCreate");
 
-        optimization = new OptimizationPreferenceCompat.ServiceReceiver(this, getClass()) {
+        optimization = new OptimizationPreferenceCompat.ServiceReceiver(this, getClass(), MainApplication.PREFERENCE_SERVICE) {
             @Override
             public void check() {
+            }
+
+            @Override
+            public void register() {
+                super.register();
+                OptimizationPreferenceCompat.setKillCheck(RecordingService.this, next, MainApplication.PREFERENCE_NEXT);
+            }
+
+            @Override
+            public void unregister() {
+                super.unregister();
+                OptimizationPreferenceCompat.setKillCheck(RecordingService.this, 0, MainApplication.PREFERENCE_NEXT);
             }
         };
 
@@ -850,7 +862,6 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
                     boolean start = false;
                     try {
-                        Thread.sleep(2000);
                         recorder.start();
                         start = true;
                         while (!interrupt.get()) {

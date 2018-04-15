@@ -158,6 +158,9 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
         setContentView(R.layout.activity_main);
 
+        if (OptimizationPreferenceCompat.needKillWarning(this, MainApplication.PREFERENCE_NEXT))
+            OptimizationPreferenceCompat.buildKilledWarning(this, true).show();
+
         progressText = findViewById(R.id.progress_text);
         progressEmpty = findViewById(R.id.progress_empty);
 
@@ -252,8 +255,8 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                             if (isChecked) {
                                 sw3.setClickable(false);
-                                if (OptimizationPreferenceCompat.needWarning(context)) // upgrade
-                                    OptimizationPreferenceCompat.showWarning(context);
+                                if (OptimizationPreferenceCompat.needWarning(context, MainApplication.PREFERENCE_WARNING)) // upgrade
+                                    OptimizationPreferenceCompat.showWarning(context, MainApplication.PREFERENCE_WARNING);
                             }
                             update();
                         }
@@ -351,11 +354,11 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                     String url = SURVERY_URL;
                     url = url.replaceAll("%MANUFACTURER%", Build.MANUFACTURER);
                     url = url.replaceAll("%MODEL%", android.os.Build.MODEL);
-                    String ver = System.getProperty("os.version") + ", ";
+                    String ver = "Android: " + Build.VERSION.RELEASE;
                     String cm = MainApplication.getprop("ro.cm.version");
                     if (cm != null && !cm.isEmpty())
-                        ver += cm + ", ";
-                    ver += "Android: " + Build.VERSION.RELEASE;
+                        ver += ", " + cm;
+                    ver += ", " + System.getProperty("os.version");
                     url = url.replaceAll("%OSVERSION%", ver);
                     try {
                         PackageManager pm = getPackageManager();
