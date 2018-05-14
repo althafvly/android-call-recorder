@@ -42,12 +42,15 @@ android {
             output.outputFileName = org.apache.commons.io.FilenameUtils.getExtension(android.defaultConfig.applicationId) + "-" + abi + "-" + android.defaultConfig.versionName + "-" + variant.buildType.name + ".apk"
         }
     }
-    splits {
+    bundle {
+        language {
+            enableSplit = false
+        }
+        density {
+            enableSplit = true
+        }
         abi {
-            enable true
-            reset()
-            include "x86", "x86_64", "armeabi-v7a", "arm64-v8a", "mips", "mips64"
-            universalApk true
+            enableSplit = true
         }
     }
 }
