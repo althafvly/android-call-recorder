@@ -10,8 +10,8 @@ android {
         applicationId "com.github.axet.callrecorder"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 160
-        versionName "1.6.5"
+        versionCode 161
+        versionName "1.6.6"
     }
     signingConfigs {
         release {
@@ -42,17 +42,20 @@ android {
             output.outputFileName = org.apache.commons.io.FilenameUtils.getExtension(android.defaultConfig.applicationId) + "-" + abi + "-" + android.defaultConfig.versionName + "-" + variant.buildType.name + ".apk"
         }
     }
-    splits {
+    bundle {
+        language {
+            enableSplit = false
+        }
+        density {
+            enableSplit = true
+        }
         abi {
-            enable true
-            reset()
-            include "x86", "x86_64", "armeabi-v7a", "arm64-v8a", "mips", "mips64"
-            universalApk true
+            enableSplit = true
         }
     }
 }
 
 dependencies {
-    implementation 'com.github.axet:android-audio-library:1.0.101' // implementation project(':android-audio-library')
+    implementation 'com.github.axet:android-audio-library:1.0.102' // implementation project(':android-audio-library')
     testImplementation 'junit:junit:4.12'
 }
