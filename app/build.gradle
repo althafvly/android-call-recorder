@@ -10,8 +10,8 @@ android {
         applicationId "com.github.axet.callrecorder"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 166
-        versionName "1.6.11"
+        versionCode 167
+        versionName "1.6.12"
     }
     signingConfigs {
         release {
@@ -56,6 +56,6 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.axet:android-audio-library:1.0.106' // implementation project(':android-audio-library')
+    implementation 'com.github.axet:android-audio-library:1.0.107' // implementation project(':android-audio-library')
     testImplementation 'junit:junit:4.12'
 }
