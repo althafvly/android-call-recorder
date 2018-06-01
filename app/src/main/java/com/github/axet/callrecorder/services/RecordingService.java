@@ -577,7 +577,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     .setContentTitle(title)
                     .setContentText(text)
                     .setTicker(title) // tooltip status bar message
-                    .setSmallIcon(R.drawable.ic_mic_24dp)
+                    .setSmallIcon(R.drawable.ic_mic)
                     .setContent(view);
 
             if (Build.VERSION.SDK_INT < 11)
