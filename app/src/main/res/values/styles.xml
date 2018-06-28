@@ -20,7 +20,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <!--@android:style/Theme.NoDisplay-->
+    <!-- @android:style/Theme.NoDisplay -->
     <style name="NoDisplay" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
