@@ -56,6 +56,6 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.axet:android-audio-library:1.0.109' // implementation project(':android-audio-library')
+    implementation 'com.github.axet:android-audio-library:1.0.111' // implementation project(':android-audio-library')
     testImplementation 'junit:junit:4.12'
 }
