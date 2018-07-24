@@ -34,6 +34,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
+import com.github.axet.androidlibrary.widgets.ProximityShader;
 import com.github.axet.audiolibrary.app.RawSamples;
 import com.github.axet.audiolibrary.app.Sound;
 import com.github.axet.audiolibrary.encoders.EncoderInfo;
@@ -389,7 +390,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 list.add(Uri.fromFile(f));
             }
         } else {
-            throw new RuntimeException("unknown uri");
+            throw new UnknownUri();
         }
 
         for (Uri f : list) {
@@ -447,6 +448,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 Intent i = new Intent(PAUSE_BUTTON);
                 sendBroadcast(i);
             } else if (a.equals(SHOW_ACTIVITY)) {
+                ProximityShader.closeSystemDialogs(this);
                 MainActivity.startActivity(this);
             }
         }
