@@ -37,5 +37,5 @@ User filled survey results from app About menu.
 # Contributors
 
   * japaness translation thanks to @naofumi
-  * greek tralsation thanks to @cryoranger
-  * german tralstaion thanks to @aenaehcwh
+  * greek translation thanks to @cryoranger
+  * german translation thanks to @aenaehcwh
