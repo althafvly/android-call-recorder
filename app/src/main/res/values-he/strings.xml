@@ -84,7 +84,7 @@
 
     <string name="pref_storage_title">נתיב אחסון</string>
     <string name="pref_rate_title">קצב דגימה</string>
-    <string name="pref_encoding_title">הַצפָּנָה</string>
+    <string name="pref_encoding_title">הצפנה</string>
     <string name="pref_encoding_summary">פלט פורמטים של קבצים (.wav, .m4a, ...)</string>
     <string name="pref_mode_title">מצב</string>
     <string name="pref_mode_summary">ערוצי הקלטה</string>
