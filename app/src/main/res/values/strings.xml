@@ -114,11 +114,11 @@
     <string name="source_line">(Voice Line)</string>
 
     <string name="call_recordings_support">Call Recordings support</string>
-    <string name="call_recordings_support_text">Most phones does not support call recording, to enable Call Recording install open-source firmware. Different encoding options (ogg, MediaRecorder), different sources (phone line, mic, VoIP). Or ROOT your phone.</string>
+    <string name="call_recordings_support_text">Most phones do not support high-quality (phone line) call recording. To enable call recording, install open-source firmware, choose different encoding options (ogg, MediaRecorder…), different audio sources (phone line, microphone, VoIP…), or root your phone.</string>
     <string name="recordings_quality">Recordings Quality</string>
-    <string name="recordings_quality_text">If you phone fails to support high quality call recording, application will ty MIC call recording (you may hear only one side: your or your opponent).</string>
+    <string name="recordings_quality_text">If your phone does not support high quality call recording, the application will try MIC call recording (you may hear only one side: your or your interlocutor).</string>
     <string name="task_managers">Task Managers</string>
-    <string name="task_managers_text">If you phone has Battery Optimization or Task Managers consider disabling them, to keep application running in background (optional)</string>
+    <string name="task_managers_text">If your phone has battery optimization or task managers enabled, consider disabling them to keep the application running in the background (optional)</string>
 
     <string name="recording_enabled">Recording enabled</string>
     <string name="recording_disabled">Recording disabled</string>
@@ -126,7 +126,7 @@
     <string name="calls_out">Out</string>
     <string name="calls_in">In</string>
     <string name="save_button">Save</string>
-    <string name="mixer_paths_done">System mixer configured, please reboot!</string>
+    <string name="mixer_paths_done">System mixer configured. Please reboot!</string>
     <string name="mixer_paths_failed">Unable to configure system mixer</string>
 
     <string name="pref_storage_title">Storage Path</string>
@@ -140,11 +140,11 @@
     <string name="pref_calldialog_title">Recent Call Dialog</string>
     <string name="pref_calldialog_summary">Show rename / favorite dialog after call ended</string>
     <string name="pref_optimization_title">Disable Battery Optimization</string>
-    <string name="pref_optimization_summary">Prevent app to be removed from memory</string>
+    <string name="pref_optimization_summary">Prevent app from being removed from memory</string>
     <string name="pref_theme_title">Application Theme</string>
     <string name="pref_theme_summary">Set application theme (dark / light)</string>
     <string name="pref_mixerpaths_title">System Mixer Incall Recording</string>
-    <string name="pref_mixerpaths_summary">Allow system mixer to records calls for regular apps</string>
+    <string name="pref_mixerpaths_summary">Allow system mixer to record calls for regular apps</string>
     <string name="pref_recordings">Recordings</string>
     <string name="pref_advanced">Advanced</string>
     <string name="pref_application">Application</string>

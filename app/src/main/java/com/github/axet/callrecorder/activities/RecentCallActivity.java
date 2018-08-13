@@ -187,11 +187,6 @@ public class RecentCallActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-    }
-
     void update() {
         int p = c / 100;
 
