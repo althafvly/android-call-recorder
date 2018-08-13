@@ -50,8 +50,8 @@
 
     <string name="action_settings">Paramètres</string>
     <string name="call_recording">Enregistrements des appels</string>
-    <string name="no_folder_app">Dossier de l'application non trouvé</string>
-    <string name="hold_by_call">mise en attente de l'appel</string>
+    <string name="no_folder_app">Dossier de l\'application non trouvé</string>
+    <string name="hold_by_call">mise en attente de l\'appel</string>
     <string name="encoding">encodage</string>
     <string name="pause">pause</string>
     <string name="edit">modification</string>
@@ -66,12 +66,12 @@
     <string name="source_mic">(Micro)</string>
     <string name="source_line">(Voix)</string>
 
-    <string name="call_recordings_support">Support de l'enregistrement des appels</string>
-    <string name="call_recordings_support_text">La plupart des téléphones ne permettent pas l'enregistrement des appels, pour l'activer installez un firmware open-source. Différentes options d'encodage (ogg, MediaRecorder), différentes sources (line de téléphone, micro, VoIP). Ou ROOTez votre téléphone.</string>
+    <string name="call_recordings_support">Support de l\'enregistrement des appels</string>
+    <string name="call_recordings_support_text">La plupart des téléphones ne permettent pas l\'enregistrement des appels, pour l\'activer installez un firmware open-source. Différentes options d\'encodage (ogg, MediaRecorder), différentes sources (line de téléphone, micro, VoIP). Ou ROOTez votre téléphone.</string>
     <string name="recordings_quality">Qualité des enregistrements</string>
-    <string name="recordings_quality_text">Si votre téléphone ne permet pas d'enregistrer des appels en haute qualité, l'application essayera l'enregistrement du micro (vous pourriez entendre seulement vous, ou votre correspondant).</string>
+    <string name="recordings_quality_text">Si votre téléphone ne permet pas d\'enregistrer des appels en haute qualité, l\'application essayera l\'enregistrement du micro (vous pourriez entendre seulement vous, ou votre correspondant).</string>
     <string name="task_managers">Gestionnaire de tâches</string>
-    <string name="task_managers_text">Si votre téléphone supporte l'optimisation de batterie ou un gestionnaire de tâches, vous devriez les désactiver pour permettre à l'application de tourner en tâche de fond (facultatif)</string>
+    <string name="task_managers_text">Si votre téléphone supporte l\'optimisation de batterie ou un gestionnaire de tâches, vous devriez les désactiver pour permettre à l\'application de tourner en tâche de fond (facultatif)</string>
 
     <string name="recording_enabled">Enregistrement activé</string>
     <string name="recording_disabled">Enregistrement désactivé</string>
@@ -83,7 +83,7 @@
     <string name="mixer_paths_failed">Configuration du system mixer impossible</string>
 
     <string name="pref_storage_title">Répertoire des enregistrements</string>
-    <string name="pref_rate_title">Taux d'échantillonnage</string>
+    <string name="pref_rate_title">Taux d\'échantillonnage</string>
     <string name="pref_encoding_title">Encodage</string>
     <string name="pref_encoding_summary">Formats des fichiers en sortie (.wav, .m4a, ...)</string>
     <string name="pref_mode_title">Mode</string>
@@ -91,11 +91,11 @@
     <string name="pref_delete_title">Supprimer les enregistrements</string>
     <string name="pref_nameformat_title">Format des fichiers</string>
     <string name="pref_calldialog_title">Enregistrement des appels récents</string>
-    <string name="pref_calldialog_summary">Montrer la fenêtre renommer / favoris à la fin d'un appel</string>
-    <string name="pref_optimization_title">Désactiver l'optimisation de la batterie</string>
-    <string name="pref_optimization_summary">Empêcher l'application d'être supprimé de la mémoire</string>
-    <string name="pref_theme_title">Thème de l'application</string>
-    <string name="pref_theme_summary">Définir le thème de l'application (sombre / clair)</string>
+    <string name="pref_calldialog_summary">Montrer la fenêtre renommer / favoris à la fin d\'un appel</string>
+    <string name="pref_optimization_title">Désactiver l\'optimisation de la batterie</string>
+    <string name="pref_optimization_summary">Empêcher l\'application d\'être supprimé de la mémoire</string>
+    <string name="pref_theme_title">Thème de l\'application</string>
+    <string name="pref_theme_summary">Définir le thème de l\'application (sombre / clair)</string>
     <string name="pref_mixerpaths_title">System Mixer Incall Recording</string>
     <string name="pref_mixerpaths_summary">Atoriser le system mixer à enregistrer des appels des autres applications</string>
     <string name="pref_recordings">Enregistrements</string>
