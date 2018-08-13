@@ -390,7 +390,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 list.add(Uri.fromFile(f));
             }
         } else {
-            throw new UnknownUri();
+            throw new Storage.UnknownUri();
         }
 
         for (Uri f : list) {
