@@ -8,6 +8,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 
 import com.github.axet.audiolibrary.encoders.Factory;
+import com.github.axet.audiolibrary.encoders.Format3GP;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -18,21 +19,21 @@ import java.util.Date;
 public class Storage extends com.github.axet.audiolibrary.app.Storage {
     public static String TAG = Storage.class.getSimpleName();
 
-    public static final String EXT_3GP = "3gp";
-    public static final String EXT_3GP16 = "3gp16";
-    public static final String EXT_AAC = "aac";
-    public static final String EXT_AACHE = "aache";
-    public static final String EXT_AACELD = "aaceld";
+    public static final String EXT_3GP = Format3GP.EXT;
+    public static final String EXT_3GP16 = Format3GP.EXT + "16"; // sample rate 16Hz
+    public static final String EXT_AAC = "aac"; // MPEG_4 / AAC
+    public static final String EXT_AACHE = EXT_AAC + "he"; // MPEG_4 / HE AAC
+    public static final String EXT_AACELD = EXT_AAC + "eld"; // MPEG_4 / AAC ELD
     public static final String EXT_WEBM = "webm";
 
     public static CharSequence[] getEncodingTexts(Context context) {
         CharSequence[] ee = Factory.getEncodingTexts(context);
         ArrayList<CharSequence> ll = new ArrayList<>(Arrays.asList(ee));
-        ll.add(".3gp (MediaRecorder)"); // AMRNB 8kHz
+        ll.add("." + EXT_3GP + " (MediaRecorder)"); // AMRNB 8kHz
 //        if (Build.VERSION.SDK_INT >= 10)
 //            ll.add(".3gp (MediaRecorder AMRWB 16kHz)");
         if (Build.VERSION.SDK_INT >= 10)
-            ll.add(".aac (MediaRecorder)");
+            ll.add("." + EXT_AAC + " (MediaRecorder)");
 //        if (Build.VERSION.SDK_INT >= 16)
 //            ll.add(".aac (MediaRecorder AACHE)");
 //        if (Build.VERSION.SDK_INT >= 16)

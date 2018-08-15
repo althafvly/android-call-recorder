@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.media.AudioManager;
+import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +28,8 @@ import com.github.axet.androidlibrary.widgets.NameFormatPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.SeekBarPreference;
 import com.github.axet.androidlibrary.widgets.StoragePathPreferenceCompat;
+import com.github.axet.androidlibrary.widgets.Toast;
+import com.github.axet.audiolibrary.app.Sound;
 import com.github.axet.audiolibrary.widgets.RecordingVolumePreference;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.app.MainApplication;
@@ -197,6 +201,13 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         super.onSharedPreferenceChanged(sharedPreferences, key);
         if (key.equals(MainApplication.PREFERENCE_STORAGE)) {
             Storage.migrateLocalStorageDialog(this, handler, new Storage(this));
+        }
+        if (key.equals(MainApplication.PREFERENCE_SOURCE)) {
+            String source = sharedPreferences.getString(MainApplication.PREFERENCE_SOURCE, "-1");
+            if (source.equals(Integer.toString(MediaRecorder.AudioSource.UNPROCESSED))) {
+                if (!Sound.isUnprocessedSupported(this))
+                    Toast.makeText(this, "Raw is not supported", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
