@@ -30,6 +30,7 @@ import com.github.axet.androidlibrary.widgets.SeekBarPreference;
 import com.github.axet.androidlibrary.widgets.StoragePathPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.Toast;
 import com.github.axet.audiolibrary.app.Sound;
+import com.github.axet.audiolibrary.encoders.Format3GP;
 import com.github.axet.audiolibrary.widgets.RecordingVolumePreference;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.app.MainApplication;
@@ -64,6 +65,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
     GeneralPreferenceFragment f;
     Handler handler = new Handler();
 
+    @SuppressWarnings("unchecked")
     public static <T> T[] removeElement(Class<T> c, T[] aa, int i) {
         List<T> ll = Arrays.asList(aa);
         ll = new ArrayList<>(ll);
@@ -139,9 +141,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         // Trigger the listener immediately with the preference's
         // current value.
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getAll().get(preference.getKey()));
+                PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getAll().get(preference.getKey()));
     }
 
     @Override
@@ -243,8 +243,8 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         public GeneralPreferenceFragment() {
         }
 
-        void initPrefs(PreferenceManager manager, PreferenceScreen screen) {
-            final Context context = screen.getContext();
+        void initPrefs(PreferenceManager manager) {
+            final Context context = manager.getContext();
 
             ListPreference format = (ListPreference) manager.findPreference(MainApplication.PREFERENCE_FORMAT);
             if (!Storage.permitted(context, CONTACTS)) {
@@ -253,7 +253,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             }
             bindPreferenceSummaryToValue(format);
 
-            ListPreference enc = (ListPreference) manager.findPreference(MainApplication.PREFERENCE_ENCODING);
+            final ListPreference enc = (ListPreference) manager.findPreference(MainApplication.PREFERENCE_ENCODING);
             String v = enc.getValue();
             CharSequence[] ee = Storage.getEncodingTexts(context);
             CharSequence[] vv = Storage.getEncodingValues(context);
@@ -270,7 +270,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
 
                 bindPreferenceSummaryToValue(enc);
             } else {
-                screen.removePreference(enc);
+                enc.setVisible(false);
             }
 
             OptimizationPreferenceCompat optimization = (OptimizationPreferenceCompat) manager.findPreference(MainApplication.PREFERENCE_OPTIMIZATION);
@@ -281,7 +281,18 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_CHANNELS));
             bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_DELETE));
             bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_SOURCE));
-            bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_VOLUME));
+
+            final Preference vol = manager.findPreference(MainApplication.PREFERENCE_VOLUME);
+            String encoder = enc.getValue();
+            onResumeVol(vol, encoder);
+            enc.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    onResumeVol(vol, (String) newValue);
+                    return sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, newValue);
+                }
+            });
+            bindPreferenceSummaryToValue(vol);
 
             StoragePathPreferenceCompat s = (StoragePathPreferenceCompat) manager.findPreference(MainApplication.PREFERENCE_STORAGE);
             s.setStorage(new Storage(getContext()));
@@ -290,11 +301,18 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
                 s.setStorageAccessFramework(this, RESULT_FILE);
         }
 
+        void onResumeVol(Preference vol, String encoder) {
+            if (Storage.isMediaRecorder(encoder))
+                vol.setVisible(false);
+            else
+                vol.setVisible(true);
+        }
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setHasOptionsMenu(true);
             addPreferencesFromResource(R.xml.pref_general);
-            initPrefs(getPreferenceManager(), getPreferenceScreen());
+            initPrefs(getPreferenceManager());
         }
 
         @Override
@@ -309,9 +327,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         @Override
         public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
             StoragePathPreferenceCompat s = (StoragePathPreferenceCompat) findPreference(MainApplication.PREFERENCE_STORAGE);
-
             switch (requestCode) {
                 case RESULT_FILE:
                     s.onRequestPermissionsResult(permissions, grantResults);
@@ -322,9 +338,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
-
             StoragePathPreferenceCompat s = (StoragePathPreferenceCompat) findPreference(MainApplication.PREFERENCE_STORAGE);
-
             switch (requestCode) {
                 case RESULT_FILE:
                     s.onActivityResult(resultCode, data);

@@ -40,6 +40,7 @@ import com.github.axet.androidlibrary.services.StorageProvider;
 import com.github.axet.androidlibrary.widgets.AboutPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.AppCompatThemeActivity;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
+import com.github.axet.audiolibrary.encoders.Format3GP;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.app.MainApplication;
 import com.github.axet.callrecorder.app.MixerPaths;
@@ -369,8 +370,8 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                     url = url.replaceAll("%ROOT%", SuperUser.isRooted() ? "Yes" : "No");
                     url = url.replaceAll("%BASEBAND%", Build.VERSION.SDK_INT < 14 ? Build.RADIO : Build.getRadioVersion());
                     String encoder = shared.getString(MainApplication.PREFERENCE_ENCODING, "-1");
-                    if (encoder.equals("3gp") || encoder.equals("aac"))
-                        encoder = "3gp, aac";
+                    if (Storage.isMediaRecorder(encoder))
+                        encoder = Format3GP.EXT + ", " + Storage.EXT_AAC;
                     else
                         encoder = "ogg, wav, flac, m4a, mp3, opus";
                     url = url.replaceAll("%ENCODER%", encoder);
