@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,9 +17,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
-import android.support.v7.preference.PreferenceScreen;
 import android.view.MenuItem;
 
 import com.github.axet.androidlibrary.widgets.AppCompatSettingsThemeActivity;
@@ -30,7 +29,6 @@ import com.github.axet.androidlibrary.widgets.SeekBarPreference;
 import com.github.axet.androidlibrary.widgets.StoragePathPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.Toast;
 import com.github.axet.audiolibrary.app.Sound;
-import com.github.axet.audiolibrary.encoders.Format3GP;
 import com.github.axet.audiolibrary.widgets.RecordingVolumePreference;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.app.MainApplication;
@@ -282,13 +280,14 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_DELETE));
             bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_SOURCE));
 
-            final Preference vol = manager.findPreference(MainApplication.PREFERENCE_VOLUME);
+            final PreferenceCategory filters = (PreferenceCategory) manager.findPreference("filters");
+            Preference vol = manager.findPreference(MainApplication.PREFERENCE_VOLUME);
             String encoder = enc.getValue();
-            onResumeVol(vol, encoder);
+            onResumeVol(filters, encoder);
             enc.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    onResumeVol(vol, (String) newValue);
+                    onResumeVol(filters, (String) newValue);
                     return sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, newValue);
                 }
             });
@@ -301,11 +300,16 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
                 s.setStorageAccessFramework(this, RESULT_FILE);
         }
 
-        void onResumeVol(Preference vol, String encoder) {
+        void onResumeVol(PreferenceCategory vol, String encoder) {
+            boolean b;
             if (Storage.isMediaRecorder(encoder))
-                vol.setVisible(false);
+                b = false;
             else
-                vol.setVisible(true);
+                b = true;
+            for (int i = 0; i < vol.getPreferenceCount(); i++) {
+                vol.getPreference(i).setVisible(b);
+            }
+            vol.setVisible(b);
         }
 
         @Override

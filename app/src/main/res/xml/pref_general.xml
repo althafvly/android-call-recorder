@@ -67,7 +67,7 @@
             android:title="@string/pref_delete_title" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_filters">
+    <PreferenceCategory android:key="filters" android:title="@string/pref_filters">
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="voice"
