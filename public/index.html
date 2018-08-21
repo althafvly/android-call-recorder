@@ -14,7 +14,9 @@
   var m = url.searchParams.get("m");
   var d = url.searchParams.get("d");
 
-  var u='https://docs.google.com/spreadsheets/d/1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk/gviz/tq?gid=1685986704';
+  var spreadsheetUrl='https://docs.google.com/spreadsheets/d/1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk/gviz/tq?gid=1685986704';
+  var spreadsheetQuery='&tqx=out:html&tq=';
+  var spreadsheetSelect='SELECT A,B,C,D,H,I,K,L';
 
   function findColumn(data, name) {
     for (var i = 0; i < data.getNumberOfColumns(); i++) {
@@ -60,9 +62,9 @@
   }
   
   function loadChart(m, d) {
-    var sql='SELECT A,B,C,D,H,I,K,L WHERE UPPER(C) LIKE \'%'+m.toUpperCase()+'%\' and UPPER(D) LIKE \'%'+d.toUpperCase()+'%\'';
-    var url=u+'&tqx=out:html&tq=' + encodeURI(sql);
-    var query = new google.visualization.Query(u);
+    var sql = spreadsheetSelect + ' WHERE UPPER(C) LIKE \'%' + m.toUpperCase() + '%\' and UPPER(D) LIKE \'%' + d.toUpperCase() + '%\'';
+    var url = spreadsheetUrl + spreadsheetQuery + encodeURI(sql);
+    var query = new google.visualization.Query(spreadsheetUrl);
     query.setQuery(sql);
     query.send(function(response) {
       var data = response.getDataTable();
@@ -72,10 +74,10 @@
            aggregation: google.visualization.data.count,
            type: 'number'
        }]);
-      var html = `<h3 class="ui-bar ui-bar-a">Your Device</h3>
+      var html = `<h3 class="ui-bar ui-bar-a">Selected Device</h3>
       <p>Manufacturer: "${m}", Model: "${d}"</p>
       <div id="piechart" style="width: 100%; height: 400px; max-width: 600px;"></div>
-      <a target="_blank" href="${url}">See all results</a>`;
+      <a target="_blank" href="${url}">See your device survey's</a>`;
       var e = document.getElementById('result');
       e.innerHTML = html;
       var chart = new google.visualization.PieChart(document.getElementById('piechart'));
@@ -84,16 +86,17 @@
   }
 
   function drawChart() {
-    var sql='SELECT A,B,C,D,H,I,K,L';
-    var url=u+'&tqx=out:html&tq=' + encodeURI(sql);
-    var query = new google.visualization.Query(u);
-    query.setQuery(sql);
+    $('#all').attr("href", spreadsheetUrl + spreadsheetQuery + encodeURI(spreadsheetSelect));
+    
+    var url = spreadsheetUrl + spreadsheetQuery + encodeURI(spreadsheetSelect);
+    var query = new google.visualization.Query(spreadsheetUrl);
+    query.setQuery(spreadsheetSelect);
     query.send(function(response) {
       var data = response.getDataTable();
-      
+
       var view = new google.visualization.DataView(data);
       view.setColumns([2,3]);
-      
+
       for (var i = 0; i < view.getNumberOfRows(); i++) {
         var k = view.getValue(i, 0).toUpperCase().trim();
         var v = view.getValue(i, 1).toUpperCase().trim();
@@ -119,14 +122,14 @@
         select.val(m);
         select.selectmenu('refresh', true);
         dd = loadDevice(m);
-        
+
         d = d.toUpperCase();
         for (var e of dd.keys()) {
           if (e.indexOf(d) >= 0) {
             d = e;
           }
         }
-        
+
         var select = $('#select-native-12');
         select.val(d);
         select.selectmenu('refresh', true);
@@ -150,6 +153,7 @@
     <div class="ui-body" data-role="main">
       <p>Call Recorder simple UI. Open gitlab.com <a href="https://gitlab.com/axet/android-call-recorder">page</a>.</p>
       <h3 class="ui-bar ui-bar-a">User Survey's</h1>
+      <a target="_blank" id="all" href="">See all user survey's</a>
       <form>
       <fieldset data-role="controlgroup" data-type="horizontal">
           <legend>Select your device:</legend>
