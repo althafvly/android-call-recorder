@@ -102,4 +102,9 @@
     <string name="pref_application">Приложение</string>
     <string name="menu_search">Поиск</string>
     <string name="send_survey">Отправить Отзыв</string>
+    <string name="survey_know_issues">Известные неисправности:</string>
+    <string name="survey_none">Нет отзывов</string>
+    <string name="survey_bad">Не работает</string>
+    <string name="survey_good">Работает</string>
+    <string name="survey_few_issues">Некоторые проблемы</string>
 </resources>

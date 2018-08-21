@@ -6,4 +6,4 @@
 .DS_Store
 /build
 /captures
-android-library
+app/src/main/res/raw/surveys.csv
