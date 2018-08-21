@@ -55,15 +55,17 @@ android {
     }
 }
 
+def surveys = project.file('src/main/res/raw/surveys.csv')
+
 task fetch() {
-    def f = project.file('src/main/res/raw/surveys.csv')
+    println "fetch"
     def url = 'https://docs.google.com/spreadsheets/d/1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk/gviz/tq?gid=1685986704&tqx=out:csv&tq=SELECT+A,B,C,D,H,I,K,L'
-    if (!f.exists())
-        new URL(url).withInputStream { i -> f.withOutputStream { it << i } }
+    if (!surveys.exists())
+        new URL(url).withInputStream { i -> surveys.withOutputStream { it << i } }
 }
 
 clean.doLast {
-    project.file('src/main/res/raw/surveys.csv').delete()
+    surveys.delete()
 }
 
 preBuild.dependsOn fetch

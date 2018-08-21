@@ -16,7 +16,9 @@
   var m = url.searchParams.get("m");
   var d = url.searchParams.get("d");
 
-  var spreadsheetUrl='https://m.docs.google.com/spreadsheets/d/1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk/gviz/tq?gid=1685986704';
+  var spreadsheetKey = '1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk';
+  var spreadsheetSheet = '1685986704';
+  var spreadsheetUrl='https://m.docs.google.com/spreadsheets/d/' + key + '/gviz/tq?gid=' + spreadsheetSheet;
   var spreadsheetQuery='&tqx=out:html&tq=';
   var spreadsheetSelect='SELECT A,B,C,D,H,I,K,L';
 
