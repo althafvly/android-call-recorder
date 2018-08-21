@@ -2,6 +2,8 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="spin.css">
+<script src="spin.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
 <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
@@ -83,15 +85,29 @@
       var chart = new google.visualization.PieChart(document.getElementById('piechart'));
       chart.draw(group, {title: 'Quality', chartArea: {height: '95%', width: '95%'}});
     });
+    new Spinner().spin(document.getElementById('result'));
   }
 
   function drawChart() {
     $('#all').attr("href", spreadsheetUrl + spreadsheetQuery + encodeURI(spreadsheetSelect));
-    
+
     var url = spreadsheetUrl + spreadsheetQuery + encodeURI(spreadsheetSelect);
     var query = new google.visualization.Query(spreadsheetUrl);
     query.setQuery(spreadsheetSelect);
     query.send(function(response) {
+      var html = `<form>
+      <fieldset data-role="controlgroup" data-type="horizontal">
+          <legend>Select your device:</legend>
+          <label for="select-native-11">Manufacturer</label>
+          <select name="select-native-11" id="select-native-11">
+          </select>
+          <label for="select-native-12">Device</label>
+          <select name="select-native-12" id="select-native-12">
+          </select>
+      </fieldset>
+      </form>`
+      $("#wait").html(html).trigger('create');
+
       var data = response.getDataTable();
 
       var view = new google.visualization.DataView(data);
@@ -143,6 +159,10 @@
 
   google.charts.load('current', {'packages':['corechart']});
   google.charts.setOnLoadCallback(drawChart);
+  
+  $( document ).ready(function() {
+    new Spinner().spin(document.getElementById('wait'));
+  });
 </script>
 </head>
 <body>
@@ -153,17 +173,7 @@
     <div class="ui-body" data-role="main">
       <p>Call Recorder simple UI. Open gitlab.com <a href="https://gitlab.com/axet/android-call-recorder">page</a>. See all user survey's <a target="_blank" id="all" href="">here.</a></p>
       <h3 class="ui-bar ui-bar-a">User Survey's</h1>
-      <form>
-      <fieldset data-role="controlgroup" data-type="horizontal">
-          <legend>Select your device:</legend>
-          <label for="select-native-11">Manufacturer</label>
-          <select name="select-native-11" id="select-native-11">
-          </select>
-          <label for="select-native-12">Device</label>
-          <select name="select-native-12" id="select-native-12">
-          </select>
-      </fieldset>
-      </form>
+      <div id="wait"></div>
       <div id="result"></div>
       <h3 class="ui-bar ui-bar-a">Manual install</h1>
       <pre>gradle installDebug</pre>
