@@ -58,8 +58,7 @@ android {
 def surveys = project.file('src/main/res/raw/surveys.csv')
 
 task fetch() {
-    println "fetch"
-    def url = 'https://docs.google.com/spreadsheets/d/1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk/gviz/tq?gid=1685986704&tqx=out:csv&tq=SELECT+A,B,C,D,H,I,K,L'
+    def url = 'https://docs.google.com/spreadsheets/d/1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk/gviz/tq?gid=1685986704&tqx=out:csv'
     if (!surveys.exists())
         new URL(url).withInputStream { i -> surveys.withOutputStream { it << i } }
 }

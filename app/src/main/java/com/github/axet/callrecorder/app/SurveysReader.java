@@ -18,7 +18,7 @@ public class SurveysReader {
 
     public static final int INDEX_TIMESTAMP = 0;
     public static final int INDEX_QUALITY = 1;
-    public static final int INDEX_MSG = 7;
+    public static final int INDEX_MSG = 11;
 
     public static final String QUALITY_LINE = "Voice Line Quality";
     public static final String QUALITY_MIC = "Mic Quality";
