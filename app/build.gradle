@@ -10,8 +10,8 @@ android {
         applicationId "com.github.axet.callrecorder"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 177
-        versionName "1.6.22"
+        versionCode 178
+        versionName "1.6.23"
     }
     signingConfigs {
         release {
@@ -55,7 +55,21 @@ android {
     }
 }
 
+task fetch() {
+    def f = project.file('src/main/res/raw/surveys.csv')
+    def url = 'https://docs.google.com/spreadsheets/d/1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk/gviz/tq?gid=1685986704&tqx=out:csv&tq=SELECT+A,B,C,D,H,I,K,L'
+    if (!f.exists())
+        new URL(url).withInputStream { i -> f.withOutputStream { it << i } }
+}
+
+clean.doLast {
+    project.file('src/main/res/raw/surveys.csv').delete()
+}
+
+preBuild.dependsOn fetch
+
 dependencies {
-    implementation 'com.github.axet:android-audio-library:1.0.117' // implementation project(':android-audio-library')
+    implementation 'com.github.axet:android-audio-library:1.0.118' // implementation project(':android-audio-library')
+    api "org.apache.commons:commons-csv:1.5"
     testImplementation 'junit:junit:4.12'
 }
