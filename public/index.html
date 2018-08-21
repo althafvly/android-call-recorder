@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+  var url = new URL(window.location.href);
+
+  var m = url.searchParams.get("m");
+  var d = url.searchParams.get("d");
+
+  sql='SELECT A,B,C,D,H,I,K,L WHERE UPPER(C) LIKE \'%'+m.toUpperCase()+'%\' and UPPER(D) LIKE \'%'+d.toUpperCase()+'%\'';
+  u='https://m.docs.google.com/spreadsheets/d/1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk/gviz/tq?gid=1685986704';
+  url=u+'&tqx=out:html&tq=' + encodeURI(sql);
+
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function findColumn(data, name) {
+    for (var i = 0; i < data.getNumberOfColumns(); i++) {
+      var c = data.getColumnId(i);
+      if (c == name) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  function drawChart() {
+    var query = new google.visualization.Query(u);
+    query.setQuery(sql);
+    query.send(function(response) {
+      var data = response.getDataTable();
+      var c = findColumn(data, "B");
+      var group = google.visualization.data.group(data, [c], [{
+           column: c,
+           aggregation: google.visualization.data.count,
+           type: 'number'
+       }]);
+      var html = `<h3 class="ui-bar ui-bar-a">Your Device</h3>
+      <p>Manufacturer: "${m}", Model: "${d}"</p>
+      <div id="piechart" style="width: 100%; height: 400px; max-width: 600px;"></div>
+      <a target="_blank" href="${url}">See all results</a>`;
+      var e = document.getElementById('result');
+      e.innerHTML = html;
+      var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+      chart.draw(group, {title: 'Quality', chartArea: {height: '95%', width: '95%'}});
+    });
+  }
+</script>
+</head>
+<body>
+  <div data-role="page">
+    <div data-role="header">
+      <h3>Call Recorder</h3>
+    </div>
+    <div class="ui-body" data-role="main">
+      <p>Call Recorder simple UI. Open gitlab.com <a href="https://gitlab.com/axet/android-call-recorder">page</a>.</p>
+      <div id="result"></div>
+      <h3 class="ui-bar ui-bar-a">Manual install</h1>
+      <pre>./libtorrent/debug.sh && gradle installDebug</pre>
+      <h3 class="ui-bar ui-bar-a">Translate</h1>
+      <p>If you want to translate 'Call Recorder' to your language please read following:</p>
+      <ul data-role="listview">
+        <a href="https://gitlab.com/axet/android-call-recorder/blob/master/docs/HOWTO-Translate.md">HOWTO-Translate.md</a>
+      </ul>
+    </div>
+    </div>
+  </div>
+</body>
+</html>
