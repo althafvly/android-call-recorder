@@ -103,4 +103,9 @@
     <string name="pref_application">Application</string>
     <string name="menu_search">Recherche</string>
     <string name="send_survey">Envoyer le sondage</string>
+    <string name="survey_know_issues">Know Issues:</string>
+    <string name="survey_none">No survery\'s</string>
+    <string name="survey_bad">Not working</string>
+    <string name="survey_good">Working</string>
+    <string name="survey_few_issues">Few issues</string>
 </resources>

@@ -37,6 +37,7 @@ public class MainApplication extends com.github.axet.audiolibrary.app.MainApplic
     public static final String CALL_OUT = "out";
     public static final String CALL_IN = "in";
 
+    @SuppressWarnings("unchecked")
     @SuppressLint("PrivateApi")
     public static String getprop(String key) {
         try {
