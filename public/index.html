@@ -8,16 +8,13 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
   var url = new URL(window.location.href);
+  
+  var devicesMap = new Map();
 
   var m = url.searchParams.get("m");
   var d = url.searchParams.get("d");
 
-  sql='SELECT A,B,C,D,H,I,K,L WHERE UPPER(C) LIKE \'%'+m.toUpperCase()+'%\' and UPPER(D) LIKE \'%'+d.toUpperCase()+'%\'';
-  u='https://m.docs.google.com/spreadsheets/d/1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk/gviz/tq?gid=1685986704';
-  url=u+'&tqx=out:html&tq=' + encodeURI(sql);
-
-  google.charts.load('current', {'packages':['corechart']});
-  google.charts.setOnLoadCallback(drawChart);
+  var u='https://docs.google.com/spreadsheets/d/1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk/gviz/tq?gid=1685986704';
 
   function findColumn(data, name) {
     for (var i = 0; i < data.getNumberOfColumns(); i++) {
@@ -28,8 +25,43 @@
     }
     return -1;
   }
-
-  function drawChart() {
+  
+  function loadDevices() {
+    var select = $('#select-native-11');
+    devicesMap.forEach(function(v, k, m) {
+      var optTempl = '<option value="'+k+'">'+k+'</option>';            
+      select.append(optTempl);
+    });
+    if (select.get(0).changeOld)
+      select.unbind('change', select.get(0).changeOld);
+    select.val('');
+    select.selectmenu('refresh', true);
+    select.change(select.get(0).changeOld = function() {
+      loadDevice($(this).val());
+    })
+  }
+  
+  function loadDevice(k) {
+    var select = $('#select-native-12');
+    select.empty();
+    var m = devicesMap.get(k);
+    m.forEach(function(v, m) {
+      var optTempl = '<option value="'+v+'">'+v+'</option>';            
+      select.append(optTempl);
+    });
+    if (select.get(0).changeOld)
+      select.unbind('change', select.get(0).changeOld);
+    select.val('');
+    select.selectmenu('refresh', true);
+    select.change(select.get(0).changeOld = function() {
+      loadChart(k, $(this).val());
+    })
+    return m;
+  }
+  
+  function loadChart(m, d) {
+    var sql='SELECT A,B,C,D,H,I,K,L WHERE UPPER(C) LIKE \'%'+m.toUpperCase()+'%\' and UPPER(D) LIKE \'%'+d.toUpperCase()+'%\'';
+    var url=u+'&tqx=out:html&tq=' + encodeURI(sql);
     var query = new google.visualization.Query(u);
     query.setQuery(sql);
     query.send(function(response) {
@@ -50,6 +82,64 @@
       chart.draw(group, {title: 'Quality', chartArea: {height: '95%', width: '95%'}});
     });
   }
+
+  function drawChart() {
+    var sql='SELECT A,B,C,D,H,I,K,L';
+    var url=u+'&tqx=out:html&tq=' + encodeURI(sql);
+    var query = new google.visualization.Query(u);
+    query.setQuery(sql);
+    query.send(function(response) {
+      var data = response.getDataTable();
+      
+      var view = new google.visualization.DataView(data);
+      view.setColumns([2,3]);
+      
+      for (var i = 0; i < view.getNumberOfRows(); i++) {
+        var k = view.getValue(i, 0).toUpperCase().trim();
+        var v = view.getValue(i, 1).toUpperCase().trim();
+        var mm = devicesMap.get(k);
+        if (!mm) {
+          mm = new Set()
+          devicesMap.set(k, mm);
+        }
+        mm.add(v);
+      }
+
+      loadDevices();
+
+      if( m != null && d != null) {
+        m = m.toUpperCase();
+        for (var e of devicesMap.keys()) {
+          if (e.indexOf(m) >= 0) {
+            m = e;
+          }
+        }
+
+        var select = $('#select-native-11');
+        select.val(m);
+        select.selectmenu('refresh', true);
+        dd = loadDevice(m);
+        
+        d = d.toUpperCase();
+        for (var e of dd.keys()) {
+          if (e.indexOf(d) >= 0) {
+            d = e;
+          }
+        }
+        
+        var select = $('#select-native-12');
+        select.val(d);
+        select.selectmenu('refresh', true);
+      }
+
+      if (m != null && d != null) {
+        loadChart(m, d);
+      }
+    });
+  }
+
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(drawChart);
 </script>
 </head>
 <body>
@@ -59,9 +149,21 @@
     </div>
     <div class="ui-body" data-role="main">
       <p>Call Recorder simple UI. Open gitlab.com <a href="https://gitlab.com/axet/android-call-recorder">page</a>.</p>
+      <h3 class="ui-bar ui-bar-a">User Survey's</h1>
+      <form>
+      <fieldset data-role="controlgroup" data-type="horizontal">
+          <legend>Select your device:</legend>
+          <label for="select-native-11">Manufacturer</label>
+          <select name="select-native-11" id="select-native-11">
+          </select>
+          <label for="select-native-12">Device</label>
+          <select name="select-native-12" id="select-native-12">
+          </select>
+      </fieldset>
+      </form>
       <div id="result"></div>
       <h3 class="ui-bar ui-bar-a">Manual install</h1>
-      <pre>./libtorrent/debug.sh && gradle installDebug</pre>
+      <pre>gradle installDebug</pre>
       <h3 class="ui-bar ui-bar-a">Translate</h1>
       <p>If you want to translate 'Call Recorder' to your language please read following:</p>
       <ul data-role="listview">
