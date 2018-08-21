@@ -107,4 +107,6 @@
     <string name="survey_bad">Не работает</string>
     <string name="survey_good">Работает</string>
     <string name="survey_few_issues">Некоторые проблемы</string>
+    <string name="survey_view">Посмотреть откзывы</string>
+    <string name="survey_status">Статус:</string>
 </resources>
