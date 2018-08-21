@@ -105,4 +105,6 @@
     <string name="survey_bad">Not working</string>
     <string name="survey_good">Working</string>
     <string name="survey_few_issues">Few issues</string>
+    <string name="survey_view">View Survey\'s</string>
+    <string name="survey_status">Status:</string>
 </resources>
