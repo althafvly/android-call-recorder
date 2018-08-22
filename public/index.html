@@ -121,7 +121,7 @@
       }
 
       loadDevices();
-
+      
       if( m != null && d != null) {
         m = m.toUpperCase().trim();
         d = d.toUpperCase().trim();
@@ -132,7 +132,7 @@
           }
         }
 
-        var select = $('#select-d');
+        var select = $('#select-m');
         select.val(m);
         select.selectmenu('refresh', true);
         devices = loadDevice(m);
@@ -143,7 +143,7 @@
           }
         }
 
-        var select = $('#select-m');
+        var select = $('#select-d');
         select.val(d);
         select.selectmenu('refresh', true);
 
