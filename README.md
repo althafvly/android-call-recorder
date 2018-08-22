@@ -32,7 +32,7 @@ If you want to translate 'Call Recorder' to your language  please read this:
 
 Check user surveys at project home page here:
 
-  * https://axet.gitlab.io/android-call-recorder/
+  * [User survey's](https://axet.gitlab.io/android-call-recorder/)
 
 # Contributors
 
