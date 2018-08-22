@@ -28,6 +28,12 @@ If you want to translate 'Call Recorder' to your language  please read this:
 
 ![shot](/docs/shot.png)
 
+# User survey's
+
+Check user surveys at project home page here:
+
+  * https://axet.gitlab.io/android-call-recorder/
+
 # Contributors
 
   * japaness translation thanks to @naofumi
