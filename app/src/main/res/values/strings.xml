@@ -12,17 +12,6 @@
         <item>System RAW</item>
     </string-array>
 
-    <string-array name="source_values" translatable="false">
-        <item>-1</item>
-        <item>4</item>
-        <item>1</item>
-        <item>0</item>
-        <item>7</item>
-        <item>6</item>
-        <item>5</item>
-        <item>9</item>
-    </string-array>
-
     <string-array name="sample_rate_text">
         <item>48 kHz</item>
         <item>44.1 kHz (CD)</item>
@@ -31,16 +20,6 @@
         <item>16 kHz (default)</item>
         <item>11 kHz</item>
         <item>8 kHz (telephone)</item>
-    </string-array>
-
-    <string-array name="sample_rate_values" translatable="false">
-        <item>48000</item>
-        <item>44100</item>
-        <item>32000</item>
-        <item>22050</item>
-        <item>16000</item>
-        <item>11025</item>
-        <item>8000</item>
     </string-array>
 
     <string-array name="delete_text">
@@ -52,15 +31,6 @@
         <item>older than 6 months</item>
     </string-array>
 
-    <string-array name="delete_values" translatable="false">
-        <item>off</item>
-        <item>1day</item>
-        <item>1week</item>
-        <item>1month</item>
-        <item>3month</item>
-        <item>6month</item>
-    </string-array>
-
     <string-array name="format_text">
         <item>2017-02-01 09.08.01.wav</item>
         <item>20170201T090801.wav</item>
@@ -68,31 +38,14 @@
         <item>2017-02-01 09.08.01 ↓↑ [Caller ID].wav</item>
     </string-array>
 
-    <string-array name="format_values" formatted="false" translatable="false">
-        <item>%s</item>
-        <item>%I</item>
-        <item>%T %p</item>
-        <item>%s %i %c</item>
-    </string-array>
-
     <string-array name="themes_text">
         <item>Theme White</item>
         <item>Theme Dark</item>
     </string-array>
 
-    <string-array name="themes_values" translatable="false">
-        <item>@string/Theme_Light</item>
-        <item>@string/Theme_Dark</item>
-    </string-array>
-
     <string-array name="channels_text">
         <item>Mono (default)</item>
         <item>Stereo</item>
-    </string-array>
-
-    <string-array name="channels_values" translatable="false">
-        <item>1</item>
-        <item>2</item>
     </string-array>
 
     <string name="action_settings">Settings</string>

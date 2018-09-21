@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         setContentView(R.layout.activity_main);
 
         if (OptimizationPreferenceCompat.needKillWarning(this, MainApplication.PREFERENCE_NEXT))
-            OptimizationPreferenceCompat.buildKilledWarning(this, true).show();
+            OptimizationPreferenceCompat.buildKilledWarning(this, true, MainApplication.PREFERENCE_OPTIMIZATION).show();
 
         progressText = findViewById(R.id.progress_text);
         progressEmpty = findViewById(R.id.progress_empty);
@@ -395,8 +395,8 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                     String ver = "Android: " + Build.VERSION.RELEASE;
                     String cm = MainApplication.getprop("ro.cm.version");
                     if (cm != null && !cm.isEmpty())
-                        ver += ", " + cm;
-                    ver += ", " + System.getProperty("os.version");
+                        ver += "; " + cm;
+                    ver += "; " + System.getProperty("os.version");
                     url = url.replaceAll("%OSVERSION%", ver);
                     try {
                         PackageManager pm = getPackageManager();
