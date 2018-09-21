@@ -28,11 +28,11 @@ If you want to translate 'Call Recorder' to your language  please read this:
 
 ![shot](/docs/shot.png)
 
-# Survey Results
+# User survey's
 
-User filled survey results from app About menu.
+Check user surveys at project home page here:
 
-  * https://docs.google.com/spreadsheets/d/1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk/edit?usp=sharing
+  * [User survey's](https://axet.gitlab.io/android-call-recorder/)
 
 # Contributors
 

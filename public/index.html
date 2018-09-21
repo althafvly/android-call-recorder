@@ -12,31 +12,23 @@
   var url = new URL(window.location.href);
   
   var devicesMap = new Map();
+  
+  const INDEX_QUALITY = 1; // B
+  const INDEX_MANUFACTURER = 2; // C
+  const INDEX_DEVICE = 3; // D
 
   var m = url.searchParams.get("m");
   var d = url.searchParams.get("d");
 
-  var spreadsheetKey = '1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk';
-  var spreadsheetSheet = '1685986704';
-  var spreadsheetUrl='https://m.docs.google.com/spreadsheets/d/' + spreadsheetKey + '/gviz/tq?gid=' + spreadsheetSheet;
+  var spreadsheetUrl='https://m.docs.google.com/spreadsheets/d/1C6HuLIk3k4SmAYEuKOnQynGEPM39rjlu90oX7bYbqLk/gviz/tq?gid=1685986704';
   var spreadsheetQuery='&tqx=out:html&tq=';
-  var spreadsheetSelect='SELECT A,B,C,D,H,I,K,L';
+  var spreadsheetSelect='SELECT *';
 
-  function findColumn(data, name) {
-    for (var i = 0; i < data.getNumberOfColumns(); i++) {
-      var c = data.getColumnId(i);
-      if (c == name) {
-        return i;
-      }
-    }
-    return -1;
-  }
-  
   function loadDevices() {
-    var select = $('#select-native-11');
+    var select = $('#select-m');
     devicesMap.forEach(function(v, k, m) {
-      var optTempl = '<option value="'+k+'">'+k+'</option>';            
-      select.append(optTempl);
+      var opt = `<option value="${k}">${k}</option>`;            
+      select.append(opt);
     });
     if (select.get(0).changeOld)
       select.unbind('change', select.get(0).changeOld);
@@ -48,12 +40,12 @@
   }
   
   function loadDevice(k) {
-    var select = $('#select-native-12');
+    var select = $('#select-d');
     select.empty();
     var m = devicesMap.get(k);
     m.forEach(function(v, m) {
-      var optTempl = '<option value="'+v+'">'+v+'</option>';            
-      select.append(optTempl);
+      var opt = `<option value="${v}">${v}</option>`;
+      select.append(opt);
     });
     if (select.get(0).changeOld)
       select.unbind('change', select.get(0).changeOld);
@@ -66,15 +58,16 @@
   }
   
   function loadChart(m, d) {
-    var sql = spreadsheetSelect + ' WHERE UPPER(C) LIKE \'%' + m.toUpperCase() + '%\' and UPPER(D) LIKE \'%' + d.toUpperCase() + '%\'';
-    var url = spreadsheetUrl + spreadsheetQuery + encodeURI(sql);
+    m = m.toUpperCase().trim();
+    d = d.toUpperCase().trim();
+    var sql = `${spreadsheetSelect} WHERE UPPER(C) LIKE '%${m}%' and UPPER(D) LIKE '%${d}%'`;
+    var url = `${spreadsheetUrl}${spreadsheetQuery}${encodeURI(sql)}`;
     var query = new google.visualization.Query(spreadsheetUrl);
     query.setQuery(sql);
     query.send(function(response) {
       var data = response.getDataTable();
-      var c = findColumn(data, "B");
-      var group = google.visualization.data.group(data, [c], [{
-           column: c,
+      var group = google.visualization.data.group(data, [INDEX_QUALITY], [{
+           column: INDEX_QUALITY,
            aggregation: google.visualization.data.count,
            type: 'number'
        }]);
@@ -91,20 +84,21 @@
   }
 
   function drawChart() {
-    $('#all').attr("href", spreadsheetUrl + spreadsheetQuery + encodeURI(spreadsheetSelect));
+    var url = `${spreadsheetUrl}${spreadsheetQuery}${encodeURI(spreadsheetSelect)}`;
 
-    var url = spreadsheetUrl + spreadsheetQuery + encodeURI(spreadsheetSelect);
+    $('#all').attr("href", url);
+
     var query = new google.visualization.Query(spreadsheetUrl);
     query.setQuery(spreadsheetSelect);
     query.send(function(response) {
       var html = `<form>
       <fieldset data-role="controlgroup" data-type="horizontal">
           <legend>Select your device:</legend>
-          <label for="select-native-11">Manufacturer</label>
-          <select name="select-native-11" id="select-native-11">
+          <label for="select-m">Manufacturer</label>
+          <select name="select-m" id="select-m">
           </select>
-          <label for="select-native-12">Device</label>
-          <select name="select-native-12" id="select-native-12">
+          <label for="select-d">Device</label>
+          <select name="select-d" id="select-d">
           </select>
       </fieldset>
       </form>`
@@ -113,47 +107,46 @@
       var data = response.getDataTable();
 
       var view = new google.visualization.DataView(data);
-      view.setColumns([2,3]);
+      view.setColumns([INDEX_MANUFACTURER,INDEX_DEVICE]);
 
       for (var i = 0; i < view.getNumberOfRows(); i++) {
         var k = view.getValue(i, 0).toUpperCase().trim();
         var v = view.getValue(i, 1).toUpperCase().trim();
-        var mm = devicesMap.get(k);
-        if (!mm) {
-          mm = new Set()
-          devicesMap.set(k, mm);
+        var devices = devicesMap.get(k);
+        if (!devices) {
+          devices = new Set()
+          devicesMap.set(k, devices);
         }
-        mm.add(v);
+        devices.add(v);
       }
 
       loadDevices();
-
+      
       if( m != null && d != null) {
-        m = m.toUpperCase();
+        m = m.toUpperCase().trim();
+        d = d.toUpperCase().trim();
+
         for (var e of devicesMap.keys()) {
           if (e.indexOf(m) >= 0) {
             m = e;
           }
         }
 
-        var select = $('#select-native-11');
+        var select = $('#select-m');
         select.val(m);
         select.selectmenu('refresh', true);
-        dd = loadDevice(m);
+        devices = loadDevice(m);
 
-        d = d.toUpperCase();
-        for (var e of dd.keys()) {
+        for (var e of devices.keys()) {
           if (e.indexOf(d) >= 0) {
             d = e;
           }
         }
 
-        var select = $('#select-native-12');
+        var select = $('#select-d');
         select.val(d);
         select.selectmenu('refresh', true);
-      }
 
-      if (m != null && d != null) {
         loadChart(m, d);
       }
     });
@@ -162,7 +155,7 @@
   google.charts.load('current', {'packages':['corechart']});
   google.charts.setOnLoadCallback(drawChart);
   
-  $( document ).ready(function() {
+  $(document).ready(function() {
     new Spinner().spin(document.getElementById('wait'));
   });
 </script>
