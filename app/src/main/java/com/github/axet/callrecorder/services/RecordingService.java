@@ -79,6 +79,10 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     public static String PAUSE_BUTTON = RecordingService.class.getCanonicalName() + ".PAUSE_BUTTON";
     public static String STOP_BUTTON = RecordingService.class.getCanonicalName() + ".STOP_BUTTON";
 
+    static {
+        OptimizationPreferenceCompat.ICON = true;
+    }
+
     Sound sound;
     AtomicBoolean interrupt = new AtomicBoolean();
     Thread thread;
@@ -136,7 +140,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
     public static void startIfEnabled(Context context) {
         if (isEnabled(context))
-            context.startService(new Intent(context, RecordingService.class));
+            startService(context);
     }
 
     public static void stopService(Context context) {
@@ -188,6 +192,9 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 }
                 if (a.equals(STOP_BUTTON)) {
                     finish();
+                }
+                if (a.equals(OptimizationPreferenceCompat.ICON_UPDATE)) {
+                    updateIcon();
                 }
             } catch (RuntimeException e) {
                 Error(e);
@@ -304,9 +311,9 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         super.onCreate();
         Log.d(TAG, "onCreate");
 
-        optimization = new OptimizationPreferenceCompat.ServiceReceiver(this, getClass(), MainApplication.PREFERENCE_SERVICE) {
+        optimization = new OptimizationPreferenceCompat.ServiceReceiver(this, getClass(), MainApplication.PREFERENCE_OPTIMIZATION) {
             @Override
-            public void check() {
+            public void check() { // disable ping
             }
 
             @Override
@@ -328,6 +335,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(PAUSE_BUTTON);
         filter.addAction(STOP_BUTTON);
+        filter.addAction(OptimizationPreferenceCompat.ICON_UPDATE);
         registerReceiver(receiver, filter);
 
         storage = new Storage(this);
@@ -356,12 +364,30 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         } catch (RuntimeException e) {
             Error(e);
         }
+
+        updateIcon();
+    }
+
+    void updateIcon() {
+        OptimizationPreferenceCompat.State state = OptimizationPreferenceCompat.getState(this, MainApplication.PREFERENCE_OPTIMIZATION);
+        if (state.icon) {
+            Notification n = buildNotification();
+            startForeground(NOTIFICATION_RECORDING_ICON, n);
+            notification = n;
+        } else {
+            if (thread == null && encoding == null) {
+                stopForeground(true);
+                NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                nm.cancel(NOTIFICATION_RECORDING_ICON);
+                notification = null;
+            }
+        }
     }
 
     void deleteOld() {
         SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
-        String d = shared.getString(MainApplication.PREFERENCE_DELETE, "off");
-        if (d.equals("off"))
+        String d = shared.getString(MainApplication.PREFERENCE_DELETE, getString(R.string.delete_off));
+        if (d.equals(getString(R.string.delete_off)))
             return;
 
         List<Uri> list = new ArrayList<>();
@@ -402,23 +428,23 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     c.setTimeInMillis(storage.getLastModified(f));
                     Calendar cur = c;
 
-                    if (d.equals("1day")) {
+                    if (d.equals(getString(R.string.delete_1day))) {
                         cur = Calendar.getInstance();
                         c.add(Calendar.DAY_OF_YEAR, 1);
                     }
-                    if (d.equals("1week")) {
+                    if (d.equals(getString(R.string.delete_1week))) {
                         cur = Calendar.getInstance();
                         c.add(Calendar.WEEK_OF_YEAR, 1);
                     }
-                    if (d.equals("1month")) {
+                    if (d.equals(getString(R.string.delete_1month))) {
                         cur = Calendar.getInstance();
                         c.add(Calendar.MONTH, 1);
                     }
-                    if (d.equals("3month")) {
+                    if (d.equals(getString(R.string.delete_3month))) {
                         cur = Calendar.getInstance();
                         c.add(Calendar.MONTH, 3);
                     }
-                    if (d.equals("6month")) {
+                    if (d.equals(getString(R.string.delete_6month))) {
                         cur = Calendar.getInstance();
                         c.add(Calendar.MONTH, 6);
                     }
@@ -527,68 +553,80 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         }
     }
 
-    public void showNotificationAlarm(boolean show) {
-        Boolean recording; // recording active == true (play (true) == pause button)
-        if (thread != null) {
-            recording = true;
+    public Notification buildNotification() {
+        boolean recording = thread != null;
+
+        PendingIntent main = PendingIntent.getService(this, 0,
+                new Intent(this, RecordingService.class).setAction(SHOW_ACTIVITY),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        PendingIntent pe = PendingIntent.getService(this, 0,
+                new Intent(this, RecordingService.class).setAction(PAUSE_BUTTON),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        RemoteViews view = new RemoteViews(getPackageName(), MainApplication.getTheme(getBaseContext(),
+                R.layout.notifictaion_recording_light,
+                R.layout.notifictaion_recording_dark));
+
+        String title;
+        String text;
+
+        if (!recording && encoding == null) {
+            title = getString(R.string.app_name);
+            text = getString(R.string.recording_enabled);
+            view.setViewVisibility(R.id.notification_pause, View.GONE);
         } else {
-            recording = false;
+            title = encoding != null ? getString(R.string.encoding_title) : (getString(R.string.recording_title) + " " + getSourceText());
+            text = ".../" + Storage.getDocumentName(targetUri);
+            view.setViewVisibility(R.id.notification_pause, View.VISIBLE);
+            view.setImageViewResource(R.id.notification_pause, recording ? R.drawable.ic_stop_black_24dp : R.drawable.ic_play_arrow_black_24dp);
         }
+
+        title = title.trim();
+
+        view.setOnClickPendingIntent(R.id.status_bar_latest_event_content, main);
+        view.setTextViewText(R.id.notification_title, title);
+        view.setTextViewText(R.id.notification_text, text);
+        view.setOnClickPendingIntent(R.id.notification_pause, pe);
+        view.setViewVisibility(R.id.notification_record, View.GONE);
+
+        if (encoding != null)
+            view.setViewVisibility(R.id.notification_pause, View.GONE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setOngoing(true)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setTicker(title) // tooltip status bar message
+                .setSmallIcon(R.drawable.ic_mic)
+                .setContent(view);
+
+        if (Build.VERSION.SDK_INT < 11)
+            builder.setContentIntent(main);
+
+        if (Build.VERSION.SDK_INT >= 21)
+            builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+        return builder.build();
+    }
+
+    public void showNotificationAlarm(boolean show) {
+        boolean recording = thread != null;
         MainActivity.showProgress(RecordingService.this, show, phone, samplesTime / sampleRate, recording);
 
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         if (!show) {
-            stopForeground(true);
-            notification = null;
-        } else {
-            PendingIntent main = PendingIntent.getService(this, 0,
-                    new Intent(this, RecordingService.class).setAction(SHOW_ACTIVITY),
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-
-            PendingIntent pe = PendingIntent.getService(this, 0,
-                    new Intent(this, RecordingService.class).setAction(PAUSE_BUTTON),
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-
-            RemoteViews view = new RemoteViews(getPackageName(), MainApplication.getTheme(getBaseContext(),
-                    R.layout.notifictaion_recording_light,
-                    R.layout.notifictaion_recording_dark));
-
-            String title = encoding != null ? getString(R.string.encoding_title) : (getString(R.string.recording_title) + " " + getSourceText());
-            String text = ".../" + Storage.getDocumentName(targetUri);
-
-            title = title.trim();
-
-            view.setOnClickPendingIntent(R.id.status_bar_latest_event_content, main);
-            view.setTextViewText(R.id.notification_title, title);
-            view.setTextViewText(R.id.notification_text, text);
-            view.setOnClickPendingIntent(R.id.notification_pause, pe);
-            if (recording == null) {
-                view.setViewVisibility(R.id.notification_pause, View.GONE);
+            OptimizationPreferenceCompat.State state = OptimizationPreferenceCompat.getState(this, MainApplication.PREFERENCE_OPTIMIZATION);
+            if (!state.icon) {
+                stopForeground(true);
+                nm.cancel(NOTIFICATION_RECORDING_ICON);
+                notification = null;
             } else {
-                view.setViewVisibility(R.id.notification_pause, View.VISIBLE);
-                view.setImageViewResource(R.id.notification_pause, recording ? R.drawable.ic_stop_black_24dp : R.drawable.ic_play_arrow_black_24dp);
+                updateIcon();
             }
-            view.setViewVisibility(R.id.notification_record, View.GONE);
-
-            if (encoding != null)
-                view.setViewVisibility(R.id.notification_pause, View.GONE);
-
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                    .setOngoing(true)
-                    .setContentTitle(title)
-                    .setContentText(text)
-                    .setTicker(title) // tooltip status bar message
-                    .setSmallIcon(R.drawable.ic_mic)
-                    .setContent(view);
-
-            if (Build.VERSION.SDK_INT < 11)
-                builder.setContentIntent(main);
-
-            if (Build.VERSION.SDK_INT >= 21)
-                builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-            Notification n = builder.build();
+        } else {
+            Notification n = buildNotification();
             if (notification == null)
                 startForeground(NOTIFICATION_RECORDING_ICON, n);
             else
@@ -864,14 +902,13 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
                     boolean start = false;
                     try {
-                        Thread.sleep(2000); // sleep after prepare
+                        Thread.sleep(2000); // sleep after prepare, some devices requires to record opponent side
                         recorder.start();
                         start = true;
                         while (!interrupt.get()) {
                             Thread.sleep(1000);
                             samplesTime += 1000 * sampleRate / 1000; // per 1 second
                             MainActivity.showProgress(RecordingService.this, true, phone, samplesTime / sampleRate, null);
-                            System.gc();
                         }
                     } catch (RuntimeException e) {
                         storage.delete(info.targetUri);
@@ -1127,5 +1164,4 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         super.onTaskRemoved(rootIntent);
         optimization.onTaskRemoved(rootIntent);
     }
-
 }
