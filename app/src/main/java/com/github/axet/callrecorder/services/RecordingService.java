@@ -1,7 +1,6 @@
 package com.github.axet.callrecorder.services;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -25,6 +24,7 @@ import android.provider.ContactsContract;
 import android.provider.DocumentsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.ProximityShader;
+import com.github.axet.androidlibrary.widgets.ThemeUtils;
 import com.github.axet.audiolibrary.app.RawSamples;
 import com.github.axet.audiolibrary.app.Sound;
 import com.github.axet.audiolibrary.encoders.EncoderInfo;
@@ -73,6 +74,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     public static final String TAG = RecordingService.class.getSimpleName();
 
     public static final int NOTIFICATION_RECORDING_ICON = 1;
+    public static final int NOTIFICATION_PERSISTENT_ICON = 2;
     public static final int RETRY_DELAY = 60 * 1000; // 1 min
 
     public static String SHOW_ACTIVITY = RecordingService.class.getCanonicalName() + ".SHOW_ACTIVITY";
@@ -87,6 +89,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     AtomicBoolean interrupt = new AtomicBoolean();
     Thread thread;
     Notification notification;
+    Notification icon;
     Storage storage;
     RecordingReceiver receiver;
     PhoneStateReceiver state;
@@ -308,6 +311,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
     @Override
     public void onCreate() {
+        setTheme(MainApplication.getTheme(this, R.style.RecThemeLight, R.style.RecThemeDark));
         super.onCreate();
         Log.d(TAG, "onCreate");
 
@@ -366,22 +370,6 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         }
 
         updateIcon();
-    }
-
-    void updateIcon() {
-        OptimizationPreferenceCompat.State state = OptimizationPreferenceCompat.getState(this, MainApplication.PREFERENCE_OPTIMIZATION);
-        if (state.icon) {
-            Notification n = buildNotification();
-            startForeground(NOTIFICATION_RECORDING_ICON, n);
-            notification = n;
-        } else {
-            if (thread == null && encoding == null) {
-                stopForeground(true);
-                NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                nm.cancel(NOTIFICATION_RECORDING_ICON);
-                notification = null;
-            }
-        }
     }
 
     void deleteOld() {
@@ -564,23 +552,17 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 new Intent(this, RecordingService.class).setAction(PAUSE_BUTTON),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        RemoteViews view = new RemoteViews(getPackageName(), MainApplication.getTheme(getBaseContext(),
-                R.layout.notifictaion_recording_light,
-                R.layout.notifictaion_recording_dark));
+        RemoteViews view = new RemoteViews(getPackageName(), MainApplication.getTheme(getBaseContext(), R.layout.notifictaion_recording_light, R.layout.notifictaion_recording_dark));
+
+        view.setInt(R.id.icon_circle, "setColorFilter", ThemeUtils.getThemeColor(this, R.attr.colorButtonNormal)); // android:tint="?attr/colorButtonNormal" not working API16
 
         String title;
         String text;
 
-        if (!recording && encoding == null) {
-            title = getString(R.string.app_name);
-            text = getString(R.string.recording_enabled);
-            view.setViewVisibility(R.id.notification_pause, View.GONE);
-        } else {
-            title = encoding != null ? getString(R.string.encoding_title) : (getString(R.string.recording_title) + " " + getSourceText());
-            text = ".../" + Storage.getDocumentName(targetUri);
-            view.setViewVisibility(R.id.notification_pause, View.VISIBLE);
-            view.setImageViewResource(R.id.notification_pause, recording ? R.drawable.ic_stop_black_24dp : R.drawable.ic_play_arrow_black_24dp);
-        }
+        title = encoding != null ? getString(R.string.encoding_title) : (getString(R.string.recording_title) + " " + getSourceText());
+        text = ".../" + Storage.getDocumentName(targetUri);
+        view.setViewVisibility(R.id.notification_pause, View.VISIBLE);
+        view.setImageViewResource(R.id.notification_pause, recording ? R.drawable.ic_stop_black_24dp : R.drawable.ic_play_arrow_black_24dp);
 
         title = title.trim();
 
@@ -589,6 +571,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         view.setTextViewText(R.id.notification_text, text);
         view.setOnClickPendingIntent(R.id.notification_pause, pe);
         view.setViewVisibility(R.id.notification_record, View.GONE);
+        view.setImageViewResource(R.id.icon, R.drawable.ic_mic_24dp);
 
         if (encoding != null)
             view.setViewVisibility(R.id.notification_pause, View.GONE);
@@ -607,31 +590,101 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         if (Build.VERSION.SDK_INT >= 21)
             builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-        return builder.build();
+        Notification n = builder.build();
+        ((MainApplication) getApplication()).channelStatus.apply(n);
+        return n;
+    }
+
+    public Notification buildPersistent() {
+        PendingIntent main = PendingIntent.getService(this, 0,
+                new Intent(this, RecordingService.class).setAction(SHOW_ACTIVITY),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        RemoteViews view = new RemoteViews(getPackageName(), MainApplication.getTheme(getBaseContext(),
+                R.layout.notifictaion_recording_light,
+                R.layout.notifictaion_recording_dark));
+
+        String title;
+        String text;
+
+        title = getString(R.string.app_name);
+        text = getString(R.string.recording_enabled);
+        view.setViewVisibility(R.id.notification_pause, View.GONE);
+
+        title = title.trim();
+
+        view.setInt(R.id.icon_circle, "setColorFilter", ThemeUtils.getThemeColor(this, R.attr.colorButtonNormal)); // android:tint="?attr/colorButtonNormal" not working API16
+
+        view.setOnClickPendingIntent(R.id.status_bar_latest_event_content, main);
+        view.setTextViewText(R.id.notification_title, title);
+        view.setTextViewText(R.id.notification_text, text);
+        view.setViewVisibility(R.id.notification_record, View.GONE);
+        view.setImageViewResource(R.id.icon, R.drawable.ic_call_black_24dp);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setOngoing(true)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setTicker(title) // tooltip status bar message
+                .setSmallIcon(R.drawable.ic_call)
+                .setContent(view);
+
+        if (Build.VERSION.SDK_INT < 11)
+            builder.setContentIntent(main);
+
+        if (Build.VERSION.SDK_INT >= 21)
+            builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+        Notification n = builder.build();
+        ((MainApplication) getApplication()).channelIcon.apply(n);
+        return n;
     }
 
     public void showNotificationAlarm(boolean show) {
         boolean recording = thread != null;
         MainActivity.showProgress(RecordingService.this, show, phone, samplesTime / sampleRate, recording);
+        updateIcon();
+    }
 
-        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+    public void updateIcon() {
+        NotificationManagerCompat nm = NotificationManagerCompat.from(this);
 
-        if (!show) {
-            OptimizationPreferenceCompat.State state = OptimizationPreferenceCompat.getState(this, MainApplication.PREFERENCE_OPTIMIZATION);
-            if (!state.icon) {
-                stopForeground(true);
+        OptimizationPreferenceCompat.State state = OptimizationPreferenceCompat.getState(this, MainApplication.PREFERENCE_OPTIMIZATION);
+
+        if (Build.VERSION.SDK_INT >= 26 && state.icon) {
+            Notification n = buildPersistent();
+            if (icon == null)
+                startForeground(NOTIFICATION_PERSISTENT_ICON, n);
+            else
+                nm.notify(NOTIFICATION_PERSISTENT_ICON, n);
+            icon = n;
+
+            if (thread == null && encoding == null) {
                 nm.cancel(NOTIFICATION_RECORDING_ICON);
-                notification = null;
             } else {
-                updateIcon();
+                n = buildNotification();
+                nm.notify(NOTIFICATION_RECORDING_ICON, n);
+                notification = n;
             }
         } else {
-            Notification n = buildNotification();
-            if (notification == null)
-                startForeground(NOTIFICATION_RECORDING_ICON, n);
-            else
+            if (thread == null && encoding == null) {
+                if (state.icon) {
+                    Notification n = buildPersistent();
+                    if (notification == null)
+                        startForeground(NOTIFICATION_RECORDING_ICON, n);
+                    else
+                        nm.notify(NOTIFICATION_RECORDING_ICON, n);
+                    notification = n;
+                } else {
+                    stopForeground(true);
+                    nm.cancel(NOTIFICATION_RECORDING_ICON);
+                    notification = null;
+                }
+            } else {
+                Notification n = buildNotification();
                 nm.notify(NOTIFICATION_RECORDING_ICON, n);
-            notification = n;
+                notification = n;
+            }
         }
     }
 
@@ -703,6 +756,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     @Override
                     public void run() {
                         deleteOld();
+                        stopRecording();
                         showNotificationAlarm(false);
                     }
                 };
@@ -881,6 +935,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                         @Override
                         public void run() {
                             deleteOld();
+                            stopRecording();
                             showNotificationAlarm(false);
                         }
                     };
@@ -1156,6 +1211,10 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         }
         if (key.equals(MainApplication.PREFERENCE_STORAGE)) {
             encodingNext();
+        }
+        if (key.equals(MainApplication.PREFERENCE_THEME)) {
+            stopService(new Intent(this, getClass()));
+            startService(new Intent(this, getClass()));
         }
     }
 
