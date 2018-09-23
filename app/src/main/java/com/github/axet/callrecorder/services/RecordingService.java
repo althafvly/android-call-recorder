@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.ProximityShader;
+import com.github.axet.androidlibrary.widgets.RemoteViewsCompat;
 import com.github.axet.androidlibrary.widgets.ThemeUtils;
 import com.github.axet.audiolibrary.app.RawSamples;
 import com.github.axet.audiolibrary.app.Sound;
@@ -229,49 +230,44 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
         @Override
         public void onCallStateChanged(final int s, final String incomingNumber) {
-            handle.post(new Runnable() { // some Nexus 6P, Android 7.1, crashes seems different threads
-                @Override
-                public void run() {
-                    try {
-                        switch (s) {
-                            case TelephonyManager.CALL_STATE_RINGING:
-                                setPhone(incomingNumber, MainApplication.CALL_IN);
-                                wasRinging = true;
-                                break;
-                            case TelephonyManager.CALL_STATE_OFFHOOK:
-                                setPhone(incomingNumber, call);
-                                if (thread == null) { // handling restart while current call
-                                    begin(wasRinging);
-                                    startedByCall = true;
-                                }
-                                break;
-                            case TelephonyManager.CALL_STATE_IDLE:
-                                if (startedByCall) {
-                                    if (tm.getCallState() != TelephonyManager.CALL_STATE_OFFHOOK) { // current state maybe differed from queued (s) one
-                                        finish();
-                                    } else {
-                                        return; // fast clicking. new call already stared. keep recording. do not reset startedByCall
-                                    }
-                                } else {
-                                    if (storage.recordingPending()) { // handling restart after call finished
-                                        finish();
-                                    } else if (storage.recordingNextPending()) { // only call encodeNext if we have next encoding
-                                        encodingNext();
-                                    }
-                                }
-                                wasRinging = false;
-                                startedByCall = false;
-                                phone = "";
-                                contactId = "";
-                                contact = "";
-                                call = "";
-                                break;
+            try {
+                switch (s) {
+                    case TelephonyManager.CALL_STATE_RINGING:
+                        setPhone(incomingNumber, MainApplication.CALL_IN);
+                        wasRinging = true;
+                        break;
+                    case TelephonyManager.CALL_STATE_OFFHOOK:
+                        setPhone(incomingNumber, call);
+                        if (thread == null) { // handling restart while current call
+                            begin(wasRinging);
+                            startedByCall = true;
                         }
-                    } catch (RuntimeException e) {
-                        Error(e);
-                    }
+                        break;
+                    case TelephonyManager.CALL_STATE_IDLE:
+                        if (startedByCall) {
+                            if (tm.getCallState() != TelephonyManager.CALL_STATE_OFFHOOK) { // current state maybe differed from queued (s) one
+                                finish();
+                            } else {
+                                return; // fast clicking. new call already stared. keep recording. do not reset startedByCall
+                            }
+                        } else {
+                            if (storage.recordingPending()) { // handling restart after call finished
+                                finish();
+                            } else if (storage.recordingNextPending()) { // only call encodeNext if we have next encoding
+                                encodingNext();
+                            }
+                        }
+                        wasRinging = false;
+                        startedByCall = false;
+                        phone = "";
+                        contactId = "";
+                        contact = "";
+                        call = "";
+                        break;
                 }
-            });
+            } catch (RuntimeException e) {
+                Error(e);
+            }
         }
     }
 
@@ -491,6 +487,8 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
         handle.removeCallbacks(encodingNext);
 
+        stopRecording();
+
         SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
         shared.unregisterOnSharedPreferenceChangeListener(this);
 
@@ -541,7 +539,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         }
     }
 
-    public Notification buildNotification() {
+    public Notification buildNotification(long when) {
         boolean recording = thread != null;
 
         PendingIntent main = PendingIntent.getService(this, 0,
@@ -554,7 +552,8 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
         RemoteViews view = new RemoteViews(getPackageName(), MainApplication.getTheme(getBaseContext(), R.layout.notifictaion_recording_light, R.layout.notifictaion_recording_dark));
 
-        view.setInt(R.id.icon_circle, "setColorFilter", ThemeUtils.getThemeColor(this, R.attr.colorButtonNormal)); // android:tint="?attr/colorButtonNormal" not working API16
+        RemoteViewsCompat.setImageViewTint(view, R.id.icon_circle, ThemeUtils.getThemeColor(this, R.attr.colorButtonNormal)); // android:tint="?attr/colorButtonNormal" not working API16
+        RemoteViewsCompat.applyTheme(this, view);
 
         String title;
         String text;
@@ -578,6 +577,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setOngoing(true)
+                .setWhen(when)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setTicker(title) // tooltip status bar message
@@ -595,9 +595,9 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         return n;
     }
 
-    public Notification buildPersistent() {
-        PendingIntent main = PendingIntent.getService(this, 0,
-                new Intent(this, RecordingService.class).setAction(SHOW_ACTIVITY),
+    public Notification buildPersistent(long when) {
+        PendingIntent main = PendingIntent.getActivity(this, 0,
+                new Intent(this, MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         RemoteViews view = new RemoteViews(getPackageName(), MainApplication.getTheme(getBaseContext(),
@@ -613,7 +613,8 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
         title = title.trim();
 
-        view.setInt(R.id.icon_circle, "setColorFilter", ThemeUtils.getThemeColor(this, R.attr.colorButtonNormal)); // android:tint="?attr/colorButtonNormal" not working API16
+        RemoteViewsCompat.setImageViewTint(view, R.id.icon_circle, ThemeUtils.getThemeColor(this, R.attr.colorButtonNormal)); // android:tint="?attr/colorButtonNormal" not working API16
+        RemoteViewsCompat.applyTheme(this, view);
 
         view.setOnClickPendingIntent(R.id.status_bar_latest_event_content, main);
         view.setTextViewText(R.id.notification_title, title);
@@ -623,6 +624,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setOngoing(true)
+                .setWhen(when)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setTicker(title) // tooltip status bar message
@@ -652,7 +654,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         OptimizationPreferenceCompat.State state = OptimizationPreferenceCompat.getState(this, MainApplication.PREFERENCE_OPTIMIZATION);
 
         if (Build.VERSION.SDK_INT >= 26 && state.icon) {
-            Notification n = buildPersistent();
+            Notification n = buildPersistent(icon == null ? System.currentTimeMillis() : icon.when);
             if (icon == null)
                 startForeground(NOTIFICATION_PERSISTENT_ICON, n);
             else
@@ -662,14 +664,14 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             if (thread == null && encoding == null) {
                 nm.cancel(NOTIFICATION_RECORDING_ICON);
             } else {
-                n = buildNotification();
+                n = buildNotification(notification == null ? System.currentTimeMillis() : notification.when);
                 nm.notify(NOTIFICATION_RECORDING_ICON, n);
                 notification = n;
             }
         } else {
             if (thread == null && encoding == null) {
                 if (state.icon) {
-                    Notification n = buildPersistent();
+                    Notification n = buildPersistent(notification == null ? System.currentTimeMillis() : notification.when);
                     if (notification == null)
                         startForeground(NOTIFICATION_RECORDING_ICON, n);
                     else
@@ -681,7 +683,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     notification = null;
                 }
             } else {
-                Notification n = buildNotification();
+                Notification n = buildNotification(notification == null ? System.currentTimeMillis() : notification.when);
                 nm.notify(NOTIFICATION_RECORDING_ICON, n);
                 notification = n;
             }
