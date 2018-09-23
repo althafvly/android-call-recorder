@@ -7,10 +7,12 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
+import com.github.axet.androidlibrary.widgets.NotificationChannelCompat;
 import com.github.axet.callrecorder.R;
 
 import java.lang.reflect.Method;
@@ -36,6 +38,9 @@ public class MainApplication extends com.github.axet.audiolibrary.app.MainApplic
     public static final String CALL_OUT = "out";
     public static final String CALL_IN = "in";
 
+    public NotificationChannelCompat channelIcon;
+    public NotificationChannelCompat channelStatus;
+
     @SuppressWarnings("unchecked")
     @SuppressLint("PrivateApi")
     public static String getprop(String key) {
@@ -47,6 +52,13 @@ public class MainApplication extends com.github.axet.audiolibrary.app.MainApplic
             Log.d(TAG, "no system prop", e);
             return null;
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        channelIcon = new NotificationChannelCompat(this, "icon", "Persistent Icon", NotificationManagerCompat.IMPORTANCE_LOW);
+        channelStatus = new NotificationChannelCompat(this, "status", "Status", NotificationManagerCompat.IMPORTANCE_LOW);
     }
 
     @Override
