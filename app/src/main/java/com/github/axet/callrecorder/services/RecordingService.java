@@ -1,5 +1,6 @@
 package com.github.axet.callrecorder.services;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -25,6 +26,7 @@ import android.provider.DocumentsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v7.view.ContextThemeWrapper;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -307,7 +309,6 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
     @Override
     public void onCreate() {
-        setTheme(MainApplication.getTheme(this, R.style.RecThemeLight, R.style.RecThemeDark));
         super.onCreate();
         Log.d(TAG, "onCreate");
 
@@ -539,6 +540,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         }
     }
 
+    @SuppressLint("RestrictedApi")
     public Notification buildNotification(long when) {
         boolean recording = thread != null;
 
@@ -552,8 +554,9 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
         RemoteViews view = new RemoteViews(getPackageName(), MainApplication.getTheme(getBaseContext(), R.layout.notifictaion_recording_light, R.layout.notifictaion_recording_dark));
 
-        RemoteViewsCompat.setImageViewTint(view, R.id.icon_circle, ThemeUtils.getThemeColor(this, R.attr.colorButtonNormal)); // android:tint="?attr/colorButtonNormal" not working API16
-        RemoteViewsCompat.applyTheme(this, view);
+        ContextThemeWrapper theme = new ContextThemeWrapper(this, MainApplication.getTheme(this, R.style.RecThemeLight, R.style.RecThemeDark));
+        RemoteViewsCompat.setImageViewTint(view, R.id.icon_circle, ThemeUtils.getThemeColor(theme, R.attr.colorButtonNormal)); // android:tint="?attr/colorButtonNormal" not working API16
+        RemoteViewsCompat.applyTheme(theme, view);
 
         String title;
         String text;
@@ -595,6 +598,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         return n;
     }
 
+    @SuppressLint("RestrictedApi")
     public Notification buildPersistent(long when) {
         PendingIntent main = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class),
@@ -613,8 +617,9 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
         title = title.trim();
 
-        RemoteViewsCompat.setImageViewTint(view, R.id.icon_circle, ThemeUtils.getThemeColor(this, R.attr.colorButtonNormal)); // android:tint="?attr/colorButtonNormal" not working API16
-        RemoteViewsCompat.applyTheme(this, view);
+        ContextThemeWrapper theme = new ContextThemeWrapper(this, MainApplication.getTheme(this, R.style.RecThemeLight, R.style.RecThemeDark));
+        RemoteViewsCompat.setImageViewTint(view, R.id.icon_circle, ThemeUtils.getThemeColor(theme, R.attr.colorButtonNormal)); // android:tint="?attr/colorButtonNormal" not working API16
+        RemoteViewsCompat.applyTheme(theme, view);
 
         view.setOnClickPendingIntent(R.id.status_bar_latest_event_content, main);
         view.setTextViewText(R.id.notification_title, title);
@@ -1215,8 +1220,6 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             encodingNext();
         }
         if (key.equals(MainApplication.PREFERENCE_THEME)) {
-            stopService(new Intent(this, getClass()));
-            startService(new Intent(this, getClass()));
         }
     }
 
