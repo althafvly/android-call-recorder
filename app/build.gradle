@@ -4,7 +4,7 @@ import com.android.build.OutputFile
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.2'
 
     defaultConfig {
         applicationId "com.github.axet.callrecorder"
