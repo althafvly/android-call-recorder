@@ -587,9 +587,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
     @SuppressLint("RestrictedApi")
     public Notification buildPersistent(Notification when) {
-        PendingIntent main = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent main = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         RemoteNotificationCompat.Builder builder = new RemoteNotificationCompat.Builder(this, MainApplication.getTheme(getBaseContext(), R.layout.notifictaion_recording_light, R.layout.notifictaion_recording_dark));
 
@@ -629,6 +627,18 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
         OptimizationPreferenceCompat.State state = OptimizationPreferenceCompat.getState(this, MainApplication.PREFERENCE_OPTIMIZATION);
 
+        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean enabled = shared.getBoolean(MainApplication.PREFERENCE_CALL, false);
+
+        if (!enabled && thread == null && encoding == null) {
+            stopForeground(true);
+            nm.cancel(NOTIFICATION_PERSISTENT_ICON);
+            nm.cancel(NOTIFICATION_RECORDING_ICON);
+            icon = null;
+            notification = null;
+            return;
+        }
+
         if (Build.VERSION.SDK_INT >= 26 && state.icon) {
             Notification n = buildPersistent(icon);
             if (icon == null)
@@ -639,6 +649,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
             if (thread == null && encoding == null) {
                 nm.cancel(NOTIFICATION_RECORDING_ICON);
+                notification = null;
             } else {
                 n = buildNotification(notification);
                 nm.notify(NOTIFICATION_RECORDING_ICON, n);

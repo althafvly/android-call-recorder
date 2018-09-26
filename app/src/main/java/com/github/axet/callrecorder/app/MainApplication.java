@@ -56,13 +56,15 @@ public class MainApplication extends com.github.axet.audiolibrary.app.MainApplic
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        channelIcon = new NotificationChannelCompat(this, "icon", "Persistent Icon", NotificationManagerCompat.IMPORTANCE_LOW);
-        channelStatus = new NotificationChannelCompat(this, "status", "Status", NotificationManagerCompat.IMPORTANCE_LOW);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        channelIcon = new NotificationChannelCompat(this, "icon", "Persistent Icon", NotificationManagerCompat.IMPORTANCE_LOW);
+        channelStatus = new NotificationChannelCompat(this, "status", "Status", NotificationManagerCompat.IMPORTANCE_LOW);
+
         switch (getVersion(PREFERENCE_VERSION, R.xml.pref_general)) {
             case -1:
                 SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
