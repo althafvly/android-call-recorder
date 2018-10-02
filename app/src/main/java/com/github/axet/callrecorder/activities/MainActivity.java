@@ -339,7 +339,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         i.setChecked(b);
 
         MenuItem m = menu.findItem(R.id.action_show_folder);
-        Intent ii = StorageProvider.getProvider().openFolderIntent(this, storage.getStoragePath());
+        Intent ii = StorageProvider.getProvider().openFolderIntent(storage.getStoragePath());
         m.setIntent(ii);
         if (!StorageProvider.isFolderCallable(this, ii, StorageProvider.getProvider().getAuthority()))
             m.setVisible(false);

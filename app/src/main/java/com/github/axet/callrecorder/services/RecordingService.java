@@ -627,10 +627,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
         OptimizationPreferenceCompat.State state = OptimizationPreferenceCompat.getState(this, MainApplication.PREFERENCE_OPTIMIZATION);
 
-        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean enabled = shared.getBoolean(MainApplication.PREFERENCE_CALL, false);
-
-        if (!enabled && thread == null && encoding == null) {
+        if (!isEnabled(this) && thread == null && encoding == null) {
             stopForeground(true);
             nm.cancel(NOTIFICATION_PERSISTENT_ICON);
             nm.cancel(NOTIFICATION_RECORDING_ICON);
