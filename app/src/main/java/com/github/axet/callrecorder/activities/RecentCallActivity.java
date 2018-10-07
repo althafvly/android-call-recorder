@@ -1,6 +1,5 @@
 package com.github.axet.callrecorder.activities;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,21 +8,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.WindowCallbackWrapper;
-import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.SearchEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -31,9 +24,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.axet.callrecorder.R;
-import com.github.axet.callrecorder.app.MainApplication;
+import com.github.axet.callrecorder.app.CallApplication;
 import com.github.axet.callrecorder.app.Storage;
-import com.github.axet.callrecorder.services.RecordingService;
 
 public class RecentCallActivity extends AppCompatActivity {
 
@@ -83,7 +75,7 @@ public class RecentCallActivity extends AppCompatActivity {
     }
 
     int getAppTheme() {
-        return MainApplication.getTheme(this, R.style.AppThemeDialogLight, R.style.Theme_AppCompat_DayNight_Dialog);
+        return CallApplication.getTheme(this, R.style.AppThemeDialogLight, R.style.Theme_AppCompat_DayNight_Dialog);
     }
 
     @Override
@@ -114,8 +106,8 @@ public class RecentCallActivity extends AppCompatActivity {
         fav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean b = MainApplication.getStar(RecentCallActivity.this, uri);
-                MainApplication.setStar(RecentCallActivity.this, uri, !b);
+                boolean b = CallApplication.getStar(RecentCallActivity.this, uri);
+                CallApplication.setStar(RecentCallActivity.this, uri, !b);
                 updateFav();
             }
         });
@@ -206,7 +198,7 @@ public class RecentCallActivity extends AppCompatActivity {
     }
 
     void updateFav() {
-        fav.setImageResource(MainApplication.getStar(this, uri) ? R.drawable.ic_star_black_24dp : R.drawable.ic_star_border_black_24dp);
+        fav.setImageResource(CallApplication.getStar(this, uri) ? R.drawable.ic_star_black_24dp : R.drawable.ic_star_border_black_24dp);
     }
 
     void countClose() {

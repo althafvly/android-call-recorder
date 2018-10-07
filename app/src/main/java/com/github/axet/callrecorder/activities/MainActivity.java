@@ -55,7 +55,7 @@ import com.github.axet.audiolibrary.encoders.FormatOGG;
 import com.github.axet.audiolibrary.encoders.FormatOPUS;
 import com.github.axet.audiolibrary.encoders.FormatWAV;
 import com.github.axet.callrecorder.R;
-import com.github.axet.callrecorder.app.MainApplication;
+import com.github.axet.callrecorder.app.CallApplication;
 import com.github.axet.callrecorder.app.MixerPaths;
 import com.github.axet.callrecorder.app.Recordings;
 import com.github.axet.callrecorder.app.Storage;
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
     @Override
     public int getAppTheme() {
-        return MainApplication.getTheme(this, R.style.RecThemeLight_NoActionBar, R.style.RecThemeDark_NoActionBar);
+        return CallApplication.getTheme(this, R.style.RecThemeLight_NoActionBar, R.style.RecThemeDark_NoActionBar);
     }
 
     @Override
@@ -198,8 +198,8 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
         setContentView(R.layout.activity_main);
 
-        if (OptimizationPreferenceCompat.needKillWarning(this, MainApplication.PREFERENCE_NEXT))
-            OptimizationPreferenceCompat.buildKilledWarning(this, true, MainApplication.PREFERENCE_OPTIMIZATION).show();
+        if (OptimizationPreferenceCompat.needKillWarning(this, CallApplication.PREFERENCE_NEXT))
+            OptimizationPreferenceCompat.buildKilledWarning(this, true, CallApplication.PREFERENCE_OPTIMIZATION).show();
 
         progressText = findViewById(R.id.progress_text);
         progressEmpty = findViewById(R.id.progress_empty);
@@ -393,7 +393,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                     url = url.replaceAll("%MANUFACTURER%", Build.MANUFACTURER);
                     url = url.replaceAll("%MODEL%", android.os.Build.MODEL);
                     String ver = "Android: " + Build.VERSION.RELEASE;
-                    String cm = MainApplication.getprop("ro.cm.version");
+                    String cm = CallApplication.getprop("ro.cm.version");
                     if (cm != null && !cm.isEmpty())
                         ver += "; " + cm;
                     ver += "; " + System.getProperty("os.version");
@@ -408,15 +408,15 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                     }
                     url = url.replaceAll("%ROOT%", SuperUser.isRooted() ? "Yes" : "No");
                     url = url.replaceAll("%BASEBAND%", Build.VERSION.SDK_INT < 14 ? Build.RADIO : Build.getRadioVersion());
-                    String encoder = shared.getString(MainApplication.PREFERENCE_ENCODING, "-1");
+                    String encoder = shared.getString(CallApplication.PREFERENCE_ENCODING, "-1");
                     if (Storage.isMediaRecorder(encoder))
                         encoder = join(", ", Format3GP.EXT, Storage.EXT_AAC);
                     else
                         encoder = join(", ", FormatOGG.EXT, FormatWAV.EXT, FormatFLAC.EXT, FormatM4A.EXT, FormatMP3.EXT, FormatOPUS.EXT);
                     url = url.replaceAll("%ENCODER%", encoder);
-                    String source = shared.getString(MainApplication.PREFERENCE_SOURCE, "-1");
-                    String[] vv = MainApplication.getStrings(MainActivity.this, new Locale("en"), R.array.source_values);
-                    String[] ss = MainApplication.getStrings(MainActivity.this, new Locale("en"), R.array.source_text);
+                    String source = shared.getString(CallApplication.PREFERENCE_SOURCE, "-1");
+                    String[] vv = CallApplication.getStrings(MainActivity.this, new Locale("en"), R.array.source_values);
+                    String[] ss = CallApplication.getStrings(MainActivity.this, new Locale("en"), R.array.source_text);
                     int i = Arrays.asList(vv).indexOf(source);
                     url = url.replaceAll("%SOURCE%", ss[i]);
                     url = url.replaceAll("%QUALITY%", "");
@@ -538,7 +538,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
     void call(boolean b) {
         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor edit = shared.edit();
-        edit.putBoolean(MainApplication.PREFERENCE_CALL, b);
+        edit.putBoolean(CallApplication.PREFERENCE_CALL, b);
         edit.commit();
         if (b) {
             RecordingService.startService(this);
@@ -605,14 +605,14 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
     int getLastRecording() {
         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
-        String last = shared.getString(MainApplication.PREFERENCE_LAST, "");
+        String last = shared.getString(CallApplication.PREFERENCE_LAST, "");
         last = last.toLowerCase();
         for (int i = 0; i < recordings.getCount(); i++) {
             Storage.RecordingUri f = recordings.getItem(i);
             String n = Storage.getDocumentName(f.uri).toLowerCase();
             if (n.equals(last)) {
                 SharedPreferences.Editor edit = shared.edit();
-                edit.putString(MainApplication.PREFERENCE_LAST, "");
+                edit.putString(CallApplication.PREFERENCE_LAST, "");
                 edit.commit();
                 return i;
             }
@@ -701,7 +701,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
             String text = phone;
             if (!text.isEmpty())
                 text += " - ";
-            text += MainApplication.formatDuration(this, sec * 1000);
+            text += CallApplication.formatDuration(this, sec * 1000);
             text = text.trim();
             status.setText(text);
             fab.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -721,7 +721,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         long free = storage.getFree(f);
         long sec = Storage.average(this, free);
         TextView text = (TextView) findViewById(R.id.space_left);
-        text.setText(MainApplication.formatFree(this, free, sec));
+        text.setText(CallApplication.formatFree(this, free, sec));
     }
 
     void Error(Throwable e) {
@@ -742,7 +742,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(MainApplication.PREFERENCE_STORAGE)) {
+        if (key.equals(CallApplication.PREFERENCE_STORAGE)) {
             recordings.load(true, null);
         }
     }

@@ -105,10 +105,10 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
             format = format.replaceAll("%i", "");
         } else {
             switch (call) {
-                case MainApplication.CALL_IN:
+                case CallApplication.CALL_IN:
                     format = format.replaceAll("%i", "↓");
                     break;
-                case MainApplication.CALL_OUT:
+                case CallApplication.CALL_OUT:
                     format = format.replaceAll("%i", "↑");
                     break;
             }
@@ -163,7 +163,7 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
         ext = filterMediaRecorder(ext);
 
         String format = "%s";
-        format = shared.getString(MainApplication.PREFERENCE_FORMAT, format);
+        format = shared.getString(CallApplication.PREFERENCE_FORMAT, format);
 
         format = getFormatted(format, now, phone, contact, call);
 
@@ -183,10 +183,10 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
         if (t == null)
             return null;
         Uri f = Uri.fromFile(ff);
-        String c = MainApplication.getContact(context, f);
-        MainApplication.setContact(context, t, c); // copy contact to migrated file
-        String call = MainApplication.getCall(context, f);
-        MainApplication.setCall(context, t, call); // copy call to migrated file
+        String c = CallApplication.getContact(context, f);
+        CallApplication.setContact(context, t, c); // copy contact to migrated file
+        String call = CallApplication.getCall(context, f);
+        CallApplication.setCall(context, t, call); // copy call to migrated file
         return t;
     }
 
@@ -195,10 +195,10 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
         Uri t = super.rename(f, tt);
         if (t == null)
             return null;
-        String c = MainApplication.getContact(context, f);
-        MainApplication.setContact(context, t, c); // copy contact to new name
-        String call = MainApplication.getCall(context, f);
-        MainApplication.setCall(context, t, call); // copy call to new name
+        String c = CallApplication.getContact(context, f);
+        CallApplication.setContact(context, t, c); // copy contact to new name
+        String call = CallApplication.getCall(context, f);
+        CallApplication.setCall(context, t, call); // copy call to new name
         return t;
     }
 }

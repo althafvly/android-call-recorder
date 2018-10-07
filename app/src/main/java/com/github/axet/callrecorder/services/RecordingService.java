@@ -24,22 +24,17 @@ import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.provider.DocumentsContract;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.view.ContextThemeWrapper;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.ProximityShader;
 import com.github.axet.androidlibrary.widgets.RemoteNotificationCompat;
-import com.github.axet.androidlibrary.widgets.RemoteViewsCompat;
-import com.github.axet.androidlibrary.widgets.ThemeUtils;
 import com.github.axet.audiolibrary.app.RawSamples;
 import com.github.axet.audiolibrary.app.Sound;
 import com.github.axet.audiolibrary.encoders.EncoderInfo;
@@ -53,7 +48,7 @@ import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.activities.MainActivity;
 import com.github.axet.callrecorder.activities.RecentCallActivity;
 import com.github.axet.callrecorder.activities.SettingsActivity;
-import com.github.axet.callrecorder.app.MainApplication;
+import com.github.axet.callrecorder.app.CallApplication;
 import com.github.axet.callrecorder.app.Storage;
 
 import java.io.File;
@@ -139,7 +134,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
     public static boolean isEnabled(Context context) {
         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean b = shared.getBoolean(MainApplication.PREFERENCE_CALL, false);
+        boolean b = shared.getBoolean(CallApplication.PREFERENCE_CALL, false);
         if (!Storage.permitted(context, MainActivity.MUST))
             b = false;
         return b;
@@ -217,7 +212,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 setPhone(intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER), call);
             }
             if (a.equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
-                setPhone(intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER), MainApplication.CALL_OUT);
+                setPhone(intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER), CallApplication.CALL_OUT);
             }
         }
     }
@@ -236,7 +231,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             try {
                 switch (s) {
                     case TelephonyManager.CALL_STATE_RINGING:
-                        setPhone(incomingNumber, MainApplication.CALL_IN);
+                        setPhone(incomingNumber, CallApplication.CALL_IN);
                         wasRinging = true;
                         break;
                     case TelephonyManager.CALL_STATE_OFFHOOK:
@@ -313,7 +308,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         super.onCreate();
         Log.d(TAG, "onCreate");
 
-        optimization = new OptimizationPreferenceCompat.ServiceReceiver(this, getClass(), MainApplication.PREFERENCE_OPTIMIZATION) {
+        optimization = new OptimizationPreferenceCompat.ServiceReceiver(this, getClass(), CallApplication.PREFERENCE_OPTIMIZATION) {
             @Override
             public void check() { // disable ping
             }
@@ -321,13 +316,13 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             @Override
             public void register() {
                 super.register();
-                OptimizationPreferenceCompat.setKillCheck(RecordingService.this, next, MainApplication.PREFERENCE_NEXT);
+                OptimizationPreferenceCompat.setKillCheck(RecordingService.this, next, CallApplication.PREFERENCE_NEXT);
             }
 
             @Override
             public void unregister() {
                 super.unregister();
-                OptimizationPreferenceCompat.setKillCheck(RecordingService.this, 0, MainApplication.PREFERENCE_NEXT);
+                OptimizationPreferenceCompat.setKillCheck(RecordingService.this, 0, CallApplication.PREFERENCE_NEXT);
             }
         };
 
@@ -372,7 +367,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
     void deleteOld() {
         SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
-        String d = shared.getString(MainApplication.PREFERENCE_DELETE, getString(R.string.delete_off));
+        String d = shared.getString(CallApplication.PREFERENCE_DELETE, getString(R.string.delete_off));
         if (d.equals(getString(R.string.delete_off)))
             return;
 
@@ -436,7 +431,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     }
 
                     if (c.before(cur)) {
-                        if (!MainApplication.getStar(this, f)) // do not delete favorite recorings
+                        if (!CallApplication.getStar(this, f)) // do not delete favorite recorings
                             storage.delete(f);
                     }
                 }
@@ -553,31 +548,31 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 new Intent(this, RecordingService.class).setAction(PAUSE_BUTTON),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        RemoteNotificationCompat.Builder builder = new RemoteNotificationCompat.Builder(this, MainApplication.getTheme(this, R.layout.notifictaion_recording_light, R.layout.notifictaion_recording_dark));
+        RemoteNotificationCompat.Builder builder = new RemoteNotificationCompat.Builder(this, R.layout.notifictaion);
 
         String title;
         String text;
 
         title = encoding != null ? getString(R.string.encoding_title) : (getString(R.string.recording_title) + " " + getSourceText());
         text = ".../" + Storage.getDocumentName(targetUri);
-        builder.view.setViewVisibility(R.id.notification_pause, View.VISIBLE);
-        builder.view.setImageViewResource(R.id.notification_pause, recording ? R.drawable.ic_stop_black_24dp : R.drawable.ic_play_arrow_black_24dp);
+        builder.setViewVisibility(R.id.notification_pause, View.VISIBLE);
+        builder.setImageViewResource(R.id.notification_pause, recording ? R.drawable.ic_stop_black_24dp : R.drawable.ic_play_arrow_black_24dp);
 
         title = title.trim();
 
-        builder.view.setOnClickPendingIntent(R.id.notification_pause, pe);
-        builder.view.setViewVisibility(R.id.notification_record, View.GONE);
+        builder.setOnClickPendingIntent(R.id.notification_pause, pe);
+        builder.setViewVisibility(R.id.notification_record, View.GONE);
 
         if (encoding != null)
-            builder.view.setViewVisibility(R.id.notification_pause, View.GONE);
+            builder.setViewVisibility(R.id.notification_pause, View.GONE);
 
-        builder.setTheme(MainApplication.getTheme(this, R.style.RecThemeLight, R.style.RecThemeDark))
+        builder.setTheme(CallApplication.getTheme(this, R.style.RecThemeLight, R.style.RecThemeDark))
                 .setImageViewTint(R.id.icon_circle, R.attr.colorButtonNormal)
                 .setMainIntent(main)
                 .setIcon(R.drawable.ic_mic_24dp)
                 .setTitle(title)
                 .setText(text)
-                .setChannel(((MainApplication) getApplication()).channelStatus)
+                .setChannel(CallApplication.from(this).channelStatus)
                 .setWhen(when)
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_mic);
@@ -589,26 +584,18 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     public Notification buildPersistent(Notification when) {
         PendingIntent main = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
-        RemoteNotificationCompat.Builder builder = new RemoteNotificationCompat.Builder(this, MainApplication.getTheme(getBaseContext(), R.layout.notifictaion_recording_light, R.layout.notifictaion_recording_dark));
+        RemoteNotificationCompat.Builder builder = new RemoteNotificationCompat.Low(this, R.layout.notifictaion);
 
-        String title;
-        String text;
+        builder.setViewVisibility(R.id.notification_pause, View.GONE);
+        builder.setViewVisibility(R.id.notification_record, View.GONE);
 
-        title = getString(R.string.app_name);
-        text = getString(R.string.recording_enabled);
-        builder.view.setViewVisibility(R.id.notification_pause, View.GONE);
-
-        title = title.trim();
-
-        builder.view.setViewVisibility(R.id.notification_record, View.GONE);
-
-        builder.setTheme(MainApplication.getTheme(this, R.style.RecThemeLight, R.style.RecThemeDark))
+        builder.setTheme(CallApplication.getTheme(this, R.style.RecThemeLight, R.style.RecThemeDark))
+                .setChannel(CallApplication.from(this).channelIcon)
                 .setMainIntent(main)
-                .setImageViewTint(R.id.icon_circle, R.attr.colorButtonNormal)
-                .setTitle(title)
-                .setText(text)
+                .setTitle(getString(R.string.app_name))
+                .setText(getString(R.string.recording_enabled))
                 .setIcon(R.drawable.ic_call_black_24dp)
-                .setChannel(((MainApplication) getApplication()).channelIcon)
+                .setImageViewTint(R.id.icon_circle, R.attr.colorButtonNormal)
                 .setWhen(when)
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_call);
@@ -625,7 +612,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     public void updateIcon() {
         NotificationManagerCompat nm = NotificationManagerCompat.from(this);
 
-        OptimizationPreferenceCompat.State state = OptimizationPreferenceCompat.getState(this, MainApplication.PREFERENCE_OPTIMIZATION);
+        OptimizationPreferenceCompat.State state = OptimizationPreferenceCompat.getState(this, CallApplication.PREFERENCE_OPTIMIZATION);
 
         if (!isEnabled(this) && thread == null && encoding == null) {
             stopForeground(true);
@@ -676,7 +663,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
     public void showDone(Uri targetUri) {
         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!shared.getBoolean(MainApplication.PREFERENCE_DONE_NOTIFICATION, false))
+        if (!shared.getBoolean(CallApplication.PREFERENCE_DONE_NOTIFICATION, false))
             return;
         RecentCallActivity.startActivity(this, targetUri, true);
     }
@@ -693,13 +680,13 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 MediaRecorder.AudioSource.DEFAULT, // mic
                 MediaRecorder.AudioSource.UNPROCESSED,
         };
-        int i = Integer.valueOf(shared.getString(MainApplication.PREFERENCE_SOURCE, "-1"));
+        int i = Integer.valueOf(shared.getString(CallApplication.PREFERENCE_SOURCE, "-1"));
         if (i == -1)
             i = 0;
         else
             i = Sound.indexOf(ss, i);
 
-        String ext = shared.getString(MainApplication.PREFERENCE_ENCODING, "");
+        String ext = shared.getString(CallApplication.PREFERENCE_ENCODING, "");
         if (Storage.isMediaRecorder(ext)) {
             startMediaRecorder(ext, ss, i);
         } else {
@@ -752,11 +739,11 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     public void run() {
                         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(RecordingService.this);
                         SharedPreferences.Editor edit = shared.edit();
-                        edit.putString(MainApplication.PREFERENCE_LAST, Storage.getDocumentName(fly.targetUri));
+                        edit.putString(CallApplication.PREFERENCE_LAST, Storage.getDocumentName(fly.targetUri));
                         edit.commit();
 
-                        MainApplication.setContact(RecordingService.this, info.targetUri, info.contactId);
-                        MainApplication.setCall(RecordingService.this, info.targetUri, info.call);
+                        CallApplication.setContact(RecordingService.this, info.targetUri, info.contactId);
+                        CallApplication.setCall(RecordingService.this, info.targetUri, info.call);
                         MainActivity.last(RecordingService.this);
                         showDone(info.targetUri);
                     }
@@ -931,11 +918,11 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                         public void run() {
                             final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(RecordingService.this);
                             SharedPreferences.Editor edit = shared.edit();
-                            edit.putString(MainApplication.PREFERENCE_LAST, Storage.getDocumentName(info.targetUri));
+                            edit.putString(CallApplication.PREFERENCE_LAST, Storage.getDocumentName(info.targetUri));
                             edit.commit();
 
-                            MainApplication.setContact(RecordingService.this, info.targetUri, info.contactId);
-                            MainApplication.setCall(RecordingService.this, info.targetUri, info.call);
+                            CallApplication.setContact(RecordingService.this, info.targetUri, info.contactId);
+                            CallApplication.setCall(RecordingService.this, info.targetUri, info.call);
                             MainActivity.last(RecordingService.this);
                             showDone(info.targetUri);
                         }
@@ -992,12 +979,12 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
         encoder = new FileEncoder(this, in, fly);
 
-        if (shared.getBoolean(MainApplication.PREFERENCE_VOICE, false))
+        if (shared.getBoolean(CallApplication.PREFERENCE_VOICE, false))
             encoder.filters.add(new VoiceFilter(getInfo()));
-        float amp = shared.getFloat(MainApplication.PREFERENCE_VOLUME, 1);
+        float amp = shared.getFloat(CallApplication.PREFERENCE_VOLUME, 1);
         if (amp != 1)
             encoder.filters.add(new AmplifierFilter(amp));
-        if (shared.getBoolean(MainApplication.PREFERENCE_SKIP, false))
+        if (shared.getBoolean(CallApplication.PREFERENCE_SKIP, false))
             encoder.filters.add(new SkipSilenceFilter(getInfo()));
 
         final Runnable save = new Runnable() {
@@ -1008,7 +995,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 MainActivity.showProgress(RecordingService.this, false, phone, samplesTime / sampleRate, false);
 
                 SharedPreferences.Editor edit = shared.edit();
-                edit.putString(MainApplication.PREFERENCE_LAST, Storage.getDocumentName(fly.targetUri));
+                edit.putString(CallApplication.PREFERENCE_LAST, Storage.getDocumentName(fly.targetUri));
                 edit.commit();
 
                 success.run(fly.targetUri);
@@ -1182,8 +1169,8 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             @Override
             public void run(Uri t) { // called on success
                 mapTarget.remove(inFile);
-                MainApplication.setContact(RecordingService.this, t, contactId);
-                MainApplication.setCall(RecordingService.this, t, call);
+                CallApplication.setContact(RecordingService.this, t, contactId);
+                CallApplication.setCall(RecordingService.this, t, call);
                 MainActivity.last(RecordingService.this);
                 showDone(t);
             }
@@ -1192,13 +1179,13 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(MainApplication.PREFERENCE_DELETE)) {
+        if (key.equals(CallApplication.PREFERENCE_DELETE)) {
             deleteOld();
         }
-        if (key.equals(MainApplication.PREFERENCE_STORAGE)) {
+        if (key.equals(CallApplication.PREFERENCE_STORAGE)) {
             encodingNext();
         }
-        if (key.equals(MainApplication.PREFERENCE_THEME)) {
+        if (key.equals(CallApplication.PREFERENCE_THEME)) {
         }
     }
 

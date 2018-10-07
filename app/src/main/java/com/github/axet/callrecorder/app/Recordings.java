@@ -33,9 +33,9 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
     @Override
     public void cleanDelete(TreeSet<String> delete, Uri f) {
         super.cleanDelete(delete, f);
-        String p = MainApplication.getFilePref(f);
-        delete.remove(p + MainApplication.PREFERENCE_DETAILS_CONTACT);
-        delete.remove(p + MainApplication.PREFERENCE_DETAILS_CALL);
+        String p = CallApplication.getFilePref(f);
+        delete.remove(p + CallApplication.PREFERENCE_DETAILS_CONTACT);
+        delete.remove(p + CallApplication.PREFERENCE_DETAILS_CALL);
     }
 
     @Override
@@ -44,16 +44,16 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
         LinearLayout s = (LinearLayout) v.findViewById(R.id.recording_status);
         ImageView i = (ImageView) v.findViewById(R.id.recording_call);
         Storage.RecordingUri u = getItem(position);
-        String call = MainApplication.getCall(getContext(), u.uri);
+        String call = CallApplication.getCall(getContext(), u.uri);
         if (call == null || call.isEmpty()) {
             i.setVisibility(View.GONE);
         } else {
             switch (call) {
-                case MainApplication.CALL_IN:
+                case CallApplication.CALL_IN:
                     i.setVisibility(View.VISIBLE);
                     i.setImageResource(R.drawable.ic_call_received_black_24dp);
                     break;
-                case MainApplication.CALL_OUT:
+                case CallApplication.CALL_OUT:
                     i.setVisibility(View.VISIBLE);
                     i.setImageResource(R.drawable.ic_call_made_black_24dp);
                     break;
@@ -68,13 +68,13 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
         if (include) {
             if (!toolbarFilterIn && !toolbarFilterOut)
                 return true;
-            String call = MainApplication.getCall(getContext(), f.uri);
+            String call = CallApplication.getCall(getContext(), f.uri);
             if (call == null || call.isEmpty())
                 return false;
             if (toolbarFilterIn)
-                return call.equals(MainApplication.CALL_IN);
+                return call.equals(CallApplication.CALL_IN);
             if (toolbarFilterOut)
-                return call.equals(MainApplication.CALL_OUT);
+                return call.equals(CallApplication.CALL_OUT);
         }
         return include;
     }
@@ -117,15 +117,15 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
         super.save();
         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor edit = shared.edit();
-        edit.putBoolean(MainApplication.PREFERENCE_FILTER_IN, toolbarFilterIn);
-        edit.putBoolean(MainApplication.PREFERENCE_FILTER_OUT, toolbarFilterOut);
+        edit.putBoolean(CallApplication.PREFERENCE_FILTER_IN, toolbarFilterIn);
+        edit.putBoolean(CallApplication.PREFERENCE_FILTER_OUT, toolbarFilterOut);
         edit.commit();
     }
 
     protected void load() {
         super.load();
         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(getContext());
-        toolbarFilterIn = shared.getBoolean(MainApplication.PREFERENCE_FILTER_IN, false);
-        toolbarFilterOut = shared.getBoolean(MainApplication.PREFERENCE_FILTER_OUT, false);
+        toolbarFilterIn = shared.getBoolean(CallApplication.PREFERENCE_FILTER_IN, false);
+        toolbarFilterOut = shared.getBoolean(CallApplication.PREFERENCE_FILTER_OUT, false);
     }
 }
