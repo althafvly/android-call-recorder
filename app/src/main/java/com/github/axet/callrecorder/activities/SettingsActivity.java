@@ -31,7 +31,7 @@ import com.github.axet.androidlibrary.widgets.Toast;
 import com.github.axet.audiolibrary.app.Sound;
 import com.github.axet.audiolibrary.widgets.RecordingVolumePreference;
 import com.github.axet.callrecorder.R;
-import com.github.axet.callrecorder.app.MainApplication;
+import com.github.axet.callrecorder.app.CallApplication;
 import com.github.axet.callrecorder.app.Storage;
 import com.github.axet.callrecorder.services.RecordingService;
 import com.github.axet.callrecorder.widgets.MixerPathsPreferenceCompat;
@@ -106,12 +106,12 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
 
     @Override
     public int getAppTheme() {
-        return MainApplication.getTheme(this, R.style.RecThemeLight, R.style.RecThemeDark);
+        return CallApplication.getTheme(this, R.style.RecThemeLight, R.style.RecThemeDark);
     }
 
     @Override
     public String getAppThemeKey() {
-        return MainApplication.PREFERENCE_THEME;
+        return CallApplication.PREFERENCE_THEME;
     }
 
     /**
@@ -166,7 +166,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         if (actionBar != null) {
             // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
-//            actionBar.setBackgroundDrawable(new ColorDrawable(MainApplication.getActionbarColor(this)));
+//            actionBar.setBackgroundDrawable(new ColorDrawable(CallApplication.getActionbarColor(this)));
         }
     }
 
@@ -197,11 +197,11 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         super.onSharedPreferenceChanged(sharedPreferences, key);
-        if (key.equals(MainApplication.PREFERENCE_STORAGE)) {
+        if (key.equals(CallApplication.PREFERENCE_STORAGE)) {
             Storage.migrateLocalStorageDialog(this, handler, new Storage(this));
         }
-        if (key.equals(MainApplication.PREFERENCE_SOURCE)) {
-            String source = sharedPreferences.getString(MainApplication.PREFERENCE_SOURCE, "-1");
+        if (key.equals(CallApplication.PREFERENCE_SOURCE)) {
+            String source = sharedPreferences.getString(CallApplication.PREFERENCE_SOURCE, "-1");
             if (source.equals(Integer.toString(MediaRecorder.AudioSource.UNPROCESSED))) {
                 if (!Sound.isUnprocessedSupported(this))
                     Toast.makeText(this, "Raw is not supported", Toast.LENGTH_SHORT).show();
@@ -244,14 +244,14 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         void initPrefs(PreferenceManager manager) {
             final Context context = manager.getContext();
 
-            ListPreference format = (ListPreference) manager.findPreference(MainApplication.PREFERENCE_FORMAT);
+            ListPreference format = (ListPreference) manager.findPreference(CallApplication.PREFERENCE_FORMAT);
             if (!Storage.permitted(context, CONTACTS)) {
                 CharSequence[] ee = format.getEntries();
                 CharSequence[] vv = format.getEntryValues();
             }
             bindPreferenceSummaryToValue(format);
 
-            final ListPreference enc = (ListPreference) manager.findPreference(MainApplication.PREFERENCE_ENCODING);
+            final ListPreference enc = (ListPreference) manager.findPreference(CallApplication.PREFERENCE_ENCODING);
             String v = enc.getValue();
             CharSequence[] ee = Storage.getEncodingTexts(context);
             CharSequence[] vv = Storage.getEncodingValues(context);
@@ -271,17 +271,17 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
                 enc.setVisible(false);
             }
 
-            OptimizationPreferenceCompat optimization = (OptimizationPreferenceCompat) manager.findPreference(MainApplication.PREFERENCE_OPTIMIZATION);
+            OptimizationPreferenceCompat optimization = (OptimizationPreferenceCompat) manager.findPreference(CallApplication.PREFERENCE_OPTIMIZATION);
             optimization.enable(RecordingService.class);
 
-            bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_RATE));
-            bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_THEME));
-            bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_CHANNELS));
-            bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_DELETE));
-            bindPreferenceSummaryToValue(manager.findPreference(MainApplication.PREFERENCE_SOURCE));
+            bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_RATE));
+            bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_THEME));
+            bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_CHANNELS));
+            bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_DELETE));
+            bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_SOURCE));
 
             final PreferenceCategory filters = (PreferenceCategory) manager.findPreference("filters");
-            Preference vol = manager.findPreference(MainApplication.PREFERENCE_VOLUME);
+            Preference vol = manager.findPreference(CallApplication.PREFERENCE_VOLUME);
             String encoder = enc.getValue();
             onResumeVol(filters, encoder);
             enc.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -293,7 +293,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             });
             bindPreferenceSummaryToValue(vol);
 
-            StoragePathPreferenceCompat s = (StoragePathPreferenceCompat) manager.findPreference(MainApplication.PREFERENCE_STORAGE);
+            StoragePathPreferenceCompat s = (StoragePathPreferenceCompat) manager.findPreference(CallApplication.PREFERENCE_STORAGE);
             s.setStorage(new Storage(getContext()));
             s.setPermissionsDialog(this, Storage.PERMISSIONS_RW, RESULT_FILE);
             if (Build.VERSION.SDK_INT >= 21)
@@ -322,16 +322,16 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         @Override
         public void onResume() {
             super.onResume();
-            OptimizationPreferenceCompat optimization = (OptimizationPreferenceCompat) findPreference(MainApplication.PREFERENCE_OPTIMIZATION);
+            OptimizationPreferenceCompat optimization = (OptimizationPreferenceCompat) findPreference(CallApplication.PREFERENCE_OPTIMIZATION);
             optimization.onResume();
-            MixerPathsPreferenceCompat mix = (MixerPathsPreferenceCompat) findPreference(MainApplication.PREFERENCE_MIXERPATHS);
+            MixerPathsPreferenceCompat mix = (MixerPathsPreferenceCompat) findPreference(CallApplication.PREFERENCE_MIXERPATHS);
             mix.onResume();
         }
 
         @Override
         public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            StoragePathPreferenceCompat s = (StoragePathPreferenceCompat) findPreference(MainApplication.PREFERENCE_STORAGE);
+            StoragePathPreferenceCompat s = (StoragePathPreferenceCompat) findPreference(CallApplication.PREFERENCE_STORAGE);
             switch (requestCode) {
                 case RESULT_FILE:
                     s.onRequestPermissionsResult(permissions, grantResults);
@@ -342,7 +342,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
-            StoragePathPreferenceCompat s = (StoragePathPreferenceCompat) findPreference(MainApplication.PREFERENCE_STORAGE);
+            StoragePathPreferenceCompat s = (StoragePathPreferenceCompat) findPreference(CallApplication.PREFERENCE_STORAGE);
             switch (requestCode) {
                 case RESULT_FILE:
                     s.onActivityResult(resultCode, data);

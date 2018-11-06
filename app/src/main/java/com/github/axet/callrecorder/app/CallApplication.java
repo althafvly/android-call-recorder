@@ -17,7 +17,7 @@ import com.github.axet.callrecorder.R;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
-public class MainApplication extends com.github.axet.audiolibrary.app.MainApplication {
+public class CallApplication extends com.github.axet.audiolibrary.app.MainApplication {
     public static final String PREFERENCE_DELETE = "delete";
     public static final String PREFERENCE_FORMAT = "format";
     public static final String PREFERENCE_CALL = "call";
@@ -53,9 +53,8 @@ public class MainApplication extends com.github.axet.audiolibrary.app.MainApplic
         }
     }
 
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
+    public static CallApplication from(Context context) {
+        return (CallApplication) com.github.axet.audiolibrary.app.MainApplication.from(context);
     }
 
     @Override
@@ -71,7 +70,7 @@ public class MainApplication extends com.github.axet.audiolibrary.app.MainApplic
                 SharedPreferences.Editor e = shared.edit();
                 MixerPaths m = new MixerPaths();
                 if (!m.isSupported() || !m.isEnabled()) {
-                    e.putString(MainApplication.PREFERENCE_ENCODING, Storage.EXT_3GP);
+                    e.putString(CallApplication.PREFERENCE_ENCODING, Storage.EXT_3GP);
                 }
                 SharedPreferences.Editor edit = shared.edit();
                 edit.putInt(PREFERENCE_VERSION, 1);
@@ -81,7 +80,6 @@ public class MainApplication extends com.github.axet.audiolibrary.app.MainApplic
                 version_0_to_1();
                 break;
         }
-        setTheme(getUserTheme());
     }
 
     void version_0_to_1() {
@@ -90,11 +88,6 @@ public class MainApplication extends com.github.axet.audiolibrary.app.MainApplic
         edit.putFloat(PREFERENCE_VOLUME, shared.getFloat(PREFERENCE_VOLUME, 0) + 1); // update volume from 0..1 to 0..1..4
         edit.putInt(PREFERENCE_VERSION, 1);
         edit.commit();
-    }
-
-    @Override
-    public int getUserTheme() {
-        return getTheme(this, R.style.RecThemeLight, R.style.RecThemeDark);
     }
 
     public static String getContact(Context context, Uri f) {
