@@ -36,6 +36,7 @@ import android.widget.Toast;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.ProximityShader;
 import com.github.axet.androidlibrary.widgets.RemoteNotificationCompat;
+import com.github.axet.audiolibrary.app.MainApplication;
 import com.github.axet.audiolibrary.app.RawSamples;
 import com.github.axet.audiolibrary.app.Sound;
 import com.github.axet.audiolibrary.encoders.EncoderInfo;
@@ -130,7 +131,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     }
 
     public static void startService(Context context) {
-        context.startService(new Intent(context, RecordingService.class));
+        MainApplication.startService(context, new Intent(context, RecordingService.class));
     }
 
     public static boolean isEnabled(Context context) {

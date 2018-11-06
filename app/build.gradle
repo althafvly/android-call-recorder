@@ -70,7 +70,7 @@ clean.doLast {
 preBuild.dependsOn fetch
 
 dependencies {
-    implementation 'com.github.axet:android-audio-library:1.0.130' // implementation project(':android-audio-library')
+    implementation 'com.github.axet:android-audio-library:1.0.131' // implementation project(':android-audio-library')
     api "org.apache.commons:commons-csv:1.5"
     testImplementation 'junit:junit:4.12'
 }
