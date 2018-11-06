@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
@@ -723,6 +724,10 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     }
                 }
 
+                PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                PowerManager.WakeLock wlcpu = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, RecordingService.class.getCanonicalName() + "_cpulock");
+                wlcpu.acquire();
+
                 android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
 
                 Runnable done = new Runnable() {
@@ -792,6 +797,8 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     Post(e);
                     return; // no save
                 } finally {
+                    wlcpu.release();
+
                     handle.post(done);
 
                     if (recorder != null)
@@ -928,6 +935,10 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                         }
                     };
 
+                    PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                    PowerManager.WakeLock wlcpu = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, RecordingService.class.getCanonicalName() + "_cpulock");
+                    wlcpu.acquire();
+
                     boolean start = false;
                     try {
                         Thread.sleep(2000); // sleep after prepare, some devices requires to record opponent side
@@ -945,6 +956,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     } catch (InterruptedException e) {
                         ;
                     } finally {
+                        wlcpu.release();
                         handle.post(done);
                         if (start) {
                             try {
