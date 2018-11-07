@@ -625,7 +625,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             return;
         }
 
-        if (Build.VERSION.SDK_INT >= 26 && state.icon) {
+        if (Build.VERSION.SDK_INT >= 26 && (state.icon || getApplicationInfo().targetSdkVersion >= 26)) {
             Notification n = buildPersistent(icon);
             if (icon == null)
                 startForeground(NOTIFICATION_PERSISTENT_ICON, n);
@@ -643,7 +643,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             }
         } else {
             if (thread == null && encoding == null) {
-                if (state.icon) {
+                if (state.icon || getApplicationInfo().targetSdkVersion >= 26) {
                     Notification n = buildPersistent(notification);
                     if (notification == null)
                         startForeground(NOTIFICATION_RECORDING_ICON, n);
