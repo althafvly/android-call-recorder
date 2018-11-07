@@ -82,10 +82,6 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     public static String PAUSE_BUTTON = RecordingService.class.getCanonicalName() + ".PAUSE_BUTTON";
     public static String STOP_BUTTON = RecordingService.class.getCanonicalName() + ".STOP_BUTTON";
 
-    static {
-        OptimizationPreferenceCompat.ICON = true;
-    }
-
     Sound sound;
     AtomicBoolean interrupt = new AtomicBoolean();
     Thread thread;
