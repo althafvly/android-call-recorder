@@ -98,7 +98,7 @@ public class RecentCallActivity extends AppCompatActivity {
 
         final boolean count = getIntent().getBooleanExtra("count", true);
         uri = getIntent().getParcelableExtra("uri");
-        String f = Storage.getDocumentName(uri);
+        String f = storage.getName(uri);
         old = Storage.getNameNoExt(f);
         ext = Storage.getExt(f);
         name.setText(old);
@@ -245,7 +245,7 @@ public class RecentCallActivity extends AppCompatActivity {
     void delete() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(com.github.axet.audiolibrary.R.string.delete_recording);
-        builder.setMessage("...\\" + Storage.getDocumentName(uri) + "\n\n" + getString(com.github.axet.audiolibrary.R.string.are_you_sure));
+        builder.setMessage("...\\" + storage.getName(uri) + "\n\n" + getString(R.string.are_you_sure));
         builder.setPositiveButton(com.github.axet.audiolibrary.R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

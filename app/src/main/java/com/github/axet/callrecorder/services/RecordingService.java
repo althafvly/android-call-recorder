@@ -23,7 +23,6 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
-import android.provider.DocumentsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.PhoneNumberUtils;
@@ -36,7 +35,6 @@ import android.widget.Toast;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.ProximityShader;
 import com.github.axet.androidlibrary.widgets.RemoteNotificationCompat;
-import com.github.axet.audiolibrary.app.MainApplication;
 import com.github.axet.audiolibrary.app.RawSamples;
 import com.github.axet.audiolibrary.app.Sound;
 import com.github.axet.audiolibrary.encoders.EncoderInfo;
@@ -57,7 +55,6 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -127,7 +124,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     }
 
     public static void startService(Context context) {
-        MainApplication.startService(context, new Intent(context, RecordingService.class));
+        OptimizationPreferenceCompat.startService(context, new Intent(context, RecordingService.class));
     }
 
     public static boolean isEnabled(Context context) {
@@ -308,10 +305,6 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
         optimization = new OptimizationPreferenceCompat.ServiceReceiver(this, getClass(), CallApplication.PREFERENCE_OPTIMIZATION) {
             @Override
-            public void check() { // disable ping
-            }
-
-            @Override
             public void register() {
                 super.register();
                 OptimizationPreferenceCompat.setKillCheck(RecordingService.this, next, CallApplication.PREFERENCE_NEXT);
@@ -323,6 +316,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 OptimizationPreferenceCompat.setKillCheck(RecordingService.this, 0, CallApplication.PREFERENCE_NEXT);
             }
         };
+        optimization.create();
 
         receiver = new RecordingReceiver();
         IntentFilter filter = new IntentFilter();
@@ -369,70 +363,50 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         if (d.equals(getString(R.string.delete_off)))
             return;
 
-        List<Uri> list = new ArrayList<>();
-
-        String[] ee = Storage.getEncodingValues(this);
+        final String[] ee = Storage.getEncodingValues(this);
         Uri path = storage.getStoragePath();
-        String s = path.getScheme();
-        if (Build.VERSION.SDK_INT >= 21 && s.startsWith(ContentResolver.SCHEME_CONTENT)) {
-            ContentResolver resolver = getContentResolver();
-            Uri childId = DocumentsContract.buildChildDocumentsUriUsingTree(path, DocumentsContract.getTreeDocumentId(path));
-            Cursor c = resolver.query(childId, null, null, null, null);
-            if (c != null) {
-                while (c.moveToNext()) {
-                    String id = c.getString(c.getColumnIndex(DocumentsContract.Document.COLUMN_DOCUMENT_ID));
-                    Uri dd = DocumentsContract.buildDocumentUriUsingTree(path, id);
-                    list.add(dd);
+
+        List<Storage.Node> nn = storage.list(path, new Storage.NodeFilter() {
+            @Override
+            public boolean accept(Storage.Node n) {
+                for (String e : ee) {
+                    e = e.toLowerCase();
+                    if (n.name.endsWith(e))
+                        return true;
                 }
-                c.close();
+                return false;
             }
-        } else if (s.startsWith(ContentResolver.SCHEME_FILE)) {
-            File dir = Storage.getFile(path);
-            File[] ff = dir.listFiles();
-            if (ff == null)
-                return;
-            for (File f : ff) {
-                list.add(Uri.fromFile(f));
+        });
+
+        for (Storage.Node n : nn) {
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(n.last);
+            Calendar cur = c;
+
+            if (d.equals(getString(R.string.delete_1day))) {
+                cur = Calendar.getInstance();
+                c.add(Calendar.DAY_OF_YEAR, 1);
             }
-        } else {
-            throw new Storage.UnknownUri();
-        }
+            if (d.equals(getString(R.string.delete_1week))) {
+                cur = Calendar.getInstance();
+                c.add(Calendar.WEEK_OF_YEAR, 1);
+            }
+            if (d.equals(getString(R.string.delete_1month))) {
+                cur = Calendar.getInstance();
+                c.add(Calendar.MONTH, 1);
+            }
+            if (d.equals(getString(R.string.delete_3month))) {
+                cur = Calendar.getInstance();
+                c.add(Calendar.MONTH, 3);
+            }
+            if (d.equals(getString(R.string.delete_6month))) {
+                cur = Calendar.getInstance();
+                c.add(Calendar.MONTH, 6);
+            }
 
-        for (Uri f : list) {
-            String n = Storage.getDocumentName(f).toLowerCase();
-            for (String e : ee) {
-                e = e.toLowerCase();
-                if (n.endsWith(e)) {
-                    Calendar c = Calendar.getInstance();
-                    c.setTimeInMillis(storage.getLastModified(f));
-                    Calendar cur = c;
-
-                    if (d.equals(getString(R.string.delete_1day))) {
-                        cur = Calendar.getInstance();
-                        c.add(Calendar.DAY_OF_YEAR, 1);
-                    }
-                    if (d.equals(getString(R.string.delete_1week))) {
-                        cur = Calendar.getInstance();
-                        c.add(Calendar.WEEK_OF_YEAR, 1);
-                    }
-                    if (d.equals(getString(R.string.delete_1month))) {
-                        cur = Calendar.getInstance();
-                        c.add(Calendar.MONTH, 1);
-                    }
-                    if (d.equals(getString(R.string.delete_3month))) {
-                        cur = Calendar.getInstance();
-                        c.add(Calendar.MONTH, 3);
-                    }
-                    if (d.equals(getString(R.string.delete_6month))) {
-                        cur = Calendar.getInstance();
-                        c.add(Calendar.MONTH, 6);
-                    }
-
-                    if (c.before(cur)) {
-                        if (!CallApplication.getStar(this, f)) // do not delete favorite recorings
-                            storage.delete(f);
-                    }
-                }
+            if (c.before(cur)) {
+                if (!CallApplication.getStar(this, n.uri)) // do not delete favorite recorings
+                    storage.delete(n.uri);
             }
         }
     }
@@ -552,7 +526,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         String text;
 
         title = encoding != null ? getString(R.string.encoding_title) : (getString(R.string.recording_title) + " " + getSourceText());
-        text = ".../" + Storage.getDocumentName(targetUri);
+        text = ".../" + storage.getName(targetUri);
         builder.setViewVisibility(R.id.notification_pause, View.VISIBLE);
         builder.setImageViewResource(R.id.notification_pause, recording ? R.drawable.ic_stop_black_24dp : R.drawable.ic_play_arrow_black_24dp);
 
@@ -741,7 +715,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     public void run() {
                         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(RecordingService.this);
                         SharedPreferences.Editor edit = shared.edit();
-                        edit.putString(CallApplication.PREFERENCE_LAST, Storage.getDocumentName(fly.targetUri));
+                        edit.putString(CallApplication.PREFERENCE_LAST, storage.getName(fly.targetUri));
                         edit.commit();
 
                         CallApplication.setContact(RecordingService.this, info.targetUri, info.contactId);
@@ -922,7 +896,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                         public void run() {
                             final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(RecordingService.this);
                             SharedPreferences.Editor edit = shared.edit();
-                            edit.putString(CallApplication.PREFERENCE_LAST, Storage.getDocumentName(info.targetUri));
+                            edit.putString(CallApplication.PREFERENCE_LAST, storage.getName(info.targetUri));
                             edit.commit();
 
                             CallApplication.setContact(RecordingService.this, info.targetUri, info.contactId);
@@ -1004,7 +978,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 MainActivity.showProgress(RecordingService.this, false, phone, samplesTime / sampleRate, false);
 
                 SharedPreferences.Editor edit = shared.edit();
-                edit.putString(CallApplication.PREFERENCE_LAST, Storage.getDocumentName(fly.targetUri));
+                edit.putString(CallApplication.PREFERENCE_LAST, storage.getName(fly.targetUri));
                 edit.commit();
 
                 success.run(fly.targetUri);

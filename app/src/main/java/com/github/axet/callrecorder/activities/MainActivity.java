@@ -339,7 +339,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         i.setChecked(b);
 
         MenuItem m = menu.findItem(R.id.action_show_folder);
-        Intent ii = StorageProvider.getProvider().openFolderIntent(storage.getStoragePath());
+        Intent ii = StorageProvider.openFolderIntent(this, storage.getStoragePath());
         m.setIntent(ii);
         if (!StorageProvider.isFolderCallable(this, ii, StorageProvider.getProvider().getAuthority()))
             m.setVisible(false);
@@ -609,7 +609,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         last = last.toLowerCase();
         for (int i = 0; i < recordings.getCount(); i++) {
             Storage.RecordingUri f = recordings.getItem(i);
-            String n = Storage.getDocumentName(f.uri).toLowerCase();
+            String n = storage.getName(f.uri).toLowerCase();
             if (n.equals(last)) {
                 SharedPreferences.Editor edit = shared.edit();
                 edit.putString(CallApplication.PREFERENCE_LAST, "");
