@@ -28,3 +28,4 @@
 -dontwarn net.sourceforge.javaflacencoder.**
 -dontwarn com.jssrc.resample.**
 -dontwarn org.apache.commons.**
+-dontwarn de.innosystec.unrar.**
