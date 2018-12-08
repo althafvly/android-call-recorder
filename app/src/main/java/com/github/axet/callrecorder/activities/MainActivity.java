@@ -46,6 +46,7 @@ import com.github.axet.androidlibrary.app.SuperUser;
 import com.github.axet.androidlibrary.services.StorageProvider;
 import com.github.axet.androidlibrary.widgets.AboutPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.AppCompatThemeActivity;
+import com.github.axet.androidlibrary.widgets.ErrorDialog;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.audiolibrary.encoders.Format3GP;
 import com.github.axet.audiolibrary.encoders.FormatFLAC;
@@ -559,7 +560,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         try {
             storage.migrateLocalStorage();
         } catch (RuntimeException e) {
-            Error(e);
+            ErrorDialog.Error(this, e);
         }
 
         Runnable done = new Runnable() {
@@ -609,7 +610,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         last = last.toLowerCase();
         for (int i = 0; i < recordings.getCount(); i++) {
             Storage.RecordingUri f = recordings.getItem(i);
-            String n = storage.getName(f.uri).toLowerCase();
+            String n = Storage.getName(this, f.uri).toLowerCase();
             if (n.equals(last)) {
                 SharedPreferences.Editor edit = shared.edit();
                 edit.putString(CallApplication.PREFERENCE_LAST, "");
@@ -629,7 +630,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                     try {
                         storage.migrateLocalStorage();
                     } catch (RuntimeException e) {
-                        Error(e);
+                        ErrorDialog.Error(this, e);
                     }
                     recordings.load(false, null);
                     if (resumeCall != null) {
@@ -718,26 +719,10 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
     void updateHeader() {
         Uri f = storage.getStoragePath();
-        long free = storage.getFree(f);
+        long free = Storage.getFree(this, f);
         long sec = Storage.average(this, free);
         TextView text = (TextView) findViewById(R.id.space_left);
         text.setText(CallApplication.formatFree(this, free, sec));
-    }
-
-    void Error(Throwable e) {
-        Log.d(TAG, "Error", e);
-        String msg = e.getMessage();
-        if (msg == null || msg.isEmpty()) {
-            Throwable t = e;
-            while (t.getCause() != null)
-                t = t.getCause();
-            msg = t.getClass().getSimpleName();
-        }
-        Error(msg);
-    }
-
-    void Error(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override

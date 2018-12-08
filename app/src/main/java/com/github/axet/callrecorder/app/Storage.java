@@ -174,12 +174,11 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
             if (!f.exists() && !f.mkdirs())
                 throw new RuntimeException("Unable to create: " + f);
         }
-        return getNextFile(parent, format, ext);
+        return getNextFile(context, parent, format, ext);
     }
 
-    @Override
     public Uri move(File ff, Uri tt) {
-        Uri t = super.move(ff, tt);
+        Uri t = super.move(context, ff, tt);
         if (t == null)
             return null;
         Uri f = Uri.fromFile(ff);

@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.app.CallApplication;
 import com.github.axet.callrecorder.app.Storage;
+import com.github.axet.callrecorder.services.RecordingService;
 
 public class RecentCallActivity extends AppCompatActivity {
 
@@ -98,7 +99,7 @@ public class RecentCallActivity extends AppCompatActivity {
 
         final boolean count = getIntent().getBooleanExtra("count", true);
         uri = getIntent().getParcelableExtra("uri");
-        String f = storage.getName(uri);
+        String f = Storage.getName(this, uri);
         old = Storage.getNameNoExt(f);
         ext = Storage.getExt(f);
         name.setText(old);
@@ -245,11 +246,11 @@ public class RecentCallActivity extends AppCompatActivity {
     void delete() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(com.github.axet.audiolibrary.R.string.delete_recording);
-        builder.setMessage("...\\" + storage.getName(uri) + "\n\n" + getString(R.string.are_you_sure));
+        builder.setMessage("...\\" + Storage.getName(this, uri) + "\n\n" + getString(R.string.are_you_sure));
         builder.setPositiveButton(com.github.axet.audiolibrary.R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                storage.delete(uri);
+                Storage.delete(RecentCallActivity.this, uri);
                 MainActivity.last(RecentCallActivity.this);
                 alertDialog.dismiss();
             }
