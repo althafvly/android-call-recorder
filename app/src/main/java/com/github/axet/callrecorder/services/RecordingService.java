@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.github.axet.androidlibrary.app.NotificationManagerCompat;
 import com.github.axet.androidlibrary.app.SuperUser;
+import com.github.axet.androidlibrary.widgets.ErrorDialog;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.ProximityShader;
 import com.github.axet.androidlibrary.widgets.RemoteNotificationCompat;
@@ -1006,7 +1007,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
     void Post(Throwable e) {
         Log.e(TAG, "post", e);
-        Post("AudioRecord error: " + SuperUser.toMessage(e));
+        Post("AudioRecord error: " + ErrorDialog.toMessage(e));
     }
 
     void Post(final String msg) {
@@ -1028,7 +1029,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             if (t == null)
                 t = e;
         }
-        Error(SuperUser.toMessage(e));
+        Error(ErrorDialog.toMessage(e));
     }
 
     void Error(String msg) {

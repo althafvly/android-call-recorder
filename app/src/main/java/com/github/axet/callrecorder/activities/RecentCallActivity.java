@@ -26,7 +26,6 @@ import android.widget.TextView;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.app.CallApplication;
 import com.github.axet.callrecorder.app.Storage;
-import com.github.axet.callrecorder.services.RecordingService;
 
 public class RecentCallActivity extends AppCompatActivity {
 
@@ -238,7 +237,7 @@ public class RecentCallActivity extends AppCompatActivity {
         String n = name.getText().toString();
         if (!old.equals(n)) {
             String s = String.format("%s.%s", n, ext);
-            storage.rename(uri, s);
+            Storage.rename(this, uri, s);
             MainActivity.last(this);
         }
     }
