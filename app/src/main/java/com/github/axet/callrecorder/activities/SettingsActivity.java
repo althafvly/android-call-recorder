@@ -127,13 +127,13 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         super.onSharedPreferenceChanged(sharedPreferences, key);
         if (key.equals(CallApplication.PREFERENCE_STORAGE)) {
-            storage.migrateLocalStorageDialog();
+            storage.migrateLocalStorageDialog(this);
         }
         if (key.equals(CallApplication.PREFERENCE_SOURCE)) {
             String source = sharedPreferences.getString(CallApplication.PREFERENCE_SOURCE, "-1");
             if (source.equals(Integer.toString(MediaRecorder.AudioSource.UNPROCESSED))) {
                 if (!Sound.isUnprocessedSupported(this))
-                    Toast.makeText(this, "Raw is not supported", Toast.LENGTH_SHORT).show();
+                    Toast.Error(this, "Raw is not supported");
             }
         }
     }

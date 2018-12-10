@@ -1029,7 +1029,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             if (t == null)
                 t = e;
         }
-        Error(ErrorDialog.toMessage(e));
+        Error(ErrorDialog.toMessage(t));
     }
 
     void Error(String msg) {
