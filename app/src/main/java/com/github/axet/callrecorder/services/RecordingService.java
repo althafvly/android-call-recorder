@@ -24,7 +24,6 @@ import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -32,6 +31,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.github.axet.androidlibrary.app.NotificationManagerCompat;
+import com.github.axet.androidlibrary.app.SuperUser;
+import com.github.axet.androidlibrary.widgets.ErrorDialog;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.ProximityShader;
 import com.github.axet.androidlibrary.widgets.RemoteNotificationCompat;
@@ -366,7 +368,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         final String[] ee = Storage.getEncodingValues(this);
         Uri path = storage.getStoragePath();
 
-        List<Storage.Node> nn = storage.list(path, new Storage.NodeFilter() {
+        List<Storage.Node> nn = Storage.list(this, path, new Storage.NodeFilter() {
             @Override
             public boolean accept(Storage.Node n) {
                 for (String e : ee) {
@@ -406,7 +408,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
             if (c.before(cur)) {
                 if (!CallApplication.getStar(this, n.uri)) // do not delete favorite recorings
-                    storage.delete(n.uri);
+                    Storage.delete(this, n.uri);
             }
         }
     }
@@ -439,12 +441,6 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    public class Binder extends android.os.Binder {
-        public RecordingService getService() {
-            return RecordingService.this;
-        }
     }
 
     @Override
@@ -526,7 +522,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         String text;
 
         title = encoding != null ? getString(R.string.encoding_title) : (getString(R.string.recording_title) + " " + getSourceText());
-        text = ".../" + storage.getName(targetUri);
+        text = ".../" + Storage.getName(this, targetUri);
         builder.setViewVisibility(R.id.notification_pause, View.VISIBLE);
         builder.setImageViewResource(R.id.notification_pause, recording ? R.drawable.ic_stop_black_24dp : R.drawable.ic_play_arrow_black_24dp);
 
@@ -613,7 +609,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             }
         } else {
             if (thread == null && encoding == null) {
-                if (state.icon || getApplicationInfo().targetSdkVersion >= 26) {
+                if (state.icon || Build.VERSION.SDK_INT >= 26 && getApplicationInfo().targetSdkVersion >= 26) {
                     Notification n = buildPersistent(notification);
                     if (notification == null)
                         startForeground(NOTIFICATION_RECORDING_ICON, n);
@@ -715,7 +711,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     public void run() {
                         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(RecordingService.this);
                         SharedPreferences.Editor edit = shared.edit();
-                        edit.putString(CallApplication.PREFERENCE_LAST, storage.getName(fly.targetUri));
+                        edit.putString(CallApplication.PREFERENCE_LAST, Storage.getName(RecordingService.this, fly.targetUri));
                         edit.commit();
 
                         CallApplication.setContact(RecordingService.this, info.targetUri, info.contactId);
@@ -764,7 +760,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                         }
                     }
                 } catch (final RuntimeException e) {
-                    storage.delete(fly.targetUri);
+                    Storage.delete(RecordingService.this, fly.targetUri);
                     Post(e);
                     return; // no save
                 } finally {
@@ -779,7 +775,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                         try {
                             fly.close();
                         } catch (RuntimeException e) {
-                            storage.delete(fly.targetUri);
+                            Storage.delete(RecordingService.this, fly.targetUri);
                             Post(e);
                             return; // no save
                         }
@@ -801,14 +797,13 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 Uri root = Storage.getDocumentTreeUri(info.targetUri);
                 resolver.takePersistableUriPermission(root, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 String path = Storage.getDocumentChildPath(info.targetUri);
-                Uri out = storage.createFile(root, path);
+                Uri out = Storage.createFile(this, root, path);
                 if (out == null)
                     throw new RuntimeException("Unable to create file, permissions?");
                 ParcelFileDescriptor pfd = resolver.openFileDescriptor(out, "rw");
                 fd = pfd.getFileDescriptor();
             } else {
-                File f = new File(info.targetUri.getPath());
-                FileOutputStream os = new FileOutputStream(f);
+                FileOutputStream os = new FileOutputStream(Storage.getFile(info.targetUri));
                 fd = os.getFD();
             }
 
@@ -896,7 +891,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                         public void run() {
                             final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(RecordingService.this);
                             SharedPreferences.Editor edit = shared.edit();
-                            edit.putString(CallApplication.PREFERENCE_LAST, storage.getName(info.targetUri));
+                            edit.putString(CallApplication.PREFERENCE_LAST, Storage.getName(RecordingService.this, info.targetUri));
                             edit.commit();
 
                             CallApplication.setContact(RecordingService.this, info.targetUri, info.contactId);
@@ -921,11 +916,11 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                             MainActivity.showProgress(RecordingService.this, true, phone, samplesTime / sampleRate, null);
                         }
                     } catch (RuntimeException e) {
-                        storage.delete(info.targetUri);
+                        Storage.delete(RecordingService.this, info.targetUri);
                         Post(e);
                         return; // no save
                     } catch (InterruptedException e) {
-                        ;
+                        Thread.currentThread().interrupt();
                     } finally {
                         wlcpu.release();
                         handle.post(done);
@@ -933,7 +928,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                             try {
                                 recorder.stop();
                             } catch (RuntimeException e) { // https://stackoverflow.com/questions/16221866
-                                storage.delete(info.targetUri);
+                                Storage.delete(RecordingService.this, info.targetUri);
                                 Post(e);
                             }
                         }
@@ -978,7 +973,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 MainActivity.showProgress(RecordingService.this, false, phone, samplesTime / sampleRate, false);
 
                 SharedPreferences.Editor edit = shared.edit();
-                edit.putString(CallApplication.PREFERENCE_LAST, storage.getName(fly.targetUri));
+                edit.putString(CallApplication.PREFERENCE_LAST, Storage.getName(RecordingService.this, fly.targetUri));
                 edit.commit();
 
                 success.run(fly.targetUri);
@@ -1000,7 +995,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         }, new Runnable() {
             @Override
             public void run() { // error
-                storage.delete(fly.targetUri);
+                Storage.delete(RecordingService.this, fly.targetUri);
                 MainActivity.showProgress(RecordingService.this, false, phone, samplesTime / sampleRate, false);
                 Error(encoder.getException());
                 done.run();
@@ -1011,13 +1006,8 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     }
 
     void Post(Throwable e) {
-        Log.e(TAG, Log.getStackTraceString(e));
-        while (e.getCause() != null)
-            e = e.getCause();
-        String msg = e.getMessage();
-        if (msg == null || msg.isEmpty())
-            msg = e.getClass().getSimpleName();
-        Post("AudioRecord error: " + msg);
+        Log.e(TAG, "post", e);
+        Post("AudioRecord error: " + ErrorDialog.toMessage(e));
     }
 
     void Post(final String msg) {
@@ -1031,21 +1021,15 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
     void Error(Throwable e) {
         Log.d(TAG, "Error", e);
-        String msg = e.getMessage();
-        if (msg == null || msg.isEmpty()) {
-            Throwable t;
-            if (encoder == null) {
+        Throwable t;
+        if (encoder == null) {
+            t = e;
+        } else {
+            t = encoder.getException();
+            if (t == null)
                 t = e;
-            } else {
-                t = encoder.getException();
-                if (t == null)
-                    t = e;
-            }
-            while (t.getCause() != null)
-                t = t.getCause();
-            msg = t.getClass().getSimpleName();
         }
-        Error(msg);
+        Error(ErrorDialog.toMessage(t));
     }
 
     void Error(String msg) {
@@ -1147,7 +1131,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             }
         };
         showNotificationAlarm(true); // update status (encoding)
-        Log.d(TAG, "Encoded " + inFile.getName() + " to " + storage.getDisplayName(targetUri));
+        Log.d(TAG, "Encoded " + inFile.getName() + " to " + Storage.getDisplayName(this, targetUri));
         encoding(inFile, targetUri, encoding, new Success() {
             @Override
             public void run(Uri t) { // called on success

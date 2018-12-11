@@ -125,6 +125,27 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
         super(context);
     }
 
+    @Override
+    public Uri migrate(File ff, Uri tt) {
+        Uri t = super.migrate(ff, tt);
+        if (t == null)
+            return null;
+        Uri f = Uri.fromFile(ff);
+        CallApplication.setContact(context, t, CallApplication.getContact(context, f)); // copy contact to migrated file
+        CallApplication.setCall(context, t, CallApplication.getCall(context, f)); // copy call to migrated file
+        return t;
+    }
+
+    @Override
+    public Uri rename(Uri f, String tt) {
+        Uri t = super.rename(f, tt);
+        if (t == null)
+            return null;
+        CallApplication.setContact(context, t, CallApplication.getContact(context, f)); // copy contact to new name
+        CallApplication.setCall(context, t, CallApplication.getCall(context, f)); // copy call to new name
+        return t;
+    }
+
     public boolean recordingNextPending() {
         File tmp = getTempRecording();
         if (tmp.exists())
@@ -169,36 +190,12 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
 
         Uri parent = getStoragePath();
         String s = parent.getScheme();
-        if (s.startsWith(ContentResolver.SCHEME_FILE)) {
+        if (s.equals(ContentResolver.SCHEME_FILE)) {
             File f = getFile(parent);
             if (!f.exists() && !f.mkdirs())
                 throw new RuntimeException("Unable to create: " + f);
         }
-        return getNextFile(parent, format, ext);
+        return getNextFile(context, parent, format, ext);
     }
 
-    @Override
-    public Uri move(File ff, Uri tt) {
-        Uri t = super.move(ff, tt);
-        if (t == null)
-            return null;
-        Uri f = Uri.fromFile(ff);
-        String c = CallApplication.getContact(context, f);
-        CallApplication.setContact(context, t, c); // copy contact to migrated file
-        String call = CallApplication.getCall(context, f);
-        CallApplication.setCall(context, t, call); // copy call to migrated file
-        return t;
-    }
-
-    @Override
-    public Uri rename(Uri f, String tt) {
-        Uri t = super.rename(f, tt);
-        if (t == null)
-            return null;
-        String c = CallApplication.getContact(context, f);
-        CallApplication.setContact(context, t, c); // copy contact to new name
-        String call = CallApplication.getCall(context, f);
-        CallApplication.setCall(context, t, call); // copy call to new name
-        return t;
-    }
 }

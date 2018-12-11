@@ -46,6 +46,7 @@ import com.github.axet.androidlibrary.app.SuperUser;
 import com.github.axet.androidlibrary.services.StorageProvider;
 import com.github.axet.androidlibrary.widgets.AboutPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.AppCompatThemeActivity;
+import com.github.axet.androidlibrary.widgets.ErrorDialog;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.audiolibrary.encoders.Format3GP;
 import com.github.axet.audiolibrary.encoders.FormatFLAC;
@@ -103,9 +104,6 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
     int encoding;
     String phone;
     long sec;
-
-    View progressText;
-    View progressEmpty;
 
     MenuItem resumeCall;
 
@@ -201,8 +199,9 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         if (OptimizationPreferenceCompat.needKillWarning(this, CallApplication.PREFERENCE_NEXT))
             OptimizationPreferenceCompat.buildKilledWarning(this, true, CallApplication.PREFERENCE_OPTIMIZATION).show();
 
-        progressText = findViewById(R.id.progress_text);
-        progressEmpty = findViewById(R.id.progress_empty);
+        list = (ListView) findViewById(R.id.list);
+        View empty = findViewById(R.id.empty_list);
+        list.setEmptyView(empty);
 
         storage = new Storage(this);
 
@@ -238,15 +237,11 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
         updatePanel();
 
-        list = (ListView) findViewById(R.id.list);
         recordings = new Recordings(this, list);
         list.setAdapter(recordings);
-        list.setEmptyView(findViewById(R.id.empty_list));
         recordings.setToolbar((ViewGroup) findViewById(R.id.recording_toolbar));
 
         RecordingService.startIfEnabled(this);
-
-        final Context context = this;
 
         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
         if (shared.getBoolean("warning", true)) {
@@ -559,18 +554,18 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         try {
             storage.migrateLocalStorage();
         } catch (RuntimeException e) {
-            Error(e);
+            ErrorDialog.Error(this, e);
         }
 
         Runnable done = new Runnable() {
             @Override
             public void run() {
-                progressText.setVisibility(View.VISIBLE);
-                progressEmpty.setVisibility(View.GONE);
+                recordings.progressText.setVisibility(View.VISIBLE);
+                recordings.progressEmpty.setVisibility(View.GONE);
             }
         };
-        progressText.setVisibility(View.GONE);
-        progressEmpty.setVisibility(View.VISIBLE);
+        recordings.progressText.setVisibility(View.GONE);
+        recordings.progressEmpty.setVisibility(View.VISIBLE);
 
         recordings.load(false, done);
 
@@ -584,8 +579,8 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
             @Override
             public void run() {
                 final int selected = getLastRecording();
-                progressText.setVisibility(View.VISIBLE);
-                progressEmpty.setVisibility(View.GONE);
+                recordings.progressText.setVisibility(View.VISIBLE);
+                recordings.progressEmpty.setVisibility(View.GONE);
                 if (selected != -1) {
                     recordings.select(selected);
                     list.smoothScrollToPosition(selected);
@@ -598,8 +593,8 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                 }
             }
         };
-        progressText.setVisibility(View.GONE);
-        progressEmpty.setVisibility(View.VISIBLE);
+        recordings.progressText.setVisibility(View.GONE);
+        recordings.progressEmpty.setVisibility(View.VISIBLE);
         recordings.load(false, done);
     }
 
@@ -609,7 +604,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         last = last.toLowerCase();
         for (int i = 0; i < recordings.getCount(); i++) {
             Storage.RecordingUri f = recordings.getItem(i);
-            String n = storage.getName(f.uri).toLowerCase();
+            String n = Storage.getName(this, f.uri).toLowerCase();
             if (n.equals(last)) {
                 SharedPreferences.Editor edit = shared.edit();
                 edit.putString(CallApplication.PREFERENCE_LAST, "");
@@ -629,7 +624,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                     try {
                         storage.migrateLocalStorage();
                     } catch (RuntimeException e) {
-                        Error(e);
+                        ErrorDialog.Error(this, e);
                     }
                     recordings.load(false, null);
                     if (resumeCall != null) {
@@ -718,26 +713,10 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
     void updateHeader() {
         Uri f = storage.getStoragePath();
-        long free = storage.getFree(f);
+        long free = Storage.getFree(this, f);
         long sec = Storage.average(this, free);
         TextView text = (TextView) findViewById(R.id.space_left);
         text.setText(CallApplication.formatFree(this, free, sec));
-    }
-
-    void Error(Throwable e) {
-        Log.d(TAG, "Error", e);
-        String msg = e.getMessage();
-        if (msg == null || msg.isEmpty()) {
-            Throwable t = e;
-            while (t.getCause() != null)
-                t = t.getCause();
-            msg = t.getClass().getSimpleName();
-        }
-        Error(msg);
-    }
-
-    void Error(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override

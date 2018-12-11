@@ -41,17 +41,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * A {@link PreferenceActivity} that presents a set of application settings. On
- * handset devices, settings are presented as a single list. On tablets,
- * settings are split by category, with category headers shown to the left of
- * the list of settings.
- * <p/>
- * See <a href="http://developer.android.com/design/patterns/settings.html">
- * Android Design: Settings</a> for design guidelines and the <a
- * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
- * API Guide</a> for more information on developing a Settings UI.
- */
 public class SettingsActivity extends AppCompatSettingsThemeActivity implements PreferenceFragmentCompat.OnPreferenceDisplayDialogCallback {
 
     public static final int RESULT_FILE = 1;
@@ -61,7 +50,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
     };
 
     GeneralPreferenceFragment f;
-    Handler handler = new Handler();
+    Storage storage;
 
     @SuppressWarnings("unchecked")
     public static <T> T[] removeElement(Class<T> c, T[] aa, int i) {
@@ -70,39 +59,6 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         ll.remove(i);
         return ll.toArray((T[]) Array.newInstance(c, ll.size()));
     }
-
-    /**
-     * A preference value change listener that updates the preference's summary
-     * to reflect its new value.
-     */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
-            String key = preference.getKey();
-
-            if (preference instanceof SeekBarPreference) {
-                preference.setSummary(((SeekBarPreference) preference).format((Float) value));
-            } else if (preference instanceof NameFormatPreferenceCompat) {
-                preference.setSummary(((NameFormatPreferenceCompat) preference).getFormatted(stringValue));
-            } else if (preference instanceof ListPreference) {
-                // For list preferences, look up the correct display value in
-                // the preference's 'entries' list.
-                ListPreference listPreference = (ListPreference) preference;
-                int index = listPreference.findIndexOfValue(stringValue);
-
-                // Set the summary to reflect the new value.
-                preference.setSummary(
-                        index >= 0
-                                ? listPreference.getEntries()[index]
-                                : null);
-
-            } else {
-                preference.setSummary(stringValue);
-            }
-            return true;
-        }
-    };
 
     @Override
     public int getAppTheme() {
@@ -114,38 +70,11 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         return CallApplication.PREFERENCE_THEME;
     }
 
-    /**
-     * Helper method to determine if the device has an extra-large screen. For
-     * example, 10" tablets are extra-large.
-     */
-    private static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
-
-    /**
-     * Binds a preference's summary to its value. More specifically, when the
-     * preference's value is changed, its summary (line of text below the
-     * preference title) is updated to reflect the value. The summary is also
-     * immediately updated upon calling this method. The exact display format is
-     * dependent on the type of preference.
-     *
-     * @see #sBindPreferenceSummaryToValueListener
-     */
-    private static void bindPreferenceSummaryToValue(Preference preference) {
-        // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getAll().get(preference.getKey()));
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(getAppTheme());
         super.onCreate(savedInstanceState);
+        storage = new Storage(this);
 
         setupActionBar();
 
@@ -198,13 +127,13 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         super.onSharedPreferenceChanged(sharedPreferences, key);
         if (key.equals(CallApplication.PREFERENCE_STORAGE)) {
-            Storage.migrateLocalStorageDialog(this, handler, new Storage(this));
+            storage.migrateLocalStorageDialog(this);
         }
         if (key.equals(CallApplication.PREFERENCE_SOURCE)) {
             String source = sharedPreferences.getString(CallApplication.PREFERENCE_SOURCE, "-1");
             if (source.equals(Integer.toString(MediaRecorder.AudioSource.UNPROCESSED))) {
                 if (!Sound.isUnprocessedSupported(this))
-                    Toast.makeText(this, "Raw is not supported", Toast.LENGTH_SHORT).show();
+                    Toast.Error(this, "Raw is not supported");
             }
         }
     }
