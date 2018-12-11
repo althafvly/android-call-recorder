@@ -36,7 +36,7 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                load(true, null);
+                load(false, null);
             }
         });
         progressText = (TextView) empty.findViewById(android.R.id.text1);
