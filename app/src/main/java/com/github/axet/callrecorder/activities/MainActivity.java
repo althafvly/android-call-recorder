@@ -105,9 +105,6 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
     String phone;
     long sec;
 
-    View progressText;
-    View progressEmpty;
-
     MenuItem resumeCall;
 
     Recordings recordings;
@@ -202,8 +199,9 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         if (OptimizationPreferenceCompat.needKillWarning(this, CallApplication.PREFERENCE_NEXT))
             OptimizationPreferenceCompat.buildKilledWarning(this, true, CallApplication.PREFERENCE_OPTIMIZATION).show();
 
-        progressText = findViewById(R.id.progress_text);
-        progressEmpty = findViewById(R.id.progress_empty);
+        list = (ListView) findViewById(R.id.list);
+        View empty = findViewById(R.id.empty_list);
+        list.setEmptyView(empty);
 
         storage = new Storage(this);
 
@@ -239,15 +237,11 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
         updatePanel();
 
-        list = (ListView) findViewById(R.id.list);
         recordings = new Recordings(this, list);
         list.setAdapter(recordings);
-        list.setEmptyView(findViewById(R.id.empty_list));
         recordings.setToolbar((ViewGroup) findViewById(R.id.recording_toolbar));
 
         RecordingService.startIfEnabled(this);
-
-        final Context context = this;
 
         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
         if (shared.getBoolean("warning", true)) {
@@ -566,12 +560,12 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         Runnable done = new Runnable() {
             @Override
             public void run() {
-                progressText.setVisibility(View.VISIBLE);
-                progressEmpty.setVisibility(View.GONE);
+                recordings.progressText.setVisibility(View.VISIBLE);
+                recordings.progressEmpty.setVisibility(View.GONE);
             }
         };
-        progressText.setVisibility(View.GONE);
-        progressEmpty.setVisibility(View.VISIBLE);
+        recordings.progressText.setVisibility(View.GONE);
+        recordings.progressEmpty.setVisibility(View.VISIBLE);
 
         recordings.load(false, done);
 
@@ -585,8 +579,8 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
             @Override
             public void run() {
                 final int selected = getLastRecording();
-                progressText.setVisibility(View.VISIBLE);
-                progressEmpty.setVisibility(View.GONE);
+                recordings.progressText.setVisibility(View.VISIBLE);
+                recordings.progressEmpty.setVisibility(View.GONE);
                 if (selected != -1) {
                     recordings.select(selected);
                     list.smoothScrollToPosition(selected);
@@ -599,8 +593,8 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                 }
             }
         };
-        progressText.setVisibility(View.GONE);
-        progressEmpty.setVisibility(View.VISIBLE);
+        recordings.progressText.setVisibility(View.GONE);
+        recordings.progressEmpty.setVisibility(View.VISIBLE);
         recordings.load(false, done);
     }
 

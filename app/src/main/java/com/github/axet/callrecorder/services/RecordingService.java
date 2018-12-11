@@ -609,7 +609,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             }
         } else {
             if (thread == null && encoding == null) {
-                if (state.icon || getApplicationInfo().targetSdkVersion >= 26) {
+                if (state.icon || Build.VERSION.SDK_INT >= 26 && getApplicationInfo().targetSdkVersion >= 26) {
                     Notification n = buildPersistent(notification);
                     if (notification == null)
                         startForeground(NOTIFICATION_RECORDING_ICON, n);

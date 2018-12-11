@@ -4,25 +4,62 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.github.axet.androidlibrary.widgets.ErrorDialog;
 import com.github.axet.callrecorder.R;
 
+import java.util.ArrayList;
 import java.util.TreeSet;
 
 public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
     protected View toolbar_i;
     protected View toolbar_o;
+    View refresh;
+    public TextView progressText;
+    public View progressEmpty;
+    protected String progressTextDefault;
 
     boolean toolbarFilterIn;
     boolean toolbarFilterOut;
 
     public Recordings(Context context, ListView list) {
         super(context, list);
+        View empty = list.getEmptyView();
+        refresh = empty.findViewById(R.id.refresh);
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                load(true, null);
+            }
+        });
+        progressText = (TextView) empty.findViewById(android.R.id.text1);
+        progressEmpty = empty.findViewById(R.id.progress_empty);
+        progressTextDefault = progressText.getText().toString();
+    }
+
+    @Override
+    public void load(Uri mount, boolean clean, Runnable done) {
+        progressText.setText(progressTextDefault);
+        refresh.setVisibility(View.GONE);
+        if (!com.github.axet.audiolibrary.app.Storage.exists(getContext(), mount)) { // folder may not exist, do not show error
+            scan(new ArrayList<com.github.axet.audiolibrary.app.Storage.Node>(), clean, done);
+            return;
+        }
+        try {
+            super.load(mount, clean, done);
+        } catch (RuntimeException e) {
+            Log.e(TAG, "unable to load", e);
+            refresh.setVisibility(View.VISIBLE);
+            progressText.setText(ErrorDialog.toMessage(e));
+            scan(new ArrayList<com.github.axet.audiolibrary.app.Storage.Node>(), clean, done);
+        }
     }
 
     @Override
