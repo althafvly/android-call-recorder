@@ -24,7 +24,6 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
     View refresh;
     public TextView progressText;
     public View progressEmpty;
-    protected String progressTextDefault;
 
     boolean toolbarFilterIn;
     boolean toolbarFilterOut;
@@ -36,17 +35,16 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                load(true, null);
+                load(false, null);
             }
         });
         progressText = (TextView) empty.findViewById(android.R.id.text1);
         progressEmpty = empty.findViewById(R.id.progress_empty);
-        progressTextDefault = progressText.getText().toString();
     }
 
     @Override
     public void load(Uri mount, boolean clean, Runnable done) {
-        progressText.setText(progressTextDefault);
+        progressText.setText(R.string.recording_list_is_empty);
         refresh.setVisibility(View.GONE);
         if (!com.github.axet.audiolibrary.app.Storage.exists(getContext(), mount)) { // folder may not exist, do not show error
             scan(new ArrayList<com.github.axet.audiolibrary.app.Storage.Node>(), clean, done);

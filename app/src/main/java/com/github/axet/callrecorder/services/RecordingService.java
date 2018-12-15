@@ -32,7 +32,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.github.axet.androidlibrary.app.NotificationManagerCompat;
-import com.github.axet.androidlibrary.app.SuperUser;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.ProximityShader;
@@ -365,51 +364,55 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         if (d.equals(getString(R.string.delete_off)))
             return;
 
-        final String[] ee = Storage.getEncodingValues(this);
-        Uri path = storage.getStoragePath();
+        try {
+            final String[] ee = Storage.getEncodingValues(this);
+            Uri path = storage.getStoragePath();
 
-        List<Storage.Node> nn = Storage.list(this, path, new Storage.NodeFilter() {
-            @Override
-            public boolean accept(Storage.Node n) {
-                for (String e : ee) {
-                    e = e.toLowerCase();
-                    if (n.name.endsWith(e))
-                        return true;
+            List<Storage.Node> nn = Storage.list(this, path, new Storage.NodeFilter() {
+                @Override
+                public boolean accept(Storage.Node n) {
+                    for (String e : ee) {
+                        e = e.toLowerCase();
+                        if (n.name.endsWith(e))
+                            return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
 
-        for (Storage.Node n : nn) {
-            Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(n.last);
-            Calendar cur = c;
+            for (Storage.Node n : nn) {
+                Calendar c = Calendar.getInstance();
+                c.setTimeInMillis(n.last);
+                Calendar cur = c;
 
-            if (d.equals(getString(R.string.delete_1day))) {
-                cur = Calendar.getInstance();
-                c.add(Calendar.DAY_OF_YEAR, 1);
-            }
-            if (d.equals(getString(R.string.delete_1week))) {
-                cur = Calendar.getInstance();
-                c.add(Calendar.WEEK_OF_YEAR, 1);
-            }
-            if (d.equals(getString(R.string.delete_1month))) {
-                cur = Calendar.getInstance();
-                c.add(Calendar.MONTH, 1);
-            }
-            if (d.equals(getString(R.string.delete_3month))) {
-                cur = Calendar.getInstance();
-                c.add(Calendar.MONTH, 3);
-            }
-            if (d.equals(getString(R.string.delete_6month))) {
-                cur = Calendar.getInstance();
-                c.add(Calendar.MONTH, 6);
-            }
+                if (d.equals(getString(R.string.delete_1day))) {
+                    cur = Calendar.getInstance();
+                    c.add(Calendar.DAY_OF_YEAR, 1);
+                }
+                if (d.equals(getString(R.string.delete_1week))) {
+                    cur = Calendar.getInstance();
+                    c.add(Calendar.WEEK_OF_YEAR, 1);
+                }
+                if (d.equals(getString(R.string.delete_1month))) {
+                    cur = Calendar.getInstance();
+                    c.add(Calendar.MONTH, 1);
+                }
+                if (d.equals(getString(R.string.delete_3month))) {
+                    cur = Calendar.getInstance();
+                    c.add(Calendar.MONTH, 3);
+                }
+                if (d.equals(getString(R.string.delete_6month))) {
+                    cur = Calendar.getInstance();
+                    c.add(Calendar.MONTH, 6);
+                }
 
-            if (c.before(cur)) {
-                if (!CallApplication.getStar(this, n.uri)) // do not delete favorite recorings
-                    Storage.delete(this, n.uri);
+                if (c.before(cur)) {
+                    if (!CallApplication.getStar(this, n.uri)) // do not delete favorite recorings
+                        Storage.delete(this, n.uri);
+                }
             }
+        } catch (RuntimeException e) {
+            Log.d(TAG, "unable to delete old", e); // hide all deleteOld IO errors
         }
     }
 
