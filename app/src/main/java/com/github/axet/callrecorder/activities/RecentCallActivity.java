@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.github.axet.androidlibrary.widgets.PopupWindowCompat;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.app.CallApplication;
 import com.github.axet.callrecorder.app.Storage;
@@ -66,12 +67,6 @@ public class RecentCallActivity extends AppCompatActivity {
         w.addFlags(android.view.WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         if (Build.VERSION.SDK_INT >= 21)
             w.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-    }
-
-    public static Rect getOnScreenRect(View v) {
-        int[] loc = new int[2];
-        v.getLocationOnScreen(loc);
-        return new Rect(loc[0], loc[1], loc[0] + v.getWidth(), loc[1] + v.getHeight());
     }
 
     int getAppTheme() {
@@ -161,7 +156,7 @@ public class RecentCallActivity extends AppCompatActivity {
 
                     @Override
                     public boolean dispatchTouchEvent(MotionEvent event) {
-                        Rect rect = getOnScreenRect(w.getDecorView());
+                        Rect rect = PopupWindowCompat.getOnScreenRect(w.getDecorView());
                         if (rect.contains((int) event.getRawX(), (int) event.getRawY()))
                             onUserInteraction();
                         return c.dispatchTouchEvent(event);
