@@ -538,7 +538,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             builder.setViewVisibility(R.id.notification_pause, View.GONE);
 
         builder.setTheme(CallApplication.getTheme(this, R.style.RecThemeLight, R.style.RecThemeDark))
-                .setImageViewTint(R.id.icon_circle, R.attr.colorButtonNormal)
+                .setImageViewTint(R.id.icon_circle, builder.getThemeColor(R.attr.colorButtonNormal))
                 .setMainIntent(main)
                 .setIcon(R.drawable.ic_mic_24dp)
                 .setTitle(title)
@@ -566,7 +566,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 .setTitle(getString(R.string.app_name))
                 .setText(getString(R.string.recording_enabled))
                 .setIcon(R.drawable.ic_call_black_24dp)
-                .setImageViewTint(R.id.icon_circle, R.attr.colorButtonNormal)
+                .setImageViewTint(R.id.icon_circle, builder.getThemeColor(R.attr.colorButtonNormal))
                 .setWhen(when)
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_call);
