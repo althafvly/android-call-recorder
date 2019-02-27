@@ -24,6 +24,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
     public static String SHOW_PROGRESS = MainActivity.class.getCanonicalName() + ".SHOW_PROGRESS";
     public static String SET_PROGRESS = MainActivity.class.getCanonicalName() + ".SET_PROGRESS";
     public static String SHOW_LAST = MainActivity.class.getCanonicalName() + ".SHOW_LAST";
+    public static String ENABLE = MainActivity.class.getCanonicalName() + ".ENABLE";
 
     public static String SURVEY_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdNWW4nmCXTrGFKbd_9_bPrxwlrfyPyzKtRESsGeaKist06VA/viewform?usp=pp_url&entry.1823308770=%MANUFACTURER%&entry.856269988=%MODEL%&entry.2054570575=%OSVERSION%&entry.1549394127=%ROOT%&entry.2121261645=%BASEBAND%&entry.648583455=%ENCODER%&entry.1739416324=%SOURCE%&entry.1221822567=%QUALITY%&entry.533092626=%INSTALLED%&entry.992467367=%VERSION%";
     public static String SURVEY_URL_VIEW = "https://axet.gitlab.io/android-call-recorder/?m=%MANUFACTURER%&d=%MODEL%";
@@ -156,6 +158,14 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
     public static void startActivity(Context context) {
         Intent i = new Intent(context, MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        context.startActivity(i);
+    }
+
+    public static void startActivity(Context context, boolean enable) {
+        Intent i = new Intent(context, MainActivity.class);
+        i.setAction(ENABLE);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         context.startActivity(i);
@@ -321,6 +331,25 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                 }
             });
             d.show();
+        }
+
+        Intent intent = getIntent();
+        openIntent(intent);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        openIntent(intent);
+    }
+
+    void openIntent(Intent intent) {
+        String a = intent.getAction();
+        if (a != null && a.equals(ENABLE)) {
+            MenuBuilder m = new MenuBuilder(this);
+            MenuItem item = m.add(Menu.NONE, R.id.action_call, Menu.NONE, "");
+            onOptionsItemSelected(item);
         }
     }
 
@@ -517,7 +546,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                 resumeCall = item;
                 return true;
             }
-            call(item.isChecked());
+            RecordingService.setEnabled(this, item.isChecked());
             return true;
         }
 
@@ -528,20 +557,6 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    void call(boolean b) {
-        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor edit = shared.edit();
-        edit.putBoolean(CallApplication.PREFERENCE_CALL, b);
-        edit.commit();
-        if (b) {
-            RecordingService.startService(this);
-            Toast.makeText(this, R.string.recording_enabled, Toast.LENGTH_SHORT).show();
-        } else {
-            RecordingService.stopService(this);
-            Toast.makeText(this, R.string.recording_disabled, Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override
@@ -628,7 +643,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                     }
                     recordings.load(false, null);
                     if (resumeCall != null) {
-                        call(resumeCall.isChecked());
+                        RecordingService.setEnabled(this, resumeCall.isChecked());
                         resumeCall = null;
                     }
                 } else {
