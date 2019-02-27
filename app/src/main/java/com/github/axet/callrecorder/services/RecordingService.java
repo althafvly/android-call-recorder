@@ -113,14 +113,17 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         }
     };
 
-    public static class MediaRecorderThread extends Thread {
-        public MediaRecorderThread() {
-            super("RecordingThread");
-        }
-
-        @Override
-        public void run() {
-            super.run();
+    public static void setEnabled(Context context, boolean b) {
+        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor edit = shared.edit();
+        edit.putBoolean(CallApplication.PREFERENCE_CALL, b);
+        edit.commit();
+        if (b) {
+            RecordingService.startService(context);
+            Toast.makeText(context, R.string.recording_enabled, Toast.LENGTH_SHORT).show();
+        } else {
+            RecordingService.stopService(context);
+            Toast.makeText(context, R.string.recording_disabled, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -153,6 +156,17 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     public static void stopButton(Context context) {
         Intent intent = new Intent(STOP_BUTTON);
         context.sendBroadcast(intent);
+    }
+
+    public static class MediaRecorderThread extends Thread {
+        public MediaRecorderThread() {
+            super("RecordingThread");
+        }
+
+        @Override
+        public void run() {
+            super.run();
+        }
     }
 
     public interface Success {
