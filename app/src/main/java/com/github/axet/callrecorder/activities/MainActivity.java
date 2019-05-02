@@ -1,6 +1,7 @@
 package com.github.axet.callrecorder.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -344,11 +345,13 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         openIntent(intent);
     }
 
+    @SuppressLint("RestrictedApi")
     void openIntent(Intent intent) {
         String a = intent.getAction();
         if (a != null && a.equals(ENABLE)) {
             MenuBuilder m = new MenuBuilder(this);
             MenuItem item = m.add(Menu.NONE, R.id.action_call, Menu.NONE, "");
+            item.setEnabled(RecordingService.isEnabled(this));
             onOptionsItemSelected(item);
         }
     }
