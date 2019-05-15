@@ -65,10 +65,7 @@ public class CallApplication extends com.github.axet.audiolibrary.app.MainApplic
         channelIcon = new NotificationChannelCompat(this, "icon", "Persistent Icon", NotificationManagerCompat.IMPORTANCE_LOW);
         channelStatus = new NotificationChannelCompat(this, "status", "Status", NotificationManagerCompat.IMPORTANCE_LOW);
 
-        if (Build.VERSION.SDK_INT >= 26 && getApplicationInfo().targetSdkVersion >= 26)
-            OptimizationPreferenceCompat.ICON = false;
-        else
-            OptimizationPreferenceCompat.ICON = true;
+        OptimizationPreferenceCompat.setIcon(this, true);
 
         switch (getVersion(PREFERENCE_VERSION, R.xml.pref_general)) {
             case -1:

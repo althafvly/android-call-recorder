@@ -3,7 +3,6 @@ package com.github.axet.callrecorder.services;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -32,6 +31,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.github.axet.androidlibrary.app.NotificationManagerCompat;
+import com.github.axet.androidlibrary.services.PersistentService;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.ProximityShader;
@@ -69,7 +69,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p/>
  * Maybe later this class will be converted for fully feature recording service with recording thread.
  */
-public class RecordingService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class RecordingService extends PersistentService implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String TAG = RecordingService.class.getSimpleName();
 
     public static final int NOTIFICATION_RECORDING_ICON = 1;
@@ -83,8 +83,6 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     Sound sound;
     AtomicBoolean interrupt = new AtomicBoolean();
     Thread thread;
-    Notification notification;
-    Notification icon;
     Storage storage;
     RecordingReceiver receiver;
     PhoneStateReceiver state;
@@ -113,22 +111,28 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         }
     };
 
+    static {
+        PersistentService.NOTIFICATION_PERSISTENT_ICON = NOTIFICATION_PERSISTENT_ICON;
+        PREFERENCE_OPTIMIZATION = CallApplication.PREFERENCE_OPTIMIZATION;
+        PREFERENCE_NEXT = CallApplication.PREFERENCE_NEXT;
+    }
+
     public static void setEnabled(Context context, boolean b) {
         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor edit = shared.edit();
         edit.putBoolean(CallApplication.PREFERENCE_CALL, b);
         edit.commit();
         if (b) {
-            RecordingService.startService(context);
+            RecordingService.start(context);
             Toast.makeText(context, R.string.recording_enabled, Toast.LENGTH_SHORT).show();
         } else {
-            RecordingService.stopService(context);
+            RecordingService.stop(context);
             Toast.makeText(context, R.string.recording_disabled, Toast.LENGTH_SHORT).show();
         }
     }
 
-    public static void startService(Context context) {
-        OptimizationPreferenceCompat.startService(context, new Intent(context, RecordingService.class));
+    public static void start(Context context) {
+        start(context, new Intent(context, RecordingService.class));
     }
 
     public static boolean isEnabled(Context context) {
@@ -141,11 +145,11 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
 
     public static void startIfEnabled(Context context) {
         if (isEnabled(context))
-            startService(context);
+            start(context);
     }
 
-    public static void stopService(Context context) {
-        context.stopService(new Intent(context, RecordingService.class));
+    public static void stop(Context context) {
+        stop(context, new Intent(context, RecordingService.class));
     }
 
     public static void pauseButton(Context context) {
@@ -195,6 +199,24 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     }
 
     class RecordingReceiver extends BroadcastReceiver {
+        IntentFilter filter;
+
+        public RecordingReceiver() {
+            filter = new IntentFilter();
+            filter.addAction(Intent.ACTION_SCREEN_ON);
+            filter.addAction(Intent.ACTION_SCREEN_OFF);
+            filter.addAction(PAUSE_BUTTON);
+            filter.addAction(STOP_BUTTON);
+        }
+
+        public void register(Context context) {
+            context.registerReceiver(this, filter);
+        }
+
+        public void unregister(Context context) {
+            context.unregisterReceiver(this);
+        }
+
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
@@ -205,9 +227,6 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                 if (a.equals(STOP_BUTTON)) {
                     finish();
                 }
-                if (a.equals(OptimizationPreferenceCompat.ICON_UPDATE)) {
-                    updateIcon();
-                }
             } catch (RuntimeException e) {
                 Error(e);
             }
@@ -215,6 +234,22 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     }
 
     class PhoneStateReceiver extends BroadcastReceiver {
+        IntentFilter filters;
+
+        public PhoneStateReceiver() {
+            filters = new IntentFilter();
+            filters.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
+            filters.addAction(Intent.ACTION_NEW_OUTGOING_CALL);
+        }
+
+        public void register(Context context) {
+            context.registerReceiver(this, filters);
+        }
+
+        public void unregister(Context context) {
+            context.unregisterReceiver(this);
+        }
+
         @Override
         public void onReceive(Context context, Intent intent) {
             String a = intent.getAction();
@@ -318,29 +353,8 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         super.onCreate();
         Log.d(TAG, "onCreate");
 
-        optimization = new OptimizationPreferenceCompat.ServiceReceiver(this, getClass(), CallApplication.PREFERENCE_OPTIMIZATION) {
-            @Override
-            public void register() {
-                super.register();
-                OptimizationPreferenceCompat.setKillCheck(RecordingService.this, next, CallApplication.PREFERENCE_NEXT);
-            }
-
-            @Override
-            public void unregister() {
-                super.unregister();
-                OptimizationPreferenceCompat.setKillCheck(RecordingService.this, 0, CallApplication.PREFERENCE_NEXT);
-            }
-        };
-        optimization.create();
-
         receiver = new RecordingReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_SCREEN_ON);
-        filter.addAction(Intent.ACTION_SCREEN_OFF);
-        filter.addAction(PAUSE_BUTTON);
-        filter.addAction(STOP_BUTTON);
-        filter.addAction(OptimizationPreferenceCompat.ICON_UPDATE);
-        registerReceiver(receiver, filter);
+        receiver.register(this);
 
         storage = new Storage(this);
         sound = new Sound(this);
@@ -351,16 +365,12 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
         tm.listen(pscl, PhoneStateListener.LISTEN_CALL_STATE);
 
-        filter = new IntentFilter();
-        filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
-        filter.addAction(Intent.ACTION_NEW_OUTGOING_CALL);
         state = new PhoneStateReceiver();
-        registerReceiver(state, filter);
-
-        SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
+        state.register(this);
 
         sampleRate = Sound.getSampleRate(this);
 
+        SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
         shared.registerOnSharedPreferenceChangeListener(this);
 
         try {
@@ -368,8 +378,6 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         } catch (RuntimeException e) {
             Error(e);
         }
-
-        updateIcon();
     }
 
     void deleteOld() {
@@ -431,27 +439,17 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand");
-
-        if (optimization.onStartCommand(intent, flags, startId)) {
-            // nothing to restart
+    public void onStartCommand(Intent intent) {
+        String a = intent.getAction();
+        if (a == null) {
+            ; // nothing
+        } else if (a.equals(PAUSE_BUTTON)) {
+            Intent i = new Intent(PAUSE_BUTTON);
+            sendBroadcast(i);
+        } else if (a.equals(SHOW_ACTIVITY)) {
+            ProximityShader.closeSystemDialogs(this);
+            MainActivity.startActivity(this);
         }
-
-        if (intent != null) {
-            String a = intent.getAction();
-            if (a == null) {
-                ; // nothing
-            } else if (a.equals(PAUSE_BUTTON)) {
-                Intent i = new Intent(PAUSE_BUTTON);
-                sendBroadcast(i);
-            } else if (a.equals(SHOW_ACTIVITY)) {
-                ProximityShader.closeSystemDialogs(this);
-                MainActivity.startActivity(this);
-            }
-        }
-
-        return super.onStartCommand(intent, flags, startId);
     }
 
     @Nullable
@@ -465,19 +463,12 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         super.onDestroy();
         Log.d(TAG, "onDestory");
 
-        showNotificationAlarm(false);
-
         handle.removeCallbacks(encodingNext);
 
         stopRecording();
 
         SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
         shared.unregisterOnSharedPreferenceChangeListener(this);
-
-        if (optimization != null) {
-            optimization.close();
-            optimization = null;
-        }
 
         if (receiver != null) {
             unregisterReceiver(receiver);
@@ -588,62 +579,19 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         return builder.build();
     }
 
-    public void showNotificationAlarm(boolean show) {
+    public void updateIcon(boolean show) {
         boolean recording = thread != null;
         MainActivity.showProgress(RecordingService.this, show, phone, samplesTime / sampleRate, recording);
-        updateIcon();
+        OptimizationPreferenceCompat.State state = OptimizationPreferenceCompat.getState(this, PREFERENCE_OPTIMIZATION);
+        updateIcon(show ? new Intent() : null);
     }
 
-    public void updateIcon() {
-        NotificationManagerCompat nm = NotificationManagerCompat.from(this);
-
-        OptimizationPreferenceCompat.State state = OptimizationPreferenceCompat.getState(this, CallApplication.PREFERENCE_OPTIMIZATION);
-
-        if (!isEnabled(this) && thread == null && encoding == null) {
-            stopForeground(true);
-            nm.cancel(NOTIFICATION_PERSISTENT_ICON);
-            nm.cancel(NOTIFICATION_RECORDING_ICON);
-            icon = null;
-            notification = null;
-            return;
-        }
-
-        if (Build.VERSION.SDK_INT >= 26 && (state.icon || getApplicationInfo().targetSdkVersion >= 26)) {
-            Notification n = buildPersistent(icon);
-            if (icon == null)
-                startForeground(NOTIFICATION_PERSISTENT_ICON, n);
-            else
-                nm.notify(NOTIFICATION_PERSISTENT_ICON, n);
-            icon = n;
-
-            if (thread == null && encoding == null) {
-                nm.cancel(NOTIFICATION_RECORDING_ICON);
-                notification = null;
-            } else {
-                n = buildNotification(notification);
-                nm.notify(NOTIFICATION_RECORDING_ICON, n);
-                notification = n;
-            }
-        } else {
-            if (thread == null && encoding == null) {
-                if (state.icon || Build.VERSION.SDK_INT >= 26 && getApplicationInfo().targetSdkVersion >= 26) {
-                    Notification n = buildPersistent(notification);
-                    if (notification == null)
-                        startForeground(NOTIFICATION_RECORDING_ICON, n);
-                    else
-                        nm.notify(NOTIFICATION_RECORDING_ICON, n);
-                    notification = n;
-                } else {
-                    stopForeground(true);
-                    nm.cancel(NOTIFICATION_RECORDING_ICON);
-                    notification = null;
-                }
-            } else {
-                Notification n = buildNotification(notification);
-                nm.notify(NOTIFICATION_RECORDING_ICON, n);
-                notification = n;
-            }
-        }
+    @Override
+    public Notification build(Intent intent) {
+        if (thread == null && encoding == null)
+            return buildPersistent(notification);
+        else
+            return buildNotification(notification);
     }
 
     public void showDone(Uri targetUri) {
@@ -678,7 +626,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             startAudioRecorder(ss, i);
         }
 
-        showNotificationAlarm(true);
+        updateIcon(true);
     }
 
     void startAudioRecorder(int[] ss, int i) {
@@ -719,7 +667,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                     public void run() {
                         deleteOld();
                         stopRecording();
-                        showNotificationAlarm(false);
+                        updateIcon(false);
                     }
                 };
 
@@ -899,7 +847,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
                         public void run() {
                             deleteOld();
                             stopRecording();
-                            showNotificationAlarm(false);
+                            updateIcon(false);
                         }
                     };
 
@@ -1104,7 +1052,7 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             }
         } else { // if encoding failed, we will get no output file, hide notifications
             deleteOld();
-            showNotificationAlarm(false);
+            updateIcon(false);
         }
     }
 
@@ -1142,12 +1090,12 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
             @Override
             public void run() {
                 deleteOld();
-                showNotificationAlarm(false);
+                updateIcon(false);
                 encoding = null;
                 encoder = null;
             }
         };
-        showNotificationAlarm(true); // update status (encoding)
+        updateIcon(true); // update status (encoding)
         Log.d(TAG, "Encoded " + inFile.getName() + " to " + Storage.getDisplayName(this, targetUri));
         encoding(inFile, targetUri, encoding, new Success() {
             @Override
@@ -1171,11 +1119,5 @@ public class RecordingService extends Service implements SharedPreferences.OnSha
         }
         if (key.equals(CallApplication.PREFERENCE_THEME)) {
         }
-    }
-
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        super.onTaskRemoved(rootIntent);
-        optimization.onTaskRemoved(rootIntent);
     }
 }
