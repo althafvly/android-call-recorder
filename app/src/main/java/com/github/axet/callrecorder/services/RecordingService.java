@@ -30,7 +30,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.github.axet.androidlibrary.app.NotificationManagerCompat;
 import com.github.axet.androidlibrary.services.PersistentService;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
@@ -551,7 +550,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
                 .setChannel(CallApplication.from(this).channelStatus)
                 .setWhen(when)
                 .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_mic);
+                .setSmallIcon(R.drawable.ic_launcher_notification_call);
 
         return builder.build();
     }
@@ -574,7 +573,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
                 .setImageViewTint(R.id.icon_circle, builder.getThemeColor(R.attr.colorButtonNormal))
                 .setWhen(when)
                 .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_call);
+                .setSmallIcon(R.drawable.ic_launcher_notification_service);
 
         return builder.build();
     }
