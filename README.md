@@ -39,3 +39,4 @@ Check user surveys at project home page here:
   * japaness translation thanks to @naofumi
   * greek translation thanks to @cryoranger
   * german translation thanks to @aenaehcwh
+  * Chinese (Taiwan) translation thanks to @cges30901
