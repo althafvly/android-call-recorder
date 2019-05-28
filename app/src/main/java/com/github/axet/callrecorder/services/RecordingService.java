@@ -30,6 +30,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.github.axet.androidlibrary.app.AlarmManager;
 import com.github.axet.androidlibrary.services.PersistentService;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
@@ -73,11 +74,15 @@ public class RecordingService extends PersistentService implements SharedPrefere
 
     public static final int NOTIFICATION_RECORDING_ICON = 1;
     public static final int NOTIFICATION_PERSISTENT_ICON = 2;
-    public static final int RETRY_DELAY = 60 * 1000; // 1 min
+    public static final int RETRY_DELAY = 60 * AlarmManager.SEC1; // 1 min
 
     public static String SHOW_ACTIVITY = RecordingService.class.getCanonicalName() + ".SHOW_ACTIVITY";
     public static String PAUSE_BUTTON = RecordingService.class.getCanonicalName() + ".PAUSE_BUTTON";
     public static String STOP_BUTTON = RecordingService.class.getCanonicalName() + ".STOP_BUTTON";
+
+    {
+        id = NOTIFICATION_PERSISTENT_ICON;
+    }
 
     Sound sound;
     AtomicBoolean interrupt = new AtomicBoolean();
@@ -85,14 +90,11 @@ public class RecordingService extends PersistentService implements SharedPrefere
     Storage storage;
     RecordingReceiver receiver;
     PhoneStateReceiver state;
-    // output target file 2016-01-01 01.01.01.wav
-    Uri targetUri;
+    Uri targetUri;    // output target file 2016-01-01 01.01.01.wav
     PhoneStateChangeListener pscl;
     Handler handle = new Handler();
-    // variable from settings. how may samples per second.
-    int sampleRate;
-    // how many samples passed for current recording
-    long samplesTime;
+    int sampleRate; // variable from settings. how may samples per second.
+    long samplesTime; // how many samples passed for current recording
     FileEncoder encoder;
     Runnable encoding; // current encoding
     HashMap<File, CallInfo> mapTarget = new HashMap<>();
@@ -109,12 +111,6 @@ public class RecordingService extends PersistentService implements SharedPrefere
             encodingNext();
         }
     };
-
-    static {
-        PersistentService.NOTIFICATION_PERSISTENT_ICON = NOTIFICATION_PERSISTENT_ICON;
-        PREFERENCE_OPTIMIZATION = CallApplication.PREFERENCE_OPTIMIZATION;
-        PREFERENCE_NEXT = CallApplication.PREFERENCE_NEXT;
-    }
 
     public static void setEnabled(Context context, boolean b) {
         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(context);
@@ -350,7 +346,6 @@ public class RecordingService extends PersistentService implements SharedPrefere
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate");
 
         receiver = new RecordingReceiver();
         receiver.register(this);
@@ -377,6 +372,12 @@ public class RecordingService extends PersistentService implements SharedPrefere
         } catch (RuntimeException e) {
             Error(e);
         }
+    }
+
+    @Override
+    public void onCreateOptimization() {
+        optimization = new ServiceReceiver(CallApplication.PREFERENCE_OPTIMIZATION, CallApplication.PREFERENCE_NEXT);
+        optimization.create();
     }
 
     void deleteOld() {
@@ -581,7 +582,6 @@ public class RecordingService extends PersistentService implements SharedPrefere
     public void updateIcon(boolean show) {
         boolean recording = thread != null;
         MainActivity.showProgress(RecordingService.this, show, phone, samplesTime / sampleRate, recording);
-        OptimizationPreferenceCompat.State state = OptimizationPreferenceCompat.getState(this, PREFERENCE_OPTIMIZATION);
         updateIcon(show ? new Intent() : null);
     }
 
