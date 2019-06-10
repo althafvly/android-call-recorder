@@ -98,7 +98,6 @@ public class RecordingService extends PersistentService implements SharedPrefere
     FileEncoder encoder;
     Runnable encoding; // current encoding
     HashMap<File, CallInfo> mapTarget = new HashMap<>();
-    OptimizationPreferenceCompat.ServiceReceiver optimization;
     String phone = "";
     String contact = "";
     String contactId = "";

@@ -4,12 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
@@ -28,9 +29,23 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
     boolean toolbarFilterIn;
     boolean toolbarFilterOut;
 
-    public Recordings(Context context, ListView list) {
+    public static class RecordingHolder extends com.github.axet.audiolibrary.app.Recordings.RecordingHolder {
+        LinearLayout s;
+        ImageView i;
+
+        public RecordingHolder(View v) {
+            super(v);
+            s = (LinearLayout) v.findViewById(R.id.recording_status);
+            i = (ImageView) v.findViewById(R.id.recording_call);
+        }
+    }
+
+    public Recordings(Context context, RecyclerView list) {
         super(context, list);
-        View empty = list.getEmptyView();
+    }
+
+    public void setEmptyView(View empty) {
+        this.empty.setEmptyView(empty);
         refresh = empty.findViewById(R.id.refresh);
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +61,7 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
     public void load(Uri mount, boolean clean, Runnable done) {
         progressText.setText(R.string.recording_list_is_empty);
         refresh.setVisibility(View.GONE);
-        if (!com.github.axet.audiolibrary.app.Storage.exists(getContext(), mount)) { // folder may not exist, do not show error
+        if (!com.github.axet.audiolibrary.app.Storage.exists(context, mount)) { // folder may not exist, do not show error
             scan(new ArrayList<com.github.axet.audiolibrary.app.Storage.Node>(), clean, done);
             return;
         }
@@ -62,7 +77,7 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
 
     @Override
     public String[] getEncodingValues() {
-        return Storage.getEncodingValues(getContext());
+        return Storage.getEncodingValues(context);
     }
 
     @Override
@@ -74,27 +89,32 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View v = super.getView(position, convertView, parent);
-        LinearLayout s = (LinearLayout) v.findViewById(R.id.recording_status);
-        ImageView i = (ImageView) v.findViewById(R.id.recording_call);
+    public RecordingHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View convertView = inflate(inflater, R.layout.recording, parent);
+        return new RecordingHolder(convertView);
+    }
+
+    @Override
+    public void onBindViewHolder(com.github.axet.audiolibrary.app.Recordings.RecordingHolder hh, int position) {
+        super.onBindViewHolder(hh, position);
+        RecordingHolder h = (RecordingHolder) hh;
         Storage.RecordingUri u = getItem(position);
-        String call = CallApplication.getCall(getContext(), u.uri);
+        String call = CallApplication.getCall(context, u.uri);
         if (call == null || call.isEmpty()) {
-            i.setVisibility(View.GONE);
+            h.i.setVisibility(View.GONE);
         } else {
             switch (call) {
                 case CallApplication.CALL_IN:
-                    i.setVisibility(View.VISIBLE);
-                    i.setImageResource(R.drawable.ic_call_received_black_24dp);
+                    h.i.setVisibility(View.VISIBLE);
+                    h.i.setImageResource(R.drawable.ic_call_received_black_24dp);
                     break;
                 case CallApplication.CALL_OUT:
-                    i.setVisibility(View.VISIBLE);
-                    i.setImageResource(R.drawable.ic_call_made_black_24dp);
+                    h.i.setVisibility(View.VISIBLE);
+                    h.i.setImageResource(R.drawable.ic_call_made_black_24dp);
                     break;
             }
         }
-        return v;
     }
 
     @Override
@@ -103,7 +123,7 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
         if (include) {
             if (!toolbarFilterIn && !toolbarFilterOut)
                 return true;
-            String call = CallApplication.getCall(getContext(), f.uri);
+            String call = CallApplication.getCall(context, f.uri);
             if (call == null || call.isEmpty())
                 return false;
             if (toolbarFilterIn)
@@ -150,7 +170,7 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
 
     protected void save() {
         super.save();
-        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(getContext());
+        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor edit = shared.edit();
         edit.putBoolean(CallApplication.PREFERENCE_FILTER_IN, toolbarFilterIn);
         edit.putBoolean(CallApplication.PREFERENCE_FILTER_OUT, toolbarFilterOut);
@@ -159,7 +179,7 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
 
     protected void load() {
         super.load();
-        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(getContext());
+        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(context);
         toolbarFilterIn = shared.getBoolean(CallApplication.PREFERENCE_FILTER_IN, false);
         toolbarFilterOut = shared.getBoolean(CallApplication.PREFERENCE_FILTER_OUT, false);
     }
