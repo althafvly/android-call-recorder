@@ -25,14 +25,14 @@ public class MixerPaths {
     public static final String VENDOR = "/vendor";
     public static final String REMOUNT_VENDOR = SuperUser.BIN_MOUNT + " -o remount,rw " + VENDOR;
 
-    public static final String PATH = find(new String[]{SuperUser.SYSTEM + SuperUser.ETC, VENDOR + SuperUser.ETC, SuperUser.ETC}, MIXER_PATHS);
+    public static final String PATH = find(MIXER_PATHS, SuperUser.SYSTEM + SuperUser.ETC, VENDOR + SuperUser.ETC, SuperUser.ETC);
 
     public static final String TRUE = "1";
     public static final String FALSE = "0";
 
     protected String xml;
 
-    public static String find(String[] dd, final Pattern p) {
+    public static String find(final Pattern p, String... dd) {
         for (String d : dd) {
             File f = new File(d);
             File[] ff = f.listFiles(new FilenameFilter() {
