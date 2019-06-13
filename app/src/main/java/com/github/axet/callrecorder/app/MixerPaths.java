@@ -25,12 +25,12 @@ public class MixerPaths {
     public static final String VENDOR = "/vendor";
     public static final String REMOUNT_VENDOR = SuperUser.BIN_MOUNT + " -o remount,rw " + VENDOR;
 
-    public static final String PATH = find(new String[]{SuperUser.SYSTEM + SuperUser.ETC, SuperUser.ETC, VENDOR + SuperUser.ETC}, MIXER_PATHS);
+    public static final String PATH = find(new String[]{SuperUser.SYSTEM + SuperUser.ETC, VENDOR + SuperUser.ETC, SuperUser.ETC}, MIXER_PATHS);
 
     public static final String TRUE = "1";
     public static final String FALSE = "0";
 
-    String xml;
+    protected String xml;
 
     public static String find(String[] dd, final Pattern p) {
         for (String d : dd) {
@@ -69,7 +69,7 @@ public class MixerPaths {
         SuperUser.Commands args = new SuperUser.Commands();
         if (PATH.startsWith(VENDOR))
             args.add(REMOUNT_VENDOR);
-        if (PATH.startsWith(SuperUser.SYSTEM))
+        else
             args.add(SuperUser.REMOUNT_SYSTEM);
         args.add(MessageFormat.format(SuperUser.CAT_TO, PATH, xml.trim()));
         SuperUser.su(args).must();
