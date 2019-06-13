@@ -22,8 +22,10 @@ public class MixerPaths {
 
     public static final Pattern MIXER_PATHS = Pattern.compile(Storage.wildcard("mixer_paths*.xml"));
     public static final Pattern VOC_REC = Pattern.compile("VOC_REC.*value=\"(\\d+)\"");
+    public static final String VENDOR = "/vendor";
+    public static final String REMOUNT_VENDOR = SuperUser.BIN_MOUNT + " -o remount,rw " + VENDOR;
 
-    public static final String PATH = find(new String[]{SuperUser.SYSTEM + SuperUser.ETC, SuperUser.ETC}, MIXER_PATHS);
+    public static final String PATH = find(new String[]{SuperUser.SYSTEM + SuperUser.ETC, SuperUser.ETC, VENDOR + SuperUser.ETC}, MIXER_PATHS);
 
     public static final String TRUE = "1";
     public static final String FALSE = "0";
@@ -65,7 +67,10 @@ public class MixerPaths {
 
     public void save() {
         SuperUser.Commands args = new SuperUser.Commands();
-        args.add(SuperUser.REMOUNT_SYSTEM);
+        if (PATH.startsWith(VENDOR))
+            args.add(REMOUNT_VENDOR);
+        if (PATH.startsWith(SuperUser.SYSTEM))
+            args.add(SuperUser.REMOUNT_SYSTEM);
         args.add(MessageFormat.format(SuperUser.CAT_TO, PATH, xml.trim()));
         SuperUser.su(args).must();
     }
