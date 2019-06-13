@@ -81,9 +81,13 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
         return ext;
     }
 
+    public static String escape(String s) {
+        return s.replace("/", "\\\\");
+    }
+
     public static String getFormatted(String format, long now, String phone, String contact, String call) {
         if (contact != null && !contact.isEmpty()) {
-            format = format.replaceAll("%c", contact);
+            format = format.replaceAll("%c", escape(contact));
         } else {
             if (phone != null && !phone.isEmpty())
                 format = format.replaceAll("%c", phone);
@@ -91,11 +95,10 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
                 format = format.replaceAll("%c", "");
         }
 
-        if (phone != null && !phone.isEmpty()) {
+        if (phone != null && !phone.isEmpty())
             format = format.replaceAll("%p", phone);
-        } else {
+        else
             format = format.replaceAll("%p", "");
-        }
 
         format = format.replaceAll("%T", "" + now / 1000);
         format = format.replaceAll("%s", SIMPLE.format(new Date()));

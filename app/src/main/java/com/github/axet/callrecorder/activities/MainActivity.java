@@ -1,6 +1,7 @@
 package com.github.axet.callrecorder.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,6 +26,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
@@ -39,7 +43,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -111,7 +114,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
     Recordings recordings;
     Storage storage;
-    ListView list;
+    RecyclerView list;
     Handler handler = new Handler();
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -209,9 +212,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         if (OptimizationPreferenceCompat.needKillWarning(this, CallApplication.PREFERENCE_NEXT))
             OptimizationPreferenceCompat.buildKilledWarning(this, true, CallApplication.PREFERENCE_OPTIMIZATION).show();
 
-        list = (ListView) findViewById(R.id.list);
-        View empty = findViewById(R.id.empty_list);
-        list.setEmptyView(empty);
+        list = (RecyclerView) findViewById(R.id.list);
 
         storage = new Storage(this);
 
@@ -247,8 +248,12 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
         updatePanel();
 
+        View empty = findViewById(R.id.empty_list);
         recordings = new Recordings(this, list);
-        list.setAdapter(recordings);
+        recordings.setEmptyView(empty);
+        list.setAdapter(recordings.empty);
+        list.setLayoutManager(new LinearLayoutManager(this));
+        list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         recordings.setToolbar((ViewGroup) findViewById(R.id.recording_toolbar));
 
         RecordingService.startIfEnabled(this);
@@ -344,11 +349,13 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         openIntent(intent);
     }
 
+    @SuppressLint("RestrictedApi")
     void openIntent(Intent intent) {
         String a = intent.getAction();
         if (a != null && a.equals(ENABLE)) {
             MenuBuilder m = new MenuBuilder(this);
             MenuItem item = m.add(Menu.NONE, R.id.action_call, Menu.NONE, "");
+            item.setEnabled(RecordingService.isEnabled(this));
             onOptionsItemSelected(item);
         }
     }
@@ -602,7 +609,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            list.setSelection(selected);
+                            list.scrollToPosition(selected);
                         }
                     });
                 }
@@ -617,7 +624,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
         String last = shared.getString(CallApplication.PREFERENCE_LAST, "");
         last = last.toLowerCase();
-        for (int i = 0; i < recordings.getCount(); i++) {
+        for (int i = 0; i < recordings.getItemCount(); i++) {
             Storage.RecordingUri f = recordings.getItem(i);
             String n = Storage.getName(this, f.uri).toLowerCase();
             if (n.equals(last)) {
@@ -673,12 +680,6 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                list.smoothScrollToPosition(recordings.getSelected());
-            }
-        });
     }
 
     @Override
