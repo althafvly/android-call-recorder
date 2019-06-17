@@ -44,6 +44,7 @@ import com.github.axet.audiolibrary.encoders.OnFlyEncoding;
 import com.github.axet.audiolibrary.filters.AmplifierFilter;
 import com.github.axet.audiolibrary.filters.SkipSilenceFilter;
 import com.github.axet.audiolibrary.filters.VoiceFilter;
+import com.github.axet.callrecorder.BuildConfig;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.activities.MainActivity;
 import com.github.axet.callrecorder.activities.RecentCallActivity;
@@ -111,7 +112,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
     };
 
     public static void Post(Context context, Throwable e) {
-        Log.e(TAG, "post", e);
+        Log.e(TAG, "Post", e);
         Toast.Post(context, "CallRecorder: " + ErrorDialog.toMessage(e));
     }
 
@@ -264,7 +265,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
     class PhoneStateChangeListener extends PhoneStateListener {
         public boolean wasRinging;
         public boolean startedByCall;
-        TelephonyManager tm;
+        public TelephonyManager tm;
 
         public PhoneStateChangeListener() {
             tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -625,11 +626,10 @@ public class RecordingService extends PersistentService implements SharedPrefere
             i = Sound.indexOf(ss, i);
 
         String ext = shared.getString(CallApplication.PREFERENCE_ENCODING, "");
-        if (Storage.isMediaRecorder(ext)) {
+        if (Storage.isMediaRecorder(ext))
             startMediaRecorder(ext, ss, i);
-        } else {
+        else
             startAudioRecorder(ss, i);
-        }
 
         updateIcon(true);
     }
@@ -662,7 +662,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
                 }
 
                 PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-                PowerManager.WakeLock wlcpu = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, RecordingService.class.getCanonicalName() + "_cpulock");
+                PowerManager.WakeLock wlcpu = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, BuildConfig.APPLICATION_ID + ":cpulock");
                 wlcpu.acquire();
 
                 android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
@@ -872,7 +872,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
                     };
 
                     PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-                    PowerManager.WakeLock wlcpu = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, RecordingService.class.getCanonicalName() + "_cpulock");
+                    PowerManager.WakeLock wlcpu = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, BuildConfig.APPLICATION_ID + ":cpulock");
                     wlcpu.acquire();
 
                     boolean start = false;
