@@ -71,8 +71,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class RecordingService extends PersistentService implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String TAG = RecordingService.class.getSimpleName();
 
-    public static final int NOTIFICATION_RECORDING_ICON = 1;
-    public static final int NOTIFICATION_PERSISTENT_ICON = 2;
+    public static final int NOTIFICATION_PERSISTENT_ICON = 1;
     public static final int RETRY_DELAY = 60 * AlarmManager.SEC1; // 1 min
 
     public static String SHOW_ACTIVITY = RecordingService.class.getCanonicalName() + ".SHOW_ACTIVITY";
@@ -88,7 +87,14 @@ public class RecordingService extends PersistentService implements SharedPrefere
     Storage storage;
     RecordingReceiver receiver;
     PhoneStateReceiver state;
-    Uri targetUri;    // output target file 2016-01-01 01.01.01.wav
+
+    long now;
+    Uri targetUri; // output target file 2016-01-01 01.01.01.wav
+    String phone = "";
+    String contact = "";
+    String contactId = "";
+    String call;
+
     PhoneStateChangeListener pscl;
     Handler handle = new Handler();
     int sampleRate; // variable from settings. how may samples per second.
@@ -96,11 +102,6 @@ public class RecordingService extends PersistentService implements SharedPrefere
     FileEncoder encoder;
     Runnable encoding; // current encoding
     HashMap<File, CallInfo> mapTarget = new HashMap<>();
-    String phone = "";
-    String contact = "";
-    String contactId = "";
-    String call;
-    long now;
     int source = -1; // audiorecorder source
     Runnable encodingNext = new Runnable() {
         @Override
@@ -1018,9 +1019,8 @@ public class RecordingService extends PersistentService implements SharedPrefere
     void begin(boolean wasRinging) {
         now = System.currentTimeMillis();
         targetUri = storage.getNewFile(now, phone, contact, call);
-        if (encoder != null) {
+        if (encoder != null)
             encoder.pause();
-        }
         if (storage.recordingPending()) {
             RawSamples rs = new RawSamples(storage.getTempRecording());
             samplesTime = rs.getSamples();
@@ -1038,11 +1038,10 @@ public class RecordingService extends PersistentService implements SharedPrefere
             File in = Storage.getNextFile(parent, Storage.TMP_REC, null);
             Storage.move(tmp, in);
             mapTarget.put(in, new CallInfo(targetUri, phone, contact, contactId, call, now));
-            if (encoder == null) { // double finish()? skip
+            if (encoder == null) // double finish()? skip
                 encodingNext();
-            } else {
+            else
                 encoder.resume();
-            }
         } else { // if encoding failed, we will get no output file, hide notifications
             deleteOld();
             updateIcon(false);
