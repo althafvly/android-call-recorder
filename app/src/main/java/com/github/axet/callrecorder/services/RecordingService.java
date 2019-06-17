@@ -33,7 +33,6 @@ import android.widget.Toast;
 import com.github.axet.androidlibrary.app.AlarmManager;
 import com.github.axet.androidlibrary.services.PersistentService;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
-import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.ProximityShader;
 import com.github.axet.androidlibrary.widgets.RemoteNotificationCompat;
 import com.github.axet.audiolibrary.app.RawSamples;
@@ -84,7 +83,6 @@ public class RecordingService extends PersistentService implements SharedPrefere
         id = NOTIFICATION_PERSISTENT_ICON;
     }
 
-    Sound sound;
     AtomicBoolean interrupt = new AtomicBoolean();
     Thread thread;
     Storage storage;
@@ -103,7 +101,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
     String contactId = "";
     String call;
     long now;
-    int source = -1; // audiotrecorder source
+    int source = -1; // audiorecorder source
     Runnable encodingNext = new Runnable() {
         @Override
         public void run() {
@@ -215,12 +213,10 @@ public class RecordingService extends PersistentService implements SharedPrefere
         public void onReceive(Context context, Intent intent) {
             try {
                 String a = intent.getAction();
-                if (a.equals(PAUSE_BUTTON)) {
+                if (a.equals(PAUSE_BUTTON))
                     pauseButton();
-                }
-                if (a.equals(STOP_BUTTON)) {
+                if (a.equals(STOP_BUTTON))
                     finish();
-                }
             } catch (RuntimeException e) {
                 Error(e);
             }
@@ -247,12 +243,10 @@ public class RecordingService extends PersistentService implements SharedPrefere
         @Override
         public void onReceive(Context context, Intent intent) {
             String a = intent.getAction();
-            if (a.equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED)) {
+            if (a.equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED))
                 setPhone(intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER), call);
-            }
-            if (a.equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
+            if (a.equals(Intent.ACTION_NEW_OUTGOING_CALL))
                 setPhone(intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER), CallApplication.CALL_OUT);
-            }
         }
     }
 
@@ -263,6 +257,14 @@ public class RecordingService extends PersistentService implements SharedPrefere
 
         public PhoneStateChangeListener() {
             tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        }
+
+        public void register() {
+            tm.listen(this, PhoneStateListener.LISTEN_CALL_STATE);
+        }
+
+        public void unregister() {
+            tm.listen(pscl, PhoneStateListener.LISTEN_NONE);
         }
 
         @Override
@@ -282,17 +284,15 @@ public class RecordingService extends PersistentService implements SharedPrefere
                         break;
                     case TelephonyManager.CALL_STATE_IDLE:
                         if (startedByCall) {
-                            if (tm.getCallState() != TelephonyManager.CALL_STATE_OFFHOOK) { // current state maybe differed from queued (s) one
+                            if (tm.getCallState() != TelephonyManager.CALL_STATE_OFFHOOK) // current state maybe differed from queued (s) one
                                 finish();
-                            } else {
+                            else
                                 return; // fast clicking. new call already stared. keep recording. do not reset startedByCall
-                            }
                         } else {
-                            if (storage.recordingPending()) { // handling restart after call finished
+                            if (storage.recordingPending()) // handling restart after call finished
                                 finish();
-                            } else if (storage.recordingNextPending()) { // only call encodeNext if we have next encoding
+                            else if (storage.recordingNextPending()) // only call encodeNext if we have next encoding
                                 encodingNext();
-                            }
                         }
                         wasRinging = false;
                         startedByCall = false;
@@ -350,13 +350,11 @@ public class RecordingService extends PersistentService implements SharedPrefere
         receiver.register(this);
 
         storage = new Storage(this);
-        sound = new Sound(this);
 
         deleteOld();
 
         pscl = new PhoneStateChangeListener();
-        TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
-        tm.listen(pscl, PhoneStateListener.LISTEN_CALL_STATE);
+        pscl.register();
 
         state = new PhoneStateReceiver();
         state.register(this);
@@ -460,7 +458,6 @@ public class RecordingService extends PersistentService implements SharedPrefere
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestory");
 
         handle.removeCallbacks(encodingNext);
 
@@ -470,18 +467,17 @@ public class RecordingService extends PersistentService implements SharedPrefere
         shared.unregisterOnSharedPreferenceChangeListener(this);
 
         if (receiver != null) {
-            unregisterReceiver(receiver);
+            receiver.unregister(this);
             receiver = null;
         }
 
         if (state != null) {
-            unregisterReceiver(state);
+            state.unregister(this);
             state = null;
         }
 
         if (pscl != null) {
-            TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
-            tm.listen(pscl, PhoneStateListener.LISTEN_NONE);
+            pscl.unregister();
             pscl = null;
         }
     }
@@ -1000,11 +996,10 @@ public class RecordingService extends PersistentService implements SharedPrefere
     }
 
     void pauseButton() {
-        if (thread != null) {
+        if (thread != null)
             stopRecording();
-        } else {
+        else
             startRecording();
-        }
         MainActivity.showProgress(this, true, phone, samplesTime / sampleRate, thread != null);
     }
 
@@ -1114,8 +1109,6 @@ public class RecordingService extends PersistentService implements SharedPrefere
         }
         if (key.equals(CallApplication.PREFERENCE_STORAGE)) {
             encodingNext();
-        }
-        if (key.equals(CallApplication.PREFERENCE_THEME)) {
         }
     }
 }
