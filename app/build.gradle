@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.github.axet.dxplugin'
 
 android {
     compileSdkVersion 25
@@ -67,5 +68,5 @@ preBuild.dependsOn fetch
 dependencies {
     implementation 'com.github.axet:android-audio-library:1.0.157' // implementation project(':android-audio-library')
     implementation "org.apache.commons:commons-csv:1.5"
-    testImplementation 'junit:junit:4.12'
+    assets('com.google.android.exoplayer:exoplayer:2.7.3') { exclude group: 'com.android.support' }
 }
