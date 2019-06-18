@@ -1078,11 +1078,9 @@ public class RecordingService extends PersistentService implements SharedPrefere
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(CallApplication.PREFERENCE_DELETE)) {
+        if (key.equals(CallApplication.PREFERENCE_DELETE))
             deleteOld();
-        }
-        if (key.equals(CallApplication.PREFERENCE_STORAGE)) {
+        if (key.equals(CallApplication.PREFERENCE_STORAGE))
             encodingNext();
-        }
     }
 }
