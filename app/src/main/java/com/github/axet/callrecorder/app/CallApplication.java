@@ -34,6 +34,8 @@ public class CallApplication extends com.github.axet.audiolibrary.app.MainApplic
     public static final String PREFERENCE_VOICE = "voice";
     public static final String PREFERENCE_VOLUME = "volume";
     public static final String PREFERENCE_VERSION = "version";
+    public static final String PREFERENCE_BOOT = "boot";
+    public static final String PREFERENCE_INSTALL = "install";
 
     public static final String CALL_OUT = "out";
     public static final String CALL_IN = "in";

@@ -211,6 +211,8 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
         if (OptimizationPreferenceCompat.needKillWarning(this, CallApplication.PREFERENCE_NEXT))
             OptimizationPreferenceCompat.buildKilledWarning(this, true, CallApplication.PREFERENCE_OPTIMIZATION).show();
+        else if (OptimizationPreferenceCompat.needBootWarning(this, CallApplication.PREFERENCE_BOOT, CallApplication.PREFERENCE_INSTALL))
+            OptimizationPreferenceCompat.buildBootWarning(this).show();
 
         list = (RecyclerView) findViewById(R.id.list);
 
