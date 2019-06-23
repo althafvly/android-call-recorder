@@ -7,3 +7,4 @@
 /build
 /captures
 app/src/main/res/raw/surveys.csv
+app/src/main/assets/*.dex
