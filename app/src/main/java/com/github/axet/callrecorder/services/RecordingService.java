@@ -522,7 +522,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
             case MediaRecorder.AudioSource.CAMCORDER:
                 return "(Camcoder)";
             default:
-                return "";
+                return "" + source;
         }
     }
 
