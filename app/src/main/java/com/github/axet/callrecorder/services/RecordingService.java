@@ -56,6 +56,7 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -164,6 +165,12 @@ public class RecordingService extends PersistentService implements SharedPrefere
     public static void stopButton(Context context) {
         Intent intent = new Intent(STOP_BUTTON);
         context.sendBroadcast(intent);
+    }
+
+    public static int[] concat(int[] first, int[] second) {
+        int[] result = Arrays.copyOf(first, first.length + second.length);
+        System.arraycopy(second, 0, result, first.length, second.length);
+        return result;
     }
 
     public static class MediaRecorderThread extends Thread {
@@ -515,7 +522,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
             case MediaRecorder.AudioSource.CAMCORDER:
                 return "(Camcoder)";
             default:
-                return "";
+                return "" + source;
         }
     }
 
@@ -619,11 +626,17 @@ public class RecordingService extends PersistentService implements SharedPrefere
                 MediaRecorder.AudioSource.DEFAULT, // mic
                 MediaRecorder.AudioSource.UNPROCESSED,
         };
-        int i = Integer.valueOf(shared.getString(CallApplication.PREFERENCE_SOURCE, "-1"));
-        if (i == -1)
+        int i;
+        int s = Integer.valueOf(shared.getString(CallApplication.PREFERENCE_SOURCE, "-1"));
+        if (s == -1) {
             i = 0;
-        else
-            i = Sound.indexOf(ss, i);
+        } else {
+            i = Sound.indexOf(ss, s);
+            if (i == -1) { // missing source, add as first
+                ss = concat(new int[]{s}, ss);
+                i = 0;
+            }
+        }
 
         String ext = shared.getString(CallApplication.PREFERENCE_ENCODING, "");
         if (Storage.isMediaRecorder(ext))
@@ -904,7 +917,6 @@ public class RecordingService extends PersistentService implements SharedPrefere
                         }
                         recorder.release();
                     }
-
                     handle.post(save);
                 }
             };
