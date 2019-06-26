@@ -460,8 +460,9 @@ public class RecordingService extends PersistentService implements SharedPrefere
         if (a == null) {
             ; // nothing
         } else if (a.equals(PAUSE_BUTTON)) {
-            Intent i = new Intent(PAUSE_BUTTON);
-            sendBroadcast(i);
+            pauseButton(this);
+        } else if (a.equals(STOP_BUTTON)) {
+            stopButton(this);
         } else if (a.equals(SHOW_ACTIVITY)) {
             ProximityShader.closeSystemDialogs(this);
             MainActivity.startActivity(this);
@@ -535,7 +536,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         PendingIntent pe = PendingIntent.getService(this, 0,
-                new Intent(this, RecordingService.class).setAction(PAUSE_BUTTON),
+                new Intent(this, RecordingService.class).setAction(STOP_BUTTON),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         RemoteNotificationCompat.Builder builder = new RemoteNotificationCompat.Builder(this, R.layout.notifictaion);
@@ -580,7 +581,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
         builder.setViewVisibility(R.id.notification_record, View.GONE);
 
         builder.setTheme(CallApplication.getTheme(this, R.style.RecThemeLight, R.style.RecThemeDark))
-                .setChannel(CallApplication.from(this).channelIcon)
+                .setChannel(CallApplication.from(this).channelPersistent)
                 .setMainIntent(main)
                 .setTitle(getString(R.string.app_name))
                 .setText(getString(R.string.recording_enabled))
@@ -896,7 +897,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
                         while (!interrupt.get()) {
                             Thread.sleep(1000);
                             samplesTime += 1000 * sampleRate / 1000; // per 1 second
-                            MainActivity.showProgress(RecordingService.this, true, phone, samplesTime / sampleRate, null);
+                            MainActivity.showProgress(RecordingService.this, true, phone, samplesTime / sampleRate, true);
                         }
                     } catch (RuntimeException e) {
                         Storage.delete(RecordingService.this, info.targetUri);

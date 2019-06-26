@@ -40,7 +40,7 @@ public class CallApplication extends com.github.axet.audiolibrary.app.MainApplic
     public static final String CALL_OUT = "out";
     public static final String CALL_IN = "in";
 
-    public NotificationChannelCompat channelIcon;
+    public NotificationChannelCompat channelPersistent;
     public NotificationChannelCompat channelStatus;
 
     @SuppressWarnings("unchecked")
@@ -64,7 +64,7 @@ public class CallApplication extends com.github.axet.audiolibrary.app.MainApplic
     public void onCreate() {
         super.onCreate();
 
-        channelIcon = new NotificationChannelCompat(this, "icon", "Persistent Icon", NotificationManagerCompat.IMPORTANCE_LOW);
+        channelPersistent = new NotificationChannelCompat(this, "icon", "Persistent Icon", NotificationManagerCompat.IMPORTANCE_LOW);
         channelStatus = new NotificationChannelCompat(this, "status", "Status", NotificationManagerCompat.IMPORTANCE_LOW);
 
         OptimizationPreferenceCompat.setIcon(this, true);

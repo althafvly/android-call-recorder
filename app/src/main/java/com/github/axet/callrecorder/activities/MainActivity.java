@@ -243,8 +243,6 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
             @Override
             public void onClick(View view) {
                 RecordingService.stopButton(MainActivity.this);
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
             }
         });
 
