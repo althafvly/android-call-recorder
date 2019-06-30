@@ -338,8 +338,8 @@ public class RecordingService extends PersistentService implements SharedPrefere
 
         contact = "";
         contactId = "";
-        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(s));
         if (Storage.permitted(this, SettingsActivity.CONTACTS)) {
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(s));
             try {
                 ContentResolver contentResolver = getContentResolver();
                 Cursor contactLookup = contentResolver.query(uri, null, null, null, null);

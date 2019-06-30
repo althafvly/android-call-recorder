@@ -1,9 +1,13 @@
 package com.github.axet.callrecorder.app;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.provider.BaseColumns;
+import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,11 +19,17 @@ import android.widget.TextView;
 
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
 import com.github.axet.callrecorder.R;
+import com.github.axet.callrecorder.activities.SettingsActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.TreeSet;
 
 public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
+    public static final String ID = "_id";
+
     protected View toolbar_i;
     protected View toolbar_o;
     View refresh;
@@ -37,6 +47,44 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
             super(v);
             s = (LinearLayout) v.findViewById(R.id.recording_status);
             i = (ImageView) v.findViewById(R.id.recording_call);
+        }
+    }
+
+    public static class SortByContact implements Comparator<com.github.axet.audiolibrary.app.Storage.RecordingUri> {
+        Context context;
+        HashMap<Uri, String> contacts = new HashMap<>();
+
+        public SortByContact(Context context) {
+            this.context = context;
+        }
+
+        public String getContact(Uri uri) {
+            String c = contacts.get(uri);
+            if (c == null) {
+                c = "";
+                String id = CallApplication.getContact(context, uri);
+                if (!id.isEmpty() && Storage.permitted(context, SettingsActivity.CONTACTS)) {
+                    ContentResolver resolver = context.getContentResolver();
+                    Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, BaseColumns._ID + " == ?", new String[]{id}, null);
+                    if (cursor != null) {
+                        try {
+                            if (cursor.moveToNext())
+                                c = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                        } finally {
+                            cursor.close();
+                        }
+                    }
+                }
+                contacts.put(uri, c);
+            }
+            return c;
+        }
+
+        @Override
+        public int compare(Storage.RecordingUri file, Storage.RecordingUri file2) {
+            String c1 = getContact(file.uri);
+            String c2 = getContact(file2.uri);
+            return c1.compareTo(c2);
         }
     }
 
@@ -114,6 +162,20 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
                     h.i.setImageResource(R.drawable.ic_call_made_black_24dp);
                     break;
             }
+        }
+    }
+
+    @Override
+    public Comparator<Storage.RecordingUri> getSort() {
+        SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(context);
+        int selected = context.getResources().getIdentifier(shared.getString(CallApplication.PREFERENCE_SORT, context.getResources().getResourceEntryName(R.id.sort_name_ask)), "id", context.getPackageName());
+        switch (selected) {
+            case R.id.sort_contact_ask:
+                return new SortByContact(context);
+            case R.id.sort_contact_desc:
+                return Collections.reverseOrder(new SortByContact(context));
+            default:
+                return super.getSort();
         }
     }
 

@@ -36,6 +36,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -51,6 +52,7 @@ import com.github.axet.androidlibrary.services.StorageProvider;
 import com.github.axet.androidlibrary.widgets.AboutPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.AppCompatThemeActivity;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
+import com.github.axet.androidlibrary.widgets.InvalidateOptionsMenuCompat;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.audiolibrary.encoders.Format3GP;
 import com.github.axet.audiolibrary.encoders.FormatFLAC;
@@ -365,15 +367,15 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        MenuItem i = menu.findItem(R.id.action_call);
+        MenuItem call = menu.findItem(R.id.action_call);
         boolean b = RecordingService.isEnabled(this);
-        i.setChecked(b);
+        call.setChecked(b);
 
-        MenuItem m = menu.findItem(R.id.action_show_folder);
+        MenuItem show = menu.findItem(R.id.action_show_folder);
         Intent ii = StorageProvider.openFolderIntent(this, storage.getStoragePath());
-        m.setIntent(ii);
+        show.setIntent(ii);
         if (!StorageProvider.isFolderCallable(this, ii, StorageProvider.getProvider().getAuthority()))
-            m.setVisible(false);
+            show.setVisible(false);
 
         MenuItem search = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
@@ -398,171 +400,166 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
             }
         });
 
+        recordings.onCreateOptionsMenu(menu);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar base clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
+        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
+        if (recordings.onOptionsItemSelected(this, item))
             return true;
-        }
-
-        final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-
-        if (id == R.id.action_about) {
-            final Runnable survey = new Runnable() {
-                @Override
-                public void run() {
-                    String url = SURVEY_URL;
-                    url = url.replaceAll("%MANUFACTURER%", Build.MANUFACTURER);
-                    url = url.replaceAll("%MODEL%", android.os.Build.MODEL);
-                    String ver = "Android: " + Build.VERSION.RELEASE;
-                    String cm = CallApplication.getprop("ro.cm.version");
-                    if (cm != null && !cm.isEmpty())
-                        ver += "; " + cm;
-                    ver += "; " + System.getProperty("os.version");
-                    url = url.replaceAll("%OSVERSION%", ver);
-                    try {
-                        PackageManager pm = getPackageManager();
-                        PackageInfo pInfo = pm.getPackageInfo(getPackageName(), 0);
-                        String version = pInfo.versionName;
-                        url = url.replaceAll("%VERSION%", version);
-                    } catch (PackageManager.NameNotFoundException e) {
-                        Log.d(TAG, "unable to get version", e);
-                    }
-                    url = url.replaceAll("%ROOT%", SuperUser.isRooted() ? "Yes" : "No");
-                    url = url.replaceAll("%BASEBAND%", Build.VERSION.SDK_INT < 14 ? Build.RADIO : Build.getRadioVersion());
-                    String encoder = shared.getString(CallApplication.PREFERENCE_ENCODING, "-1");
-                    if (Storage.isMediaRecorder(encoder))
-                        encoder = join(", ", Format3GP.EXT, Storage.EXT_AAC);
-                    else
-                        encoder = join(", ", FormatOGG.EXT, FormatWAV.EXT, FormatFLAC.EXT, FormatM4A.EXT, FormatMP3.EXT, FormatOPUS.EXT);
-                    url = url.replaceAll("%ENCODER%", encoder);
-                    String source = shared.getString(CallApplication.PREFERENCE_SOURCE, "-1");
-                    String[] vv = CallApplication.getStrings(MainActivity.this, new Locale("en"), R.array.source_values);
-                    String[] ss = CallApplication.getStrings(MainActivity.this, new Locale("en"), R.array.source_text);
-                    int i = Arrays.asList(vv).indexOf(source);
-                    url = url.replaceAll("%SOURCE%", ss[i]);
-                    url = url.replaceAll("%QUALITY%", "");
-                    boolean system = (getApplicationInfo().flags & ApplicationInfo.FLAG_SYSTEM) == ApplicationInfo.FLAG_SYSTEM;
-                    url = url.replaceAll("%INSTALLED%", system ? "System Preinstalled" : "User Installed");
-                    AboutPreferenceCompat.openUrl(MainActivity.this, url);
-                }
-            };
-            AlertDialog.Builder b = AboutPreferenceCompat.buildDialog(this, R.raw.about);
-            LayoutInflater inflater = LayoutInflater.from(this);
-            LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.survey_title, null);
-            ImageView icon = (ImageView) ll.findViewById(R.id.survey_image);
-            TextView status = (TextView) ll.findViewById(R.id.survey_status);
-            TextView text = (TextView) ll.findViewById(R.id.survey_text);
-            final Drawable drawable = icon.getDrawable();
-
-            int raw = getResources().getIdentifier("surveys", "raw", getPackageName()); // R.raw.surveys
-            if (raw == 0) {
-                setSolid(drawable, Color.GRAY);
-                status.setText(R.string.survey_none);
-            } else {
-                SurveysReader reader = new SurveysReader(getResources().openRawResource(raw), new String[]{null, null, Build.MANUFACTURER, android.os.Build.MODEL});
-                CSVRecord review = reader.getApproved();
-                if (review != null) {
-                    text.setText(getString(R.string.survey_know_issues) + "\n" + review.get(SurveysReader.INDEX_MSG));
-                    switch (reader.getStatus(review)) {
-                        case UNKNOWN:
-                            setSolid(drawable, Color.GRAY);
-                            break;
-                        case RED:
-                            setSolid(drawable, Color.RED);
-                            status.setText(R.string.survey_bad);
-                            break;
-                        case GREEN:
-                            setSolid(drawable, Color.GREEN);
-                            status.setText(R.string.survey_good);
-                            break;
-                        case YELLOW:
-                            setSolid(drawable, Color.YELLOW);
-                            status.setText(R.string.survey_few_issues);
-                            break;
-                    }
-                } else {
-                    text.setVisibility(View.GONE);
-                    switch (reader.getStatus()) {
-                        case UNKNOWN:
-                            setSolid(drawable, Color.GRAY);
-                            status.setText(R.string.survey_none);
-                            break;
-                        case RED:
-                            setSolid(drawable, Color.RED);
-                            status.setText(R.string.survey_bad);
-                            break;
-                        case GREEN:
-                            setSolid(drawable, Color.GREEN);
-                            status.setText(R.string.survey_good);
-                            break;
-                        case YELLOW:
-                            setSolid(drawable, Color.YELLOW);
-                            status.setText(R.string.survey_few_issues);
-                            break;
-                    }
-                }
-            }
-
-            View surveyButton = ll.findViewById(R.id.survey_button);
-            surveyButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String url = SURVEY_URL_VIEW;
-                    url = url.replaceAll("%MANUFACTURER%", Build.MANUFACTURER);
-                    url = url.replaceAll("%MODEL%", android.os.Build.MODEL);
-                    AboutPreferenceCompat.openUrl(MainActivity.this, url);
-                }
-            });
-            ll.addView(AboutPreferenceCompat.buildTitle(this), 0);
-            b.setCustomTitle(ll);
-            b.setNeutralButton(R.string.send_survey, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            final AlertDialog d = b.create();
-            d.setOnShowListener(new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dialog) {
-                    Button b = d.getButton(DialogInterface.BUTTON_NEUTRAL);
-                    b.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            survey.run();
-                        }
-                    });
-                }
-            });
-            d.show();
-            return true;
-        }
-
-        if (id == R.id.action_call) {
-            item.setChecked(!item.isChecked());
-            if (item.isChecked() && !Storage.permitted(MainActivity.this, PERMISSIONS, RESULT_CALL)) {
-                resumeCall = item;
+        switch (item.getItemId()) {
+            case R.id.sort_contact_ask:
+            case R.id.sort_contact_desc:
+                recordings.onSortOptionSelected(this, item.getItemId());
                 return true;
-            }
-            RecordingService.setEnabled(this, item.isChecked());
-            return true;
-        }
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            case R.id.action_call:
+                item.setChecked(!item.isChecked());
+                if (item.isChecked() && !Storage.permitted(MainActivity.this, PERMISSIONS, RESULT_CALL)) {
+                    resumeCall = item;
+                    return true;
+                }
+                RecordingService.setEnabled(this, item.isChecked());
+                return true;
+            case R.id.action_show_folder:
+                Intent intent = item.getIntent();
+                startActivity(intent);
+                return true;
+            case R.id.action_about:
+                final Runnable survey = new Runnable() {
+                    @Override
+                    public void run() {
+                        String url = SURVEY_URL;
+                        url = url.replaceAll("%MANUFACTURER%", Build.MANUFACTURER);
+                        url = url.replaceAll("%MODEL%", android.os.Build.MODEL);
+                        String ver = "Android: " + Build.VERSION.RELEASE;
+                        String cm = CallApplication.getprop("ro.cm.version");
+                        if (cm != null && !cm.isEmpty())
+                            ver += "; " + cm;
+                        ver += "; " + System.getProperty("os.version");
+                        url = url.replaceAll("%OSVERSION%", ver);
+                        try {
+                            PackageManager pm = getPackageManager();
+                            PackageInfo pInfo = pm.getPackageInfo(getPackageName(), 0);
+                            String version = pInfo.versionName;
+                            url = url.replaceAll("%VERSION%", version);
+                        } catch (PackageManager.NameNotFoundException e) {
+                            Log.d(TAG, "unable to get version", e);
+                        }
+                        url = url.replaceAll("%ROOT%", SuperUser.isRooted() ? "Yes" : "No");
+                        url = url.replaceAll("%BASEBAND%", Build.VERSION.SDK_INT < 14 ? Build.RADIO : Build.getRadioVersion());
+                        String encoder = shared.getString(CallApplication.PREFERENCE_ENCODING, "-1");
+                        if (Storage.isMediaRecorder(encoder))
+                            encoder = join(", ", Format3GP.EXT, Storage.EXT_AAC);
+                        else
+                            encoder = join(", ", FormatOGG.EXT, FormatWAV.EXT, FormatFLAC.EXT, FormatM4A.EXT, FormatMP3.EXT, FormatOPUS.EXT);
+                        url = url.replaceAll("%ENCODER%", encoder);
+                        String source = shared.getString(CallApplication.PREFERENCE_SOURCE, "-1");
+                        String[] vv = CallApplication.getStrings(MainActivity.this, new Locale("en"), R.array.source_values);
+                        String[] ss = CallApplication.getStrings(MainActivity.this, new Locale("en"), R.array.source_text);
+                        int i = Arrays.asList(vv).indexOf(source);
+                        url = url.replaceAll("%SOURCE%", ss[i]);
+                        url = url.replaceAll("%QUALITY%", "");
+                        boolean system = (getApplicationInfo().flags & ApplicationInfo.FLAG_SYSTEM) == ApplicationInfo.FLAG_SYSTEM;
+                        url = url.replaceAll("%INSTALLED%", system ? "System Preinstalled" : "User Installed");
+                        AboutPreferenceCompat.openUrl(MainActivity.this, url);
+                    }
+                };
+                AlertDialog.Builder b = AboutPreferenceCompat.buildDialog(this, R.raw.about);
+                LayoutInflater inflater = LayoutInflater.from(this);
+                LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.survey_title, null);
+                ImageView icon = (ImageView) ll.findViewById(R.id.survey_image);
+                TextView status = (TextView) ll.findViewById(R.id.survey_status);
+                TextView text = (TextView) ll.findViewById(R.id.survey_text);
+                final Drawable drawable = icon.getDrawable();
 
-        if (id == R.id.action_show_folder) {
-            Intent intent = item.getIntent();
-            startActivity(intent);
-            return true;
-        }
+                int raw = getResources().getIdentifier("surveys", "raw", getPackageName()); // R.raw.surveys
+                if (raw == 0) {
+                    setSolid(drawable, Color.GRAY);
+                    status.setText(R.string.survey_none);
+                } else {
+                    SurveysReader reader = new SurveysReader(getResources().openRawResource(raw), new String[]{null, null, Build.MANUFACTURER, android.os.Build.MODEL});
+                    CSVRecord review = reader.getApproved();
+                    if (review != null) {
+                        text.setText(getString(R.string.survey_know_issues) + "\n" + review.get(SurveysReader.INDEX_MSG));
+                        switch (reader.getStatus(review)) {
+                            case UNKNOWN:
+                                setSolid(drawable, Color.GRAY);
+                                break;
+                            case RED:
+                                setSolid(drawable, Color.RED);
+                                status.setText(R.string.survey_bad);
+                                break;
+                            case GREEN:
+                                setSolid(drawable, Color.GREEN);
+                                status.setText(R.string.survey_good);
+                                break;
+                            case YELLOW:
+                                setSolid(drawable, Color.YELLOW);
+                                status.setText(R.string.survey_few_issues);
+                                break;
+                        }
+                    } else {
+                        text.setVisibility(View.GONE);
+                        switch (reader.getStatus()) {
+                            case UNKNOWN:
+                                setSolid(drawable, Color.GRAY);
+                                status.setText(R.string.survey_none);
+                                break;
+                            case RED:
+                                setSolid(drawable, Color.RED);
+                                status.setText(R.string.survey_bad);
+                                break;
+                            case GREEN:
+                                setSolid(drawable, Color.GREEN);
+                                status.setText(R.string.survey_good);
+                                break;
+                            case YELLOW:
+                                setSolid(drawable, Color.YELLOW);
+                                status.setText(R.string.survey_few_issues);
+                                break;
+                        }
+                    }
+                }
 
+                View surveyButton = ll.findViewById(R.id.survey_button);
+                surveyButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String url = SURVEY_URL_VIEW;
+                        url = url.replaceAll("%MANUFACTURER%", Build.MANUFACTURER);
+                        url = url.replaceAll("%MODEL%", android.os.Build.MODEL);
+                        AboutPreferenceCompat.openUrl(MainActivity.this, url);
+                    }
+                });
+                ll.addView(AboutPreferenceCompat.buildTitle(this), 0);
+                b.setCustomTitle(ll);
+                b.setNeutralButton(R.string.send_survey, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                final AlertDialog d = b.create();
+                d.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+                        Button b = d.getButton(DialogInterface.BUTTON_NEUTRAL);
+                        b.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                survey.run();
+                            }
+                        });
+                    }
+                });
+                d.show();
+                return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
