@@ -78,11 +78,14 @@ public class CallApplication extends com.github.axet.audiolibrary.app.MainApplic
                     e.putString(CallApplication.PREFERENCE_ENCODING, Storage.EXT_3GP);
                 }
                 SharedPreferences.Editor edit = shared.edit();
-                edit.putInt(PREFERENCE_VERSION, 1);
+                edit.putInt(PREFERENCE_VERSION, 2);
                 edit.commit();
                 break;
             case 0:
                 version_0_to_1();
+                break;
+            case 1:
+                version_1_to_2();
                 break;
         }
     }
@@ -92,6 +95,14 @@ public class CallApplication extends com.github.axet.audiolibrary.app.MainApplic
         SharedPreferences.Editor edit = shared.edit();
         edit.putFloat(PREFERENCE_VOLUME, shared.getFloat(PREFERENCE_VOLUME, 0) + 1); // update volume from 0..1 to 0..1..4
         edit.putInt(PREFERENCE_VERSION, 1);
+        edit.commit();
+    }
+
+    void version_1_to_2() {
+        SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor edit = shared.edit();
+        edit.remove(PREFERENCE_SORT);
+        edit.putInt(PREFERENCE_VERSION, 2);
         edit.commit();
     }
 

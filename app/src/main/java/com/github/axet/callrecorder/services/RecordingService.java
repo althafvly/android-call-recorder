@@ -32,7 +32,7 @@ import android.view.View;
 import com.github.axet.androidlibrary.app.AlarmManager;
 import com.github.axet.androidlibrary.services.PersistentService;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
-import com.github.axet.androidlibrary.widgets.ProximityShader;
+import com.github.axet.androidlibrary.app.ProximityShader;
 import com.github.axet.androidlibrary.widgets.RemoteNotificationCompat;
 import com.github.axet.androidlibrary.widgets.Toast;
 import com.github.axet.audiolibrary.app.RawSamples;

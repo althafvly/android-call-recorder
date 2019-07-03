@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -37,20 +36,24 @@
                         android:src="@drawable/ic_star_border_black_24dp"
                         android:tint="?attr/colorAccent" />
 
-                    <com.github.axet.androidlibrary.widgets.PathMax
+                    <TextView
+                        android:id="@+id/recording_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="middle"
+                        android:padding="5dp"
+                        android:singleLine="true"
+                        android:text="2016-02-01.wav"
+                        android:textColor="?attr/titleColor"
+                        android:textSize="20dp" />
+
+                    <TextView
+                        android:id="@+id/recording_duration"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center">
-
-                        <TextView
-                            android:id="@+id/recording_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="5dp"
-                            android:text="2016-02-01.wav"
-                            android:textColor="?attr/titleColor"
-                            android:textSize="20dp" />
-                    </com.github.axet.androidlibrary.widgets.PathMax>
+                        android:padding="5dp"
+                        android:text="00:05" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -73,28 +76,37 @@
                         android:layout_height="wrap_content"
                         android:padding="5dp"
                         android:text="2016 02 01" />
+
+                    <FrameLayout
+                        android:id="@+id/moodbar_frame"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1">
+
+                        <com.github.axet.audiolibrary.widgets.MoodbarView
+                            android:id="@+id/moodbar"
+                            android:layout_width="match_parent"
+                            android:layout_height="24dp"
+                            android:layout_gravity="right"
+                            android:tint="?android:attr/colorForeground" />
+
+                        <ProgressBar
+                            android:id="@+id/moodbar_progress"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:indeterminate="true" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/recording_size"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="0.1 MB" />
                 </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/recording_duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:text="00:05" />
-
-                <TextView
-                    android:id="@+id/recording_size"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:text="0.1 MB" />
             </LinearLayout>
         </com.github.axet.androidlibrary.widgets.EqualLinearLayout>
 
