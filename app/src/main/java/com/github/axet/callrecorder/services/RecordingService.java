@@ -37,7 +37,6 @@ import com.github.axet.androidlibrary.widgets.RemoteNotificationCompat;
 import com.github.axet.androidlibrary.widgets.Toast;
 import com.github.axet.audiolibrary.app.RawSamples;
 import com.github.axet.audiolibrary.app.Sound;
-import com.github.axet.audiolibrary.encoders.EncoderInfo;
 import com.github.axet.audiolibrary.encoders.Factory;
 import com.github.axet.audiolibrary.encoders.FileEncoder;
 import com.github.axet.audiolibrary.encoders.OnFlyEncoding;
@@ -927,10 +926,8 @@ public class RecordingService extends PersistentService implements SharedPrefere
         }
     }
 
-    EncoderInfo getInfo() {
-        final int channels = Sound.getChannels(this);
-        final int bps = Sound.DEFAULT_AUDIOFORMAT == AudioFormat.ENCODING_PCM_16BIT ? 16 : 8;
-        return new EncoderInfo(channels, sampleRate, bps);
+    RawSamples.Info getInfo() {
+        return new RawSamples.Info(sampleRate, Sound.getChannels(this));
     }
 
     void encoding(final File in, final Uri uri, final Runnable done, final Success success) {
