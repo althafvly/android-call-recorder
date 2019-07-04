@@ -109,4 +109,6 @@
     <string name="survey_few_issues">Некоторые проблемы</string>
     <string name="survey_view">Посмотреть откзывы</string>
     <string name="survey_status">Статус:</string>
+    <string name="sort_by_contact_z_a">Контакты Я-А</string>
+    <string name="sort_by_contact_a_z">Контакты А-Я</string>
 </resources>

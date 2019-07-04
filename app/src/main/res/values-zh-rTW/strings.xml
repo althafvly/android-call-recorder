@@ -110,4 +110,6 @@
     <string name="survey_few_issues">有一些問題</string>
     <string name="survey_view">檢視調查</string>
     <string name="survey_status">狀態：</string>
+    <string name="sort_by_contact_z_a">Contact Z-A</string>
+    <string name="sort_by_contact_a_z">Contact A-Z</string>
 </resources>
