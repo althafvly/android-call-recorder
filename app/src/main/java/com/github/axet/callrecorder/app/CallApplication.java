@@ -67,7 +67,7 @@ public class CallApplication extends com.github.axet.audiolibrary.app.MainApplic
         channelPersistent = new NotificationChannelCompat(this, "icon", "Persistent Icon", NotificationManagerCompat.IMPORTANCE_LOW);
         channelStatus = new NotificationChannelCompat(this, "status", "Status", NotificationManagerCompat.IMPORTANCE_LOW);
 
-        OptimizationPreferenceCompat.setIcon(this, true);
+        OptimizationPreferenceCompat.setPersistentServiceIcon(this, true);
 
         switch (getVersion(PREFERENCE_VERSION, R.xml.pref_general)) {
             case -1:
