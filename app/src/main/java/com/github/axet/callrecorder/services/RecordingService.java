@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -30,9 +29,10 @@ import android.util.Log;
 import android.view.View;
 
 import com.github.axet.androidlibrary.app.AlarmManager;
+import com.github.axet.androidlibrary.app.ProximityShader;
 import com.github.axet.androidlibrary.services.PersistentService;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
-import com.github.axet.androidlibrary.app.ProximityShader;
+import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.RemoteNotificationCompat;
 import com.github.axet.androidlibrary.widgets.Toast;
 import com.github.axet.audiolibrary.app.RawSamples;
@@ -78,10 +78,6 @@ public class RecordingService extends PersistentService implements SharedPrefere
     public static String SHOW_ACTIVITY = RecordingService.class.getCanonicalName() + ".SHOW_ACTIVITY";
     public static String PAUSE_BUTTON = RecordingService.class.getCanonicalName() + ".PAUSE_BUTTON";
     public static String STOP_BUTTON = RecordingService.class.getCanonicalName() + ".STOP_BUTTON";
-
-    {
-        id = NOTIFICATION_PERSISTENT_ICON;
-    }
 
     AtomicBoolean interrupt = new AtomicBoolean();
     Thread thread;
@@ -391,7 +387,15 @@ public class RecordingService extends PersistentService implements SharedPrefere
 
     @Override
     public void onCreateOptimization() {
-        optimization = new ServiceReceiver(CallApplication.PREFERENCE_OPTIMIZATION, CallApplication.PREFERENCE_NEXT);
+        optimization = new OptimizationPreferenceCompat.ServiceReceiver(this, NOTIFICATION_PERSISTENT_ICON, CallApplication.PREFERENCE_OPTIMIZATION, CallApplication.PREFERENCE_NEXT) {
+            @Override
+            public Notification build(Intent intent) {
+                if (thread == null && encoding == null)
+                    return buildPersistent(icon.notification);
+                else
+                    return buildNotification(icon.notification);
+            }
+        };
         optimization.create();
     }
 
@@ -596,15 +600,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
     public void updateIcon(boolean show) {
         boolean recording = thread != null;
         MainActivity.showProgress(RecordingService.this, show, phone, samplesTime / sampleRate, recording);
-        updateIcon(show ? new Intent() : null);
-    }
-
-    @Override
-    public Notification build(Intent intent) {
-        if (thread == null && encoding == null)
-            return buildPersistent(notification);
-        else
-            return buildNotification(notification);
+        optimization.icon.updateIcon(show ? new Intent() : null);
     }
 
     public void showDone(Uri targetUri) {

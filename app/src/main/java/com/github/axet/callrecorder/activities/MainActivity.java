@@ -211,11 +211,6 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
         setContentView(R.layout.activity_main);
 
-        if (OptimizationPreferenceCompat.needKillWarning(this, CallApplication.PREFERENCE_NEXT))
-            OptimizationPreferenceCompat.buildKilledWarning(this, true, CallApplication.PREFERENCE_OPTIMIZATION).show();
-        else if (OptimizationPreferenceCompat.needBootWarning(this, CallApplication.PREFERENCE_BOOT, CallApplication.PREFERENCE_INSTALL))
-            OptimizationPreferenceCompat.buildBootWarning(this).show();
-
         list = (RecyclerView) findViewById(R.id.list);
 
         storage = new Storage(this);
@@ -342,6 +337,11 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
         Intent intent = getIntent();
         openIntent(intent);
+
+        if (OptimizationPreferenceCompat.needKillWarning(this, CallApplication.PREFERENCE_NEXT))
+            OptimizationPreferenceCompat.buildKilledWarning(this, true, CallApplication.PREFERENCE_OPTIMIZATION, RecordingService.class).show();
+        else if (OptimizationPreferenceCompat.needBootWarning(this, CallApplication.PREFERENCE_BOOT, CallApplication.PREFERENCE_INSTALL))
+            OptimizationPreferenceCompat.buildBootWarning(this).show();
     }
 
     @Override
