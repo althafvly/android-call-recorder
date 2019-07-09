@@ -253,8 +253,6 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         recordings.setToolbar((ViewGroup) findViewById(R.id.recording_toolbar));
 
-        RecordingService.startIfEnabled(this);
-
         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
         if (shared.getBoolean("warning", true)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -335,13 +333,15 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
             d.show();
         }
 
-        Intent intent = getIntent();
-        openIntent(intent);
-
         if (OptimizationPreferenceCompat.needKillWarning(this, CallApplication.PREFERENCE_NEXT))
             OptimizationPreferenceCompat.buildKilledWarning(this, true, CallApplication.PREFERENCE_OPTIMIZATION, RecordingService.class).show();
         else if (OptimizationPreferenceCompat.needBootWarning(this, CallApplication.PREFERENCE_BOOT, CallApplication.PREFERENCE_INSTALL))
             OptimizationPreferenceCompat.buildBootWarning(this).show();
+
+        RecordingService.startIfEnabled(this);
+
+        Intent intent = getIntent();
+        openIntent(intent);
     }
 
     @Override
