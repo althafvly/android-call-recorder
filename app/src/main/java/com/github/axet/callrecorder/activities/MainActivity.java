@@ -25,6 +25,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,7 +37,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -52,7 +52,6 @@ import com.github.axet.androidlibrary.services.StorageProvider;
 import com.github.axet.androidlibrary.widgets.AboutPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.AppCompatThemeActivity;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
-import com.github.axet.androidlibrary.widgets.InvalidateOptionsMenuCompat;
 import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.audiolibrary.encoders.Format3GP;
 import com.github.axet.audiolibrary.encoders.FormatFLAC;
@@ -334,7 +333,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         }
 
         if (OptimizationPreferenceCompat.needKillWarning(this, CallApplication.PREFERENCE_NEXT))
-            OptimizationPreferenceCompat.buildKilledWarning(this, true, CallApplication.PREFERENCE_OPTIMIZATION, RecordingService.class).show();
+            OptimizationPreferenceCompat.buildKilledWarning(new ContextThemeWrapper(this, getAppTheme()), true, CallApplication.PREFERENCE_OPTIMIZATION, RecordingService.class).show();
         else if (OptimizationPreferenceCompat.needBootWarning(this, CallApplication.PREFERENCE_BOOT, CallApplication.PREFERENCE_INSTALL))
             OptimizationPreferenceCompat.buildBootWarning(this).show();
 
