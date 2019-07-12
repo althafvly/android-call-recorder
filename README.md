@@ -33,10 +33,3 @@ If you want to translate 'Call Recorder' to your language  please read this:
 Check user surveys at project home page here:
 
   * [User survey's](https://axet.gitlab.io/android-call-recorder/)
-
-# Contributors
-
-  * japaness translation thanks to @naofumi
-  * greek translation thanks to @cryoranger
-  * german translation thanks to @aenaehcwh
-  * Chinese (Taiwan) translation thanks to @cges30901
