@@ -49,10 +49,10 @@ import android.widget.Toast;
 
 import com.github.axet.androidlibrary.app.SuperUser;
 import com.github.axet.androidlibrary.services.StorageProvider;
-import com.github.axet.androidlibrary.widgets.AboutPreferenceCompat;
-import com.github.axet.androidlibrary.widgets.AppCompatThemeActivity;
+import com.github.axet.androidlibrary.preferences.AboutPreferenceCompat;
+import com.github.axet.androidlibrary.activities.AppCompatThemeActivity;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
-import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
+import com.github.axet.androidlibrary.preferences.OptimizationPreferenceCompat;
 import com.github.axet.audiolibrary.encoders.Format3GP;
 import com.github.axet.audiolibrary.encoders.FormatFLAC;
 import com.github.axet.audiolibrary.encoders.FormatM4A;
@@ -335,7 +335,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         if (OptimizationPreferenceCompat.needKillWarning(this, CallApplication.PREFERENCE_NEXT))
             OptimizationPreferenceCompat.buildKilledWarning(new ContextThemeWrapper(this, getAppTheme()), true, CallApplication.PREFERENCE_OPTIMIZATION, RecordingService.class).show();
         else if (OptimizationPreferenceCompat.needBootWarning(this, CallApplication.PREFERENCE_BOOT, CallApplication.PREFERENCE_INSTALL))
-            OptimizationPreferenceCompat.buildBootWarning(this).show();
+            OptimizationPreferenceCompat.buildBootWarning(this, CallApplication.PREFERENCE_BOOT).show();
 
         RecordingService.startIfEnabled(this);
 

@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import com.github.axet.callrecorder.app.CallApplication;
 import com.github.axet.callrecorder.app.Storage;
 
-public class NameFormatPreferenceCompat extends com.github.axet.androidlibrary.widgets.NameFormatPreferenceCompat {
+public class NameFormatPreferenceCompat extends com.github.axet.androidlibrary.preferences.NameFormatPreferenceCompat {
     public NameFormatPreferenceCompat(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
