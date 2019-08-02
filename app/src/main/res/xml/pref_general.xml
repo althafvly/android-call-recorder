@@ -73,7 +73,7 @@
             android:key="voice"
             android:summary="@string/pref_voice_summary"
             android:title="@string/pref_voice_title" />
-        <com.github.axet.audiolibrary.preferences.RecordingVolumePreference
+        <com.github.axet.audiolibrary.widgets.RecordingVolumePreference
             android:defaultValue="1"
             android:key="volume"
             android:summary=""
