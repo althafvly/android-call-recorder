@@ -52,10 +52,7 @@ import com.github.axet.androidlibrary.services.StorageProvider;
 import com.github.axet.androidlibrary.preferences.AboutPreferenceCompat;
 import com.github.axet.androidlibrary.activities.AppCompatThemeActivity;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
-<<<<<<< HEAD
-=======
 import com.github.axet.androidlibrary.widgets.InvalidateOptionsMenuCompat;
->>>>>>> update libs
 import com.github.axet.androidlibrary.preferences.OptimizationPreferenceCompat;
 import com.github.axet.audiolibrary.encoders.Format3GP;
 import com.github.axet.audiolibrary.encoders.FormatFLAC;
