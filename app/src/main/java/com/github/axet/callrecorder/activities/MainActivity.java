@@ -89,18 +89,18 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
     public static final int RESULT_CALL = 1;
 
     public static final String[] PERMISSIONS = new String[]{
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.PROCESS_OUTGOING_CALLS,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_CONTACTS,
-            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.READ_CONTACTS, // get contact name by phone number
+            Manifest.permission.READ_PHONE_STATE, // read outgoing going calls information
     };
 
     public static final String[] MUST = new String[]{
             Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.PROCESS_OUTGOING_CALLS,
+            Manifest.permission.PROCESS_OUTGOING_CALLS, // receive Intent.ACTION_NEW_OUTGOING_CALL
     };
+
+    public static final String[] PP = SuperUser.concat(MUST, PERMISSIONS);
 
     FloatingActionButton fab;
     FloatingActionButton fab_stop;
@@ -420,7 +420,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                 return true;
             case R.id.action_call:
                 item.setChecked(!item.isChecked());
-                if (item.isChecked() && !Storage.permitted(MainActivity.this, PERMISSIONS, RESULT_CALL)) {
+                if (item.isChecked() && !Storage.permitted(MainActivity.this, PP, RESULT_CALL)) {
                     resumeCall = item;
                     return true;
                 }
