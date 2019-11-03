@@ -2,10 +2,10 @@ package com.github.axet.callrecorder.services;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Icon;
 import android.preference.PreferenceManager;
 import android.service.quicksettings.Tile;
 
+import com.github.axet.androidlibrary.app.SuperUser;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.activities.MainActivity;
 import com.github.axet.callrecorder.app.CallApplication;
@@ -63,7 +63,7 @@ public class TileService extends android.service.quicksettings.TileService {
     public void onClick() {
         super.onClick();
         boolean b = !RecordingService.isEnabled(this);
-        if(b && !Storage.permitted(this, MainActivity.PERMISSIONS)){
+        if (b && !Storage.permitted(this, MainActivity.MUST)) {
             MainActivity.startActivity(this, true);
             return;
         }

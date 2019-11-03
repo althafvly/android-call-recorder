@@ -79,11 +79,14 @@ public class RecordingService extends PersistentService implements SharedPrefere
     public static String PAUSE_BUTTON = RecordingService.class.getCanonicalName() + ".PAUSE_BUTTON";
     public static String STOP_BUTTON = RecordingService.class.getCanonicalName() + ".STOP_BUTTON";
 
+    Handler handle = new Handler();
+
     AtomicBoolean interrupt = new AtomicBoolean();
     Thread thread;
     Storage storage;
     RecordingReceiver receiver;
     PhoneStateReceiver state;
+    PhoneStateChangeListener pscl;
 
     long now;
     Uri targetUri; // output target file 2016-01-01 01.01.01.wav
@@ -92,8 +95,6 @@ public class RecordingService extends PersistentService implements SharedPrefere
     String contactId = "";
     String call;
 
-    PhoneStateChangeListener pscl;
-    Handler handle = new Handler();
     int sampleRate; // variable from settings. how may samples per second.
     long samplesTime; // how many samples passed for current recording
     FileEncoder encoder;
@@ -256,6 +257,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "onReceive");
             String a = intent.getAction();
             if (a.equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED))
                 setPhone(intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER), call);
@@ -283,6 +285,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
 
         @Override
         public void onCallStateChanged(final int s, final String incomingNumber) {
+            Log.d(TAG, "onCallStateChanged");
             try {
                 switch (s) {
                     case TelephonyManager.CALL_STATE_RINGING:
