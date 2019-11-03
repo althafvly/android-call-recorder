@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_CONTACTS, // get contact name by phone number
             Manifest.permission.READ_PHONE_STATE, // read outgoing going calls information
-    };
+    });
 
     FloatingActionButton fab;
     FloatingActionButton fab_stop;
