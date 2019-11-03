@@ -25,6 +25,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,7 +37,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -47,13 +47,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.axet.androidlibrary.activities.AppCompatThemeActivity;
 import com.github.axet.androidlibrary.app.SuperUser;
+import com.github.axet.androidlibrary.preferences.AboutPreferenceCompat;
+import com.github.axet.androidlibrary.preferences.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.services.StorageProvider;
-import com.github.axet.androidlibrary.widgets.AboutPreferenceCompat;
-import com.github.axet.androidlibrary.widgets.AppCompatThemeActivity;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
-import com.github.axet.androidlibrary.widgets.InvalidateOptionsMenuCompat;
-import com.github.axet.androidlibrary.widgets.OptimizationPreferenceCompat;
 import com.github.axet.audiolibrary.encoders.Format3GP;
 import com.github.axet.audiolibrary.encoders.FormatFLAC;
 import com.github.axet.audiolibrary.encoders.FormatM4A;
@@ -88,19 +87,18 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
     public static final int RESULT_CALL = 1;
 
-    public static final String[] PERMISSIONS = new String[]{
+    public static final String[] MUST = new String[]{
             Manifest.permission.RECORD_AUDIO,
+    };
+
+    public static final String[] PERMISSIONS = SuperUser.concat(MUST, new String[]{
             Manifest.permission.PROCESS_OUTGOING_CALLS,
             Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.READ_CALL_LOG,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.READ_PHONE_STATE,
-    };
-
-    public static final String[] MUST = new String[]{
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.PROCESS_OUTGOING_CALLS,
-    };
+    });
 
     FloatingActionButton fab;
     FloatingActionButton fab_stop;
@@ -334,9 +332,9 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         }
 
         if (OptimizationPreferenceCompat.needKillWarning(this, CallApplication.PREFERENCE_NEXT))
-            OptimizationPreferenceCompat.buildKilledWarning(this, true, CallApplication.PREFERENCE_OPTIMIZATION, RecordingService.class).show();
+            OptimizationPreferenceCompat.buildKilledWarning(new ContextThemeWrapper(this, getAppTheme()), true, CallApplication.PREFERENCE_OPTIMIZATION, RecordingService.class).show();
         else if (OptimizationPreferenceCompat.needBootWarning(this, CallApplication.PREFERENCE_BOOT, CallApplication.PREFERENCE_INSTALL))
-            OptimizationPreferenceCompat.buildBootWarning(this).show();
+            OptimizationPreferenceCompat.buildBootWarning(this, CallApplication.PREFERENCE_BOOT).show();
 
         RecordingService.startIfEnabled(this);
 
@@ -734,8 +732,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(CallApplication.PREFERENCE_STORAGE)) {
+        if (key.equals(CallApplication.PREFERENCE_STORAGE))
             recordings.load(true, null);
-        }
     }
 }

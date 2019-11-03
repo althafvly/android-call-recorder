@@ -8,9 +8,9 @@ android {
     defaultConfig {
         applicationId "com.github.axet.callrecorder"
         minSdkVersion 9
-        targetSdkVersion 26
-        versionCode 213
-        versionName "1.7.6"
+        targetSdkVersion 28
+        versionCode 214
+        versionName "1.7.7"
     }
     signingConfigs {
         release {
@@ -66,7 +66,7 @@ clean.doLast {
 preBuild.dependsOn fetch
 
 dependencies {
-    implementation 'com.github.axet:android-audio-library:1.0.167' // implementation project(':android-audio-library')
+    implementation 'com.github.axet:android-audio-library:1.0.171' // implementation project(':android-audio-library')
     implementation "org.apache.commons:commons-csv:1.5"
     assets('com.google.android.exoplayer:exoplayer:2.7.3') { exclude group: 'com.android.support' }
 }
