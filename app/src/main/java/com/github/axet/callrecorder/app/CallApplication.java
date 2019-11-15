@@ -10,6 +10,7 @@ import android.os.Build;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
+import com.github.axet.androidlibrary.app.AssetsDexLoader;
 import com.github.axet.androidlibrary.app.NotificationManagerCompat;
 import com.github.axet.androidlibrary.widgets.NotificationChannelCompat;
 import com.github.axet.androidlibrary.preferences.OptimizationPreferenceCompat;
@@ -68,6 +69,8 @@ public class CallApplication extends com.github.axet.audiolibrary.app.MainApplic
         channelStatus = new NotificationChannelCompat(this, "status", "Status", NotificationManagerCompat.IMPORTANCE_LOW);
 
         OptimizationPreferenceCompat.setPersistentServiceIcon(this, true);
+
+        AssetsDexLoader.clearCodeCacheDir(this);
 
         switch (getVersion(PREFERENCE_VERSION, R.xml.pref_general)) {
             case -1:
