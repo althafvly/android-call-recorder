@@ -10,7 +10,7 @@ import com.github.axet.callrecorder.app.CallApplication;
 public class OnBootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        OptimizationPreferenceCompat.setBootInstallTime(context, CallApplication.PREFERENCE_BOOT, System.currentTimeMillis());
+        OptimizationPreferenceCompat.setPrefTime(context, CallApplication.PREFERENCE_BOOT, System.currentTimeMillis());
         RecordingService.startIfEnabled(context);
     }
 }
