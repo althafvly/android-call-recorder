@@ -2,6 +2,7 @@ package com.github.axet.callrecorder.app;
 
 import android.util.Log;
 
+import com.github.axet.androidlibrary.app.MountInfo;
 import com.github.axet.androidlibrary.app.SuperUser;
 
 import org.apache.commons.io.IOUtils;
@@ -67,7 +68,7 @@ public class MixerPaths {
 
     public void save() {
         SuperUser.Commands args = new SuperUser.Commands();
-        if (PATH.startsWith(VENDOR))
+        if (PATH.startsWith(VENDOR) && new MountInfo().findMount(new File(VENDOR)) != null)
             args.add(REMOUNT_VENDOR);
         else
             args.add(SuperUser.REMOUNT_SYSTEM);
