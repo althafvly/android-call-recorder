@@ -1,0 +1,115 @@
+<resources>
+    <string name="app_name">Call Recorder</string>
+
+    <string-array name="source_text">
+        <item>自动 (默认)</item>
+        <item>Voice Line</item>
+        <item>麦克风</item>
+        <item>系统默认</item>
+        <item>VoIP</item>
+        <item>语音识别</item>
+        <item>摄录机</item>
+        <item>系统 RAW</item>
+    </string-array>
+
+    <string-array name="sample_rate_text">
+        <item>48 kHz</item>
+        <item>44.1 kHz (CD)</item>
+        <item>32 kHz</item>
+        <item>22 kHz</item>
+        <item>16 kHz (默认)</item>
+        <item>11 kHz</item>
+        <item>8 kHz (普通电话)</item>
+    </string-array>
+
+    <string-array name="delete_text">
+        <item>保留所有录音</item>
+        <item>超过一天</item>
+        <item>超过一周</item>
+        <item>超过一个月</item>
+        <item>超过三个月</item>
+        <item>超过六个月</item>
+    </string-array>
+
+    <string-array name="format_text">
+        <item>2017-02-01 09.08.01.wav</item>
+        <item>20170201T090801.wav</item>
+        <item>Unix时间戳 电话号码.wav</item>
+        <item>2017-02-01 09.08.01 ↓↑ [联系人名].wav</item>
+    </string-array>
+
+    <string-array name="themes_text">
+        <item>白色主题</item>
+        <item>深色主题</item>
+    </string-array>
+
+    <string-array name="channels_text">
+        <item>单声道 (默认)</item>
+        <item>立体声</item>
+    </string-array>
+
+    <string name="action_settings">设置</string>
+    <string name="call_recording">通话录音</string>
+    <string name="no_folder_app">没有安装文件夹查看应用</string>
+    <string name="hold_by_call">暂停 (呼叫保持)</string>
+    <string name="encoding">编码</string>
+    <string name="pause">暂停</string>
+    <string name="edit">编辑</string>
+    <string name="recording">录音</string>
+    <string name="encoding_title">正在编码...</string>
+    <string name="recording_title">正在录音</string>
+    <string name="title_header">%1$s 可用 ~ %2$s 剩余</string>
+    <string name="open_recording_folder">打开录音文件夹</string>
+    <string name="recording_list_is_empty">录音列表是空的。\n\n选中“通话录音”来开启录音</string>
+
+    <string name="source_default">(默认)</string>
+    <string name="source_mic">(麦克风)</string>
+    <string name="source_line">(Voice Line)</string>
+
+    <string name="call_recordings_support">通话录音支持</string>
+    <string name="call_recordings_support_text">许多手机不支持高品质（phone line）通话录音。要启用通话录音，请安装开源固件，尝试选择不同的编码选项（ogg、MediaRecorder 等），不同的音频源（phone line、麦克风、VoIP 等），或尝试 root 你的手机。</string>
+    <string name="recordings_quality">录音品质</string>
+    <string name="recordings_quality_text">如果您的手机不支持高品质的通话录音，本应用程序将尝试通过麦克风（MIC）录音。（您可能只能听到一方的声音）</string>
+    <string name="task_managers">任务管理器</string>
+    <string name="task_managers_text">如果您的手机启用了“电池优化”或某些任务管理器，考虑禁用它们以确保本应用程序在后台运行。（可选）</string>
+
+    <string name="recording_enabled">录音已启用</string>
+    <string name="recording_disabled">录音已禁用</string>
+    <string name="callrecent_auto_save">当 %1$d 时自动保存</string>
+    <string name="calls_out">拨打</string>
+    <string name="calls_in">接听</string>
+    <string name="save_button">保存</string>
+    <string name="mixer_paths_done">已配置 System mixer。请重启系统！</string>
+    <string name="mixer_paths_failed">无法配置 System mixer</string>
+
+    <string name="pref_storage_title">存储路径</string>
+    <string name="pref_rate_title">采样率</string>
+    <string name="pref_encoding_title">编码</string>
+    <string name="pref_encoding_summary">输出文件格式（.wav、.m4a 等）</string>
+    <string name="pref_mode_title">模式</string>
+    <string name="pref_mode_summary">录音频道</string>
+    <string name="pref_delete_title">删除录音</string>
+    <string name="pref_nameformat_title">名称格式</string>
+    <string name="pref_calldialog_title">最近通话对话框</string>
+    <string name="pref_calldialog_summary">通话结束后显示重命名或收藏对话框</string>
+    <string name="pref_optimization_title">禁用“电池优化”</string>
+    <string name="pref_optimization_summary">避免应用被系统清理</string>
+    <string name="pref_theme_title">界面主题</string>
+    <string name="pref_theme_summary">设置本应用的界面主题（亮/暗）</string>
+    <string name="pref_mixerpaths_title">System Mixer 通话录音</string>
+    <string name="pref_mixerpaths_summary">允许 System mixer 面向一般程序录制通话</string>
+    <string name="pref_recordings">录音</string>
+    <string name="pref_advanced">高级</string>
+    <string name="pref_application">应用程序</string>
+    <string name="menu_search">搜索</string>
+    <string name="send_survey">发送调查</string>
+    <string name="survey_know_issues">已知问题:</string>
+    <string name="survey_none">目前没有调查</string>
+    <string name="survey_bad">不能用</string>
+    <string name="survey_good">可以用</string>
+    <string name="survey_few_issues">有点小毛病</string>
+    <string name="survey_view">查看调查</string>
+    <string name="survey_status">状态:</string>
+    <string name="sort_by_contact_z_a">联系人Z-A</string>
+    <string name="sort_by_contact_a_z">联系人A-Z</string>
+</resources>
