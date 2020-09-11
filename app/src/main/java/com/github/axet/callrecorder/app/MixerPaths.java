@@ -80,9 +80,8 @@ public class MixerPaths {
         setEnabled(b);
         save();
         load();
-        if (b != isEnabled()) {
+        if (b != isEnabled())
             throw new RuntimeException("Unable to write changes");
-        }
     }
 
     public boolean isCompatible() {
@@ -95,9 +94,8 @@ public class MixerPaths {
         if (xml == null || xml.isEmpty())
             return false;
         Matcher m = VOC_REC.matcher(xml);
-        if (m.find()) {
+        if (m.find())
             return true;
-        }
         return false;
     }
 
@@ -114,9 +112,8 @@ public class MixerPaths {
     public void setEnabled(boolean b) {
         Matcher m = VOC_REC.matcher(xml);
         StringBuffer sb = new StringBuffer(xml.length());
-        while (m.find()) {
+        while (m.find())
             m.appendReplacement(sb, m.group().replaceFirst(Pattern.quote(m.group(1)), b ? TRUE : FALSE));
-        }
         m.appendTail(sb);
         xml = sb.toString();
     }
