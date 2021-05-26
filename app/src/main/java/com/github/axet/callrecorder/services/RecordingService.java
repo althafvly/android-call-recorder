@@ -115,7 +115,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
 
     public static void Error(Context context, Throwable e) {
         Log.d(TAG, "Error", e);
-        Toast.Error(context, "CallRecorder: " + ErrorDialog.toMessage(e));
+        Toast.Text(context, "CallRecorder: " + ErrorDialog.toMessage(e));
     }
 
     public static void setEnabled(Context context, boolean b) {
