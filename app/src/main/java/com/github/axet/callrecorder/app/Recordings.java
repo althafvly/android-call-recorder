@@ -21,14 +21,49 @@ import com.github.axet.androidlibrary.widgets.ErrorDialog;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.activities.SettingsActivity;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.TreeSet;
 
 public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
     public static final String ID = "_id";
+
+    public static String filter(String name) { // filter recording name
+        String nn = Storage.getNameNoExt(name);
+        String format = null;
+        Long date = null;
+        if (date == null) {
+            try {
+                date = Long.parseLong(name);
+                format = "%T";
+            } catch (NumberFormatException ignore) {
+            }
+        }
+        if (date == null) {
+            try {
+                date = Storage.SIMPLE.parse(name).getTime();
+                format = "%s";
+            } catch (ParseException ignore) {
+            }
+        }
+        if (date == null) {
+            try {
+                date = Storage.ISO8601.parse(name).getTime();
+                format = "%I";
+            } catch (ParseException ignore) {
+            }
+        }
+        if (date != null) {
+            String str = Storage.getFormatted(format, date, "", "", "");
+            if (nn.startsWith(str) && str.length() < nn.length())
+                name = "…" + name.substring(str.length());
+        }
+        return name;
+    }
 
     protected View toolbar_i;
     protected View toolbar_o;
@@ -148,6 +183,7 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
         super.onBindViewHolder(hh, position);
         RecordingHolder h = (RecordingHolder) hh;
         Storage.RecordingUri u = getItem(position);
+        h.title.setText(filter(u.name));
         String call = CallApplication.getCall(context, u.uri);
         if (call == null || call.isEmpty()) {
             h.i.setVisibility(View.GONE);

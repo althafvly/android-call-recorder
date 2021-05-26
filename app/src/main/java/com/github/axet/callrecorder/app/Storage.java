@@ -26,6 +26,8 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
     public static final String EXT_AACELD = EXT_AAC + "eld"; // MPEG_4 / AAC ELD
     public static final String EXT_WEBM = "webm";
 
+    public static String[] DATES = new String[]{"%T", "%s", "%I"}; // dates supported as prefix
+
     public static CharSequence[] getEncodingTexts(Context context) {
         CharSequence[] ee = Factory.getEncodingTexts(context);
         ArrayList<CharSequence> ll = new ArrayList<>(Arrays.asList(ee));
@@ -101,8 +103,8 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
             format = format.replaceAll("%p", "");
 
         format = format.replaceAll("%T", "" + now / 1000);
-        format = format.replaceAll("%s", SIMPLE.format(new Date()));
-        format = format.replaceAll("%I", ISO8601.format(new Date()));
+        format = format.replaceAll("%s", SIMPLE.format(new Date(now)));
+        format = format.replaceAll("%I", ISO8601.format(new Date(now)));
 
         if (call == null || call.isEmpty()) {
             format = format.replaceAll("%i", "");

@@ -8,16 +8,16 @@ android {
     defaultConfig {
         applicationId "com.github.axet.callrecorder"
         minSdkVersion 9
-        targetSdkVersion 28
-        versionCode 219
-        versionName "1.7.13"
+        targetSdkVersion 29
+        versionCode  220
+        versionName  "1.7.14"
     }
     signingConfigs {
         release {
-            storeFile file(prop('RELEASE_STORE_FILE') ?: 'none')
-            storePassword prop('RELEASE_STORE_PASSWORD')
-            keyAlias prop('RELEASE_KEY_ALIAS')
-            keyPassword prop('RELEASE_KEY_PASSWORD')
+            storeFile file(project.findProperty('RELEASE_STORE_FILE') ?: 'none')
+            storePassword project.findProperty('RELEASE_STORE_PASSWORD')
+            keyAlias project.findProperty('RELEASE_KEY_ALIAS')
+            keyPassword project.findProperty('RELEASE_KEY_PASSWORD')
         }
     }
     buildTypes {
@@ -66,7 +66,7 @@ clean.doLast {
 preBuild.dependsOn fetch
 
 dependencies {
-    implementation 'com.github.axet:android-audio-library:1.0.174' // implementation project(':android-audio-library')
+    implementation 'com.github.axet:android-audio-library:1.0.180' // implementation project(':android-audio-library')
     implementation "org.apache.commons:commons-csv:1.5"
     assets('com.google.android.exoplayer:exoplayer:2.7.3') { exclude group: 'com.android.support' }
 }

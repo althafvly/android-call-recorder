@@ -87,18 +87,6 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         super.onResume();
     }
 
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
-//            actionBar.setBackgroundDrawable(new ColorDrawable(CallApplication.getActionbarColor(this)));
-        }
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -133,7 +121,7 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             String source = sharedPreferences.getString(CallApplication.PREFERENCE_SOURCE, "-1");
             if (source.equals(Integer.toString(MediaRecorder.AudioSource.UNPROCESSED))) {
                 if (!Sound.isUnprocessedSupported(this))
-                    Toast.Error(this, "Raw is not supported");
+                    Toast.Text(this, "Raw is not supported");
             }
         }
     }
