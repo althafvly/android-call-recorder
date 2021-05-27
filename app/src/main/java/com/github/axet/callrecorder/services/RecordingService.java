@@ -486,9 +486,10 @@ public class RecordingService extends PersistentService implements SharedPrefere
         super.onDestroy();
 
         handle.removeCallbacks(encodingNext);
-        handle.removeCallbacksAndMessages(null); // drop 'done' events
 
         stopRecording();
+
+        handle.removeCallbacksAndMessages(null); // drop 'done' events
 
         SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
         shared.unregisterOnSharedPreferenceChangeListener(this);
