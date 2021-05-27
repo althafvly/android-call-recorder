@@ -486,6 +486,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
         super.onDestroy();
 
         handle.removeCallbacks(encodingNext);
+        handle.removeCallbacksAndMessages(null); // drop 'done' events
 
         stopRecording();
 
