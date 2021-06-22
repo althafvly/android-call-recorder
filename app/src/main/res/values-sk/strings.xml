@@ -1,0 +1,115 @@
+<resources>
+    <string name="app_name">Call Recorder</string>
+
+    <string-array name="source_text">
+        <item>Automaticky (predvolené)</item>
+        <item>Hlasová linka</item>
+        <item>Mikrofón</item>
+        <item>Predvolené systémom</item>
+        <item>VoIP</item>
+        <item>Rozpoznávanie hlasu</item>
+        <item>Videokamera</item>
+        <item>Systémový RAW</item>
+    </string-array>
+
+    <string-array name="sample_rate_text">
+        <item>48 kHz</item>
+        <item>44.1 kHz (CD)</item>
+        <item>32 kHz</item>
+        <item>22 kHz</item>
+        <item>16 kHz (predvolené)</item>
+        <item>11 kHz</item>
+        <item>8 kHz (telefón)</item>
+    </string-array>
+
+    <string-array name="delete_text">
+        <item>Ponechať všetky nahrávky</item>
+        <item>staršie ako deň</item>
+        <item>staršie ako týždeň</item>
+        <item>staršie ako 1 mesiac</item>
+        <item>staršie ako 3 mesiace</item>
+        <item>staršie ako 6 mesiacov</item>
+    </string-array>
+
+    <string-array name="format_text">
+        <item>2017-02-01 09.08.01.wav</item>
+        <item>20170201T090801.wav</item>
+        <item>1512340435 [Telefón].wav</item>
+        <item>2017-02-01 09.08.01 ↓↑ [ID volajúceho].wav</item>
+    </string-array>
+
+    <string-array name="themes_text">
+        <item>Svetlý motív</item>
+        <item>Tmavý motív</item>
+    </string-array>
+
+    <string-array name="channels_text">
+        <item>Mono (predvolené)</item>
+        <item>Stereo</item>
+    </string-array>
+
+    <string name="action_settings">Nastavenia</string>
+    <string name="call_recording">Nahrávanie hovorov</string>
+    <string name="no_folder_app">Nie je nainštalovaná žiadna aplikácia na zobrazenie priečinkov</string>
+    <string name="hold_by_call">pozastaviť (podržaný hovor)</string>
+    <string name="encoding">Kódovanie</string>
+    <string name="pause">pozastaviť</string>
+    <string name="edit">upraviť</string>
+    <string name="recording">nahrávanie</string>
+    <string name="encoding_title">Kódovanie...</string>
+    <string name="recording_title">Nahrávanie</string>
+    <string name="title_header">%1$s voľné ~ %2$s zostáva</string>
+    <string name="open_recording_folder">Otvoriť priečinok s nahrávkami</string>
+    <string name="recording_list_is_empty">Zoznam nahrávok je prázdny\n\nZaškrtnite \'Nahrávanie hovorov\' pre spustenie nahrávania hovorov</string>
+
+    <string name="source_default">(Predvolené)</string>
+    <string name="source_mic">(Mikrofón)</string>
+    <string name="source_line">(Hlasová linka)</string>
+
+    <string name="call_recordings_support">Podpora nahrávania hovorov</string>
+    <string name="call_recordings_support_text">Väčšina telefónov nepodporuje nahrávanie hovorov vo vysokej kvalite (telefónna linka). Ak chcete povoliť nahrávanie hovorov, nainštalujte firmvér s otvoreným zdrojovým kódom, vyberte rôzne možnosti kódovania (ogg, MediaRecorder...), rôzne zdroje zvuku (telefónna linka, mikrofón, VoIP...) alebo rootnite telefón.</string>
+    <string name="recordings_quality">Kvalita nahrávania</string>
+    <string name="recordings_quality_text">Ak váš telefón nepodporuje nahrávanie hovorov vo vysokej kvalite, aplikácia sa pokúsi o nahrávanie hovoru cez MIC (môžete počuť len jednu stranu: vašu alebo druhého účastníka hovoru).</string>
+    <string name="task_managers">Správcovia úloh</string>
+    <string name="task_managers_text">Ak máte v telefóne zapnutú optimalizáciu batérie alebo správcu úloh, zvážte ich vypnutie, aby aplikácia bežala na pozadí (voliteľné).</string>
+
+    <string name="recording_enabled">Nahrávanie povolené</string>
+    <string name="recording_disabled">Nahrávanie zakázané</string>
+    <string name="callrecent_auto_save">Automaticky ukladať (%1$d)</string>
+    <string name="calls_out">Odchádzajúci</string>
+    <string name="calls_in">Prichádzajúci</string>
+    <string name="save_button">Uložiť</string>
+    <string name="mixer_paths_done">Systémový zmiešavač nastavený. Reštartujte, prosím!</string>
+    <string name="mixer_paths_failed">Nepodarilo sa nastaviť systémový zmiešavač</string>
+
+    <string name="pref_storage_title">Umiestnenie nahrávok</string>
+    <string name="pref_rate_title">Vzorkovacia frekvencia</string>
+    <string name="pref_encoding_title">Kódovanie</string>
+    <string name="pref_encoding_summary">Výstupný formát súboru (.wav, .m4a, ...)</string>
+    <string name="pref_mode_title">Režim</string>
+    <string name="pref_mode_summary">Nahrávanie kanálov</string>
+    <string name="pref_delete_title">Odstrániť nahrávky</string>
+    <string name="pref_nameformat_title">Formát názvu</string>
+    <string name="pref_calldialog_title">Posledný hovor</string>
+    <string name="pref_calldialog_summary">Zobraziť dialógové na premenovanie/obľúbené po skončení hovoru</string>
+    <string name="pref_optimization_title">Zakázať optimalizáciu batérie</string>
+    <string name="pref_optimization_summary">Zabrániť odstráneniu aplikácie z pamäte</string>
+    <string name="pref_theme_title">Motív aplikácie</string>
+    <string name="pref_theme_summary">Nastaviť motív aplikácie (tmavý/svetlý)</string>
+    <string name="pref_mixerpaths_title">Systémový zmiešavač Incall Recordings</string>
+    <string name="pref_mixerpaths_summary">Umožniť systémovému zmiešavaču nahrávať hovory pre bežné aplikácie</string>
+    <string name="pref_recordings">Nahrávky</string>
+    <string name="pref_advanced">Pokročilé</string>
+    <string name="pref_application">Aplikácia</string>
+    <string name="menu_search">Vyhľadať</string>
+    <string name="send_survey">Odoslať dotazník</string>
+    <string name="survey_know_issues">Známe chyby:</string>
+    <string name="survey_none">Žiadny dotazník</string>
+    <string name="survey_bad">Nefunguje</string>
+    <string name="survey_good">Funguje</string>
+    <string name="survey_few_issues">Zopár chýb</string>
+    <string name="survey_view">Zobraziť dotazník</string>
+    <string name="survey_status">Stav:</string>
+    <string name="sort_by_contact_z_a">Kontakt Z-A</string>
+    <string name="sort_by_contact_a_z">Kontakt A-Z</string>
+</resources>
