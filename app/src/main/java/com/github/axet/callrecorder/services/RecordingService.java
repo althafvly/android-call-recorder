@@ -713,7 +713,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
                     // how many samples we need to update 'samples'. time clock. every 1000ms.
                     int samplesTimeUpdate = 1000 * sampleRate / 1000;
 
-                    short[] buffer = new short[100 * sampleRate / 1000 * Sound.getChannels(RecordingService.this)];
+                    short[] buffer = new short[100 * sampleRate / 1000 * fly.info.channels];
 
                     boolean stableRefresh = false;
 
@@ -728,7 +728,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
 
                         start = end;
 
-                        int samples = readSize / Sound.getChannels(RecordingService.this);
+                        int samples = readSize / fly.info.channels;
 
                         if (stableRefresh || diff >= samples) {
                             stableRefresh = true;
@@ -936,7 +936,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
 
         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(RecordingService.this);
 
-        encoder = new FileEncoder(this, in, fly);
+        encoder = new FileEncoder(this, in, getInfo(), fly);
 
         if (shared.getBoolean(CallApplication.PREFERENCE_VOICE, false))
             encoder.filters.add(new VoiceFilter(getInfo()));
@@ -1012,7 +1012,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
         if (encoder != null)
             encoder.pause();
         if (storage.recordingPending()) {
-            RawSamples rs = new RawSamples(storage.getTempRecording());
+            RawSamples rs = new RawSamples(storage.getTempRecording(), getInfo());
             samplesTime = rs.getSamples();
         } else {
             samplesTime = 0;
