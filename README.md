@@ -10,10 +10,6 @@ If you have any audio issues (no opponent voice, your voice muted or any else). 
 
 If it fails with high quality sound recording (voice line) this app will switch back to the MIC recording, no ads, open-source, GPLv3.
 
-Google knows about issue but do nothing, can read more here:
-
-https://code.google.com/p/android/issues/detail?id=206613#c13
-
 # Manual install
 
     gradle installDebug
