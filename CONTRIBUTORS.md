@@ -10,3 +10,4 @@
   * French thanks to @mentalo
   * Norwegian Bokmål thanks to @DandelionSprout
   * Portugess thanks to @rafaelff
+  * Polish thanks to @patryk_mis
