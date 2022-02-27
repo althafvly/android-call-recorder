@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -31,6 +32,7 @@ import android.view.View;
 import com.github.axet.androidlibrary.app.AlarmManager;
 import com.github.axet.androidlibrary.app.ProximityShader;
 import com.github.axet.androidlibrary.services.PersistentService;
+import com.github.axet.androidlibrary.sound.AudioTrack;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
 import com.github.axet.androidlibrary.preferences.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.RemoteNotificationCompat;
@@ -653,7 +655,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
 
         final OnFlyEncoding fly = new OnFlyEncoding(storage, info.targetUri, getInfo());
 
-        final AudioRecord recorder = Sound.createAudioRecorder(this, sampleRate, ss, i);
+        final AudioRecord recorder = Sound.createAudioRecorder(this, Sound.DEFAULT_AUDIOFORMAT, sampleRate, ss, i);
         source = recorder.getAudioSource();
 
         final Thread old = thread;
@@ -713,15 +715,21 @@ public class RecordingService extends PersistentService implements SharedPrefere
                     // how many samples we need to update 'samples'. time clock. every 1000ms.
                     int samplesTimeUpdate = 1000 * sampleRate / 1000;
 
-                    short[] buffer = new short[100 * sampleRate / 1000 * fly.info.channels];
+                    AudioTrack.SamplesBuffer buffer = new AudioTrack.SamplesBuffer(Sound.DEFAULT_AUDIOFORMAT, 100 * sampleRate / 1000 * fly.info.channels);
 
                     boolean stableRefresh = false;
 
                     while (!interrupt.get()) {
-                        final int readSize = recorder.read(buffer, 0, buffer.length);
-                        if (readSize < 0) {
-                            break;
+                        final int readSize;
+                        switch (buffer.format) {
+                            case AudioFormat.ENCODING_PCM_16BIT:
+                                readSize = recorder.read(buffer.shorts, 0, buffer.count);
+                                break;
+                            default:
+                                throw new RuntimeException("Unsupported format");
                         }
+                        if (readSize < 0)
+                            break;
                         long end = System.currentTimeMillis();
 
                         long diff = (end - start) * sampleRate / 1000;
@@ -928,7 +936,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
     }
 
     RawSamples.Info getInfo() {
-        return new RawSamples.Info(sampleRate, Sound.getChannels(this));
+        return new RawSamples.Info(Sound.DEFAULT_AUDIOFORMAT, sampleRate, Sound.getChannels(this));
     }
 
     void encoding(final File in, final Uri uri, final Runnable done, final Success success) {
