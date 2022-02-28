@@ -7,7 +7,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 import android.content.res.TypedArray;
-import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.provider.Settings;
@@ -16,17 +15,10 @@ import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.github.axet.audiolibrary.app.Sound;
 import com.github.axet.callrecorder.R;
-import com.github.axet.callrecorder.services.EmptyAccessibilityService;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.TreeMap;
+import com.github.axet.callrecorder.services.VoiceRecordingService;
 
 public class RecordingSourcePreferenceCompat extends ListPreference {
     public static final String TAG = RecordingSourcePreferenceCompat.class.getSimpleName();
@@ -89,7 +81,7 @@ public class RecordingSourcePreferenceCompat extends ListPreference {
         View view = holder.findViewById(android.R.id.widget_frame);
         String v = getValue();
         int source = Integer.parseInt(v);
-        if (Build.VERSION.SDK_INT >= 29 && findService(getContext(), EmptyAccessibilityService.class) && source == MediaRecorder.AudioSource.VOICE_RECOGNITION) {
+        if (Build.VERSION.SDK_INT >= 29 && findService(getContext(), VoiceRecordingService.class) && source == MediaRecorder.AudioSource.VOICE_RECOGNITION) {
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
