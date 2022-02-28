@@ -112,4 +112,6 @@
     <string name="survey_status">状态:</string>
     <string name="sort_by_contact_z_a">联系人Z-A</string>
     <string name="sort_by_contact_a_z">联系人A-Z</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
 </resources>

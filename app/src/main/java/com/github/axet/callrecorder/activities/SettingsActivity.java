@@ -35,6 +35,7 @@ import com.github.axet.callrecorder.app.CallApplication;
 import com.github.axet.callrecorder.app.Storage;
 import com.github.axet.callrecorder.services.RecordingService;
 import com.github.axet.callrecorder.widgets.MixerPathsPreferenceCompat;
+import com.github.axet.callrecorder.widgets.RecordingSourcePreferenceCompat;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -243,6 +244,8 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             optimization.onResume();
             MixerPathsPreferenceCompat mix = (MixerPathsPreferenceCompat) findPreference(CallApplication.PREFERENCE_MIXERPATHS);
             mix.onResume();
+            RecordingSourcePreferenceCompat source = (RecordingSourcePreferenceCompat) findPreference(CallApplication.PREFERENCE_SOURCE);
+            source.onResume();
         }
 
         @Override

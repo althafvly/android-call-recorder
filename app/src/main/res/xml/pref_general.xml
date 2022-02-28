@@ -8,7 +8,7 @@
             android:summary="/sdcard/some/"
             android:title="@string/pref_storage_title" />
 
-        <ListPreference
+        <com.github.axet.callrecorder.widgets.RecordingSourcePreferenceCompat
             android:defaultValue="-1"
             android:entries="@array/source_text"
             android:entryValues="@array/source_values"

@@ -112,4 +112,6 @@
     <string name="survey_status">Stan:</string>
     <string name="sort_by_contact_z_a">Kontakt Z-A</string>
     <string name="sort_by_contact_a_z">Kontakt A-Z</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
 </resources>
