@@ -18,7 +18,7 @@
             android:summary=""
             android:title="@string/pref_source_title" />
 
-        <ListPreference
+        <com.github.axet.audiolibrary.widgets.SampleRatePreferenceCompat
             android:defaultValue="16000"
             android:entries="@array/sample_rate_text"
             android:entryValues="@array/sample_rate_values"
