@@ -11,6 +11,7 @@ import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
 import com.github.axet.androidlibrary.app.NotificationManagerCompat;
+import com.github.axet.androidlibrary.app.Prefs;
 import com.github.axet.androidlibrary.preferences.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.widgets.NotificationChannelCompat;
 import com.github.axet.callrecorder.R;
@@ -20,6 +21,12 @@ import java.util.Locale;
 
 public class CallApplication extends com.github.axet.audiolibrary.app.MainApplication {
     public static final String PREFERENCE_DELETE = "delete";
+    public static final String PREFERENCE_DELETE_OFF = Prefs.PrefString(R.string.delete_off);
+    public static final String PREFERENCE_DELETE_1DAY = Prefs.PrefString(R.string.delete_1day);
+    public static final String PREFERENCE_DELETE_1WEEK = Prefs.PrefString(R.string.delete_1week);
+    public static final String PREFERENCE_DELETE_1MONTH = Prefs.PrefString(R.string.delete_1month);
+    public static final String PREFERENCE_DELETE_3MONTH = Prefs.PrefString(R.string.delete_3month);
+    public static final String PREFERENCE_DELETE_6MONTH = Prefs.PrefString(R.string.delete_6month);
     public static final String PREFERENCE_FORMAT = "format";
     public static final String PREFERENCE_CALL = "call";
     public static final String PREFERENCE_OPTIMIZATION = "optimization";
@@ -35,7 +42,6 @@ public class CallApplication extends com.github.axet.audiolibrary.app.MainApplic
     public static final String PREFERENCE_VOLUME = "volume";
     public static final String PREFERENCE_VERSION = "version";
     public static final String PREFERENCE_BOOT = "boot";
-    public static final String PREFERENCE_INSTALL = "install";
 
     public static final String CALL_OUT = "out";
     public static final String CALL_IN = "in";

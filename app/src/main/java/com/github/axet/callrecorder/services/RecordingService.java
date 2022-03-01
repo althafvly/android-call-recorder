@@ -412,8 +412,8 @@ public class RecordingService extends PersistentService implements SharedPrefere
 
     void deleteOld() {
         SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
-        String d = shared.getString(CallApplication.PREFERENCE_DELETE, getString(R.string.delete_off));
-        if (d.equals(getString(R.string.delete_off)))
+        String d = shared.getString(CallApplication.PREFERENCE_DELETE, CallApplication.PREFERENCE_DELETE_OFF);
+        if (d.equals(CallApplication.PREFERENCE_DELETE_OFF))
             return;
 
         try {
@@ -437,23 +437,23 @@ public class RecordingService extends PersistentService implements SharedPrefere
                 c.setTimeInMillis(n.last);
                 Calendar cur = c;
 
-                if (d.equals(getString(R.string.delete_1day))) {
+                if (d.equals(CallApplication.PREFERENCE_DELETE_1DAY)) {
                     cur = Calendar.getInstance();
                     c.add(Calendar.DAY_OF_YEAR, 1);
                 }
-                if (d.equals(getString(R.string.delete_1week))) {
+                if (d.equals(CallApplication.PREFERENCE_DELETE_1WEEK)) {
                     cur = Calendar.getInstance();
                     c.add(Calendar.WEEK_OF_YEAR, 1);
                 }
-                if (d.equals(getString(R.string.delete_1month))) {
+                if (d.equals(CallApplication.PREFERENCE_DELETE_1MONTH)) {
                     cur = Calendar.getInstance();
                     c.add(Calendar.MONTH, 1);
                 }
-                if (d.equals(getString(R.string.delete_3month))) {
+                if (d.equals(CallApplication.PREFERENCE_DELETE_3MONTH)) {
                     cur = Calendar.getInstance();
                     c.add(Calendar.MONTH, 3);
                 }
-                if (d.equals(getString(R.string.delete_6month))) {
+                if (d.equals(CallApplication.PREFERENCE_DELETE_6MONTH)) {
                     cur = Calendar.getInstance();
                     c.add(Calendar.MONTH, 6);
                 }
