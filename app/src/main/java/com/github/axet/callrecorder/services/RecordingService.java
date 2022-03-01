@@ -735,7 +735,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
                         final int readSize;
                         switch (buffer.format) {
                             case AudioFormat.ENCODING_PCM_16BIT:
-                                readSize = recorder.read(buffer.shorts, 0, buffer.count);
+                                readSize = recorder.read(buffer.shorts, 0, buffer.capacity);
                                 break;
                             default:
                                 throw new RuntimeException("Unsupported format");
