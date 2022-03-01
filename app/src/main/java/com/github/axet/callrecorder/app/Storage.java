@@ -9,6 +9,17 @@ import android.preference.PreferenceManager;
 
 import com.github.axet.audiolibrary.encoders.Factory;
 import com.github.axet.audiolibrary.encoders.Format3GP;
+import com.github.axet.audiolibrary.encoders.FormatAMR;
+import com.github.axet.audiolibrary.encoders.FormatFLAC;
+import com.github.axet.audiolibrary.encoders.FormatM4A;
+import com.github.axet.audiolibrary.encoders.FormatMKA_AAC;
+import com.github.axet.audiolibrary.encoders.FormatMP3;
+import com.github.axet.audiolibrary.encoders.FormatOGG;
+import com.github.axet.audiolibrary.encoders.FormatOPUS;
+import com.github.axet.audiolibrary.encoders.FormatOPUS_MKA;
+import com.github.axet.audiolibrary.encoders.FormatOPUS_OGG;
+import com.github.axet.audiolibrary.encoders.FormatWAV;
+import com.github.axet.callrecorder.R;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -29,8 +40,27 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
     public static String[] DATES = new String[]{"%T", "%s", "%I"}; // dates supported as prefix
 
     public static CharSequence[] getEncodingTexts(Context context) {
-        CharSequence[] ee = Factory.getEncodingTexts(context);
-        ArrayList<CharSequence> ll = new ArrayList<>(Arrays.asList(ee));
+        String[] aa = context.getResources().getStringArray(R.array.encodings_text);
+        ArrayList<String> ll = new ArrayList<>(Arrays.asList(aa));
+        ll.add("." + FormatWAV.EXT);
+        ll.add("." + FormatFLAC.EXT);
+        if (Build.VERSION.SDK_INT >= 21)
+            ll.add("." + Format3GP.EXT);
+        if (Build.VERSION.SDK_INT >= 21)
+            ll.add("." + FormatAMR.EXT);
+        if (Build.VERSION.SDK_INT >= 18)
+            ll.add("." + FormatM4A.EXT);
+        if (Build.VERSION.SDK_INT >= 16)
+            ll.add("." + FormatMKA_AAC.EXT);
+        if (FormatMP3.supported(context))
+            ll.add("." + FormatMP3.EXT);
+        if (Build.VERSION.SDK_INT >= 23) { // Android 6.0 (has ogg/opus support) https://en.wikipedia.org/wiki/Opus_(audio_format)
+            if (FormatOPUS_OGG.supported(context))
+                ll.add("." + FormatOPUS.EXT);
+        } else if (Build.VERSION.SDK_INT >= 21) { // android 5.0 (has mka/opus support only)
+            if (FormatOPUS_MKA.supported(context))
+                ll.add("." + FormatOPUS.EXT);
+        }
         ll.add("." + EXT_3GP + " (MediaRecorder)"); // AMRNB 8kHz
 //        if (Build.VERSION.SDK_INT >= 10)
 //            ll.add(".3gp (MediaRecorder AMRWB 16kHz)");
@@ -42,12 +72,33 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
 //            ll.add(".aac (MediaRecorder AACELD)");
 //        if (Build.VERSION.SDK_INT >= 21)
 //            ll.add(".webm (MediaRecorder WEBM)");
-        return ll.toArray(new CharSequence[]{});
+        return ll.toArray(new String[]{});
     }
 
     public static String[] getEncodingValues(Context context) {
-        String[] ee = Factory.getEncodingValues(context);
-        ArrayList<String> ll = new ArrayList<>(Arrays.asList(ee));
+        String[] aa = context.getResources().getStringArray(R.array.encodings_values);
+        ArrayList<String> ll = new ArrayList<>(Arrays.asList(aa));
+        ll.add(FormatWAV.EXT);
+        ll.add(FormatFLAC.EXT);
+        if (Build.VERSION.SDK_INT >= 21)
+            ll.add(Format3GP.EXT);
+        if (Build.VERSION.SDK_INT >= 21)
+            ll.add(FormatAMR.EXT);
+        if (Build.VERSION.SDK_INT >= 18)
+            ll.add(FormatM4A.EXT);
+        if (Build.VERSION.SDK_INT >= 16)
+            ll.add(FormatMKA_AAC.EXT);
+        if (!FormatOGG.supported(context))
+            ll.remove(FormatOGG.EXT);
+        if (FormatMP3.supported(context))
+            ll.add(FormatMP3.EXT);
+        if (Build.VERSION.SDK_INT >= 23) { // Android 6.0 (has ogg/opus support) https://en.wikipedia.org/wiki/Opus_(audio_format)
+            if (FormatOPUS_OGG.supported(context))
+                ll.add(FormatOPUS.EXT);
+        } else if (Build.VERSION.SDK_INT >= 21) { // android 5.0 (has mka/opus support only)
+            if (FormatOPUS_MKA.supported(context))
+                ll.add(FormatOPUS.EXT);
+        }
         ll.add(EXT_3GP);
 //        if (Build.VERSION.SDK_INT >= 10)
 //            ll.add(EXT_3GP16);

@@ -159,11 +159,6 @@ public class Recordings extends com.github.axet.audiolibrary.app.Recordings {
     }
 
     @Override
-    public String[] getEncodingValues() {
-        return Storage.getEncodingValues(context);
-    }
-
-    @Override
     public void cleanDelete(TreeSet<String> delete, Uri f) {
         super.cleanDelete(delete, f);
         String p = CallApplication.getFilePref(f);
