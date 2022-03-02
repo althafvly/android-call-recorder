@@ -28,7 +28,7 @@
             android:summary="44100"
             android:title="@string/pref_rate_title" />
 
-        <ListPreference
+        <com.github.axet.callrecorder.widgets.EncodingsPreferenceCompat
             android:defaultValue="ogg"
             android:entries="@array/encodings_text"
             android:entryValues="@array/encodings_values"

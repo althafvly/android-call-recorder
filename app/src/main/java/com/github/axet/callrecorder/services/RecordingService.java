@@ -417,7 +417,7 @@ public class RecordingService extends PersistentService implements SharedPrefere
             return;
 
         try {
-            final String[] ee = Storage.getEncodingValues(this);
+            final String[] ee = Storage.ENCODERS;
             Uri path = storage.getStoragePath();
 
             List<Storage.Node> nn = Storage.list(this, path, new Storage.NodeFilter() {

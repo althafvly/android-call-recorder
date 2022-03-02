@@ -32,6 +32,7 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
 
     public static final String EXT_3GP = Format3GP.EXT;
     public static final String EXT_3GP16 = Format3GP.EXT + "16"; // sample rate 16Hz
+    public static final String EXT_AMR = "amr";
     public static final String EXT_AAC = "aac"; // MPEG_4 / AAC
     public static final String EXT_AACHE = EXT_AAC + "he"; // MPEG_4 / HE AAC
     public static final String EXT_AACELD = EXT_AAC + "eld"; // MPEG_4 / AAC ELD
@@ -39,79 +40,16 @@ public class Storage extends com.github.axet.audiolibrary.app.Storage {
 
     public static String[] DATES = new String[]{"%T", "%s", "%I"}; // dates supported as prefix
 
-    public static CharSequence[] getEncodingTexts(Context context) {
-        String[] aa = context.getResources().getStringArray(R.array.encodings_text);
-        ArrayList<String> ll = new ArrayList<>(Arrays.asList(aa));
-        ll.add("." + FormatWAV.EXT);
-        ll.add("." + FormatFLAC.EXT);
-        if (Build.VERSION.SDK_INT >= 21)
-            ll.add("." + Format3GP.EXT);
-        if (Build.VERSION.SDK_INT >= 21)
-            ll.add("." + FormatAMR.EXT);
-        if (Build.VERSION.SDK_INT >= 18)
-            ll.add("." + FormatM4A.EXT);
-        if (Build.VERSION.SDK_INT >= 16)
-            ll.add("." + FormatMKA_AAC.EXT);
-        if (FormatMP3.supported(context))
-            ll.add("." + FormatMP3.EXT);
-        if (Build.VERSION.SDK_INT >= 23) { // Android 6.0 (has ogg/opus support) https://en.wikipedia.org/wiki/Opus_(audio_format)
-            if (FormatOPUS_OGG.supported(context))
-                ll.add("." + FormatOPUS.EXT);
-        } else if (Build.VERSION.SDK_INT >= 21) { // android 5.0 (has mka/opus support only)
-            if (FormatOPUS_MKA.supported(context))
-                ll.add("." + FormatOPUS.EXT);
-        }
-        ll.add("." + EXT_3GP + " (MediaRecorder)"); // AMRNB 8kHz
-//        if (Build.VERSION.SDK_INT >= 10)
-//            ll.add(".3gp (MediaRecorder AMRWB 16kHz)");
-        if (Build.VERSION.SDK_INT >= 10)
-            ll.add("." + EXT_AAC + " (MediaRecorder)");
-//        if (Build.VERSION.SDK_INT >= 16)
-//            ll.add(".aac (MediaRecorder AACHE)");
-//        if (Build.VERSION.SDK_INT >= 16)
-//            ll.add(".aac (MediaRecorder AACELD)");
-//        if (Build.VERSION.SDK_INT >= 21)
-//            ll.add(".webm (MediaRecorder WEBM)");
-        return ll.toArray(new String[]{});
-    }
-
-    public static String[] getEncodingValues(Context context) {
-        String[] aa = context.getResources().getStringArray(R.array.encodings_values);
-        ArrayList<String> ll = new ArrayList<>(Arrays.asList(aa));
-        ll.add(FormatWAV.EXT);
-        ll.add(FormatFLAC.EXT);
-        if (Build.VERSION.SDK_INT >= 21)
-            ll.add(Format3GP.EXT);
-        if (Build.VERSION.SDK_INT >= 21)
-            ll.add(FormatAMR.EXT);
-        if (Build.VERSION.SDK_INT >= 18)
-            ll.add(FormatM4A.EXT);
-        if (Build.VERSION.SDK_INT >= 16)
-            ll.add(FormatMKA_AAC.EXT);
-        if (!FormatOGG.supported(context))
-            ll.remove(FormatOGG.EXT);
-        if (FormatMP3.supported(context))
-            ll.add(FormatMP3.EXT);
-        if (Build.VERSION.SDK_INT >= 23) { // Android 6.0 (has ogg/opus support) https://en.wikipedia.org/wiki/Opus_(audio_format)
-            if (FormatOPUS_OGG.supported(context))
-                ll.add(FormatOPUS.EXT);
-        } else if (Build.VERSION.SDK_INT >= 21) { // android 5.0 (has mka/opus support only)
-            if (FormatOPUS_MKA.supported(context))
-                ll.add(FormatOPUS.EXT);
-        }
-        ll.add(EXT_3GP);
-//        if (Build.VERSION.SDK_INT >= 10)
-//            ll.add(EXT_3GP16);
-        if (Build.VERSION.SDK_INT >= 10)
-            ll.add(EXT_AAC);
-//        if (Build.VERSION.SDK_INT >= 16)
-//            ll.add(EXT_AACHE);
-//        if (Build.VERSION.SDK_INT >= 16)
-//            ll.add(EXT_AACELD);
-//        if (Build.VERSION.SDK_INT >= 21)
-//            ll.add(EXT_WEBM);
-        return ll.toArray(new String[]{});
-    }
+    public static String[] ENCODERS = new String[]{
+            FormatOGG.EXT,
+            FormatWAV.EXT,
+            FormatFLAC.EXT,
+            FormatM4A.EXT,
+            FormatMP3.EXT,
+            FormatOPUS.EXT,
+            Format3GP.EXT,
+            EXT_AAC
+    };
 
     public static boolean isMediaRecorder(String ext) {
         switch (ext) {
