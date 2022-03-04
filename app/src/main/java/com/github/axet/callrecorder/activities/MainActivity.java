@@ -53,6 +53,7 @@ import com.github.axet.androidlibrary.preferences.AboutPreferenceCompat;
 import com.github.axet.androidlibrary.preferences.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.services.StorageProvider;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
+import com.github.axet.audiolibrary.app.Sound;
 import com.github.axet.audiolibrary.encoders.Format3GP;
 import com.github.axet.audiolibrary.encoders.FormatFLAC;
 import com.github.axet.audiolibrary.encoders.FormatM4A;
@@ -726,7 +727,7 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
     void updateHeader() {
         Uri f = storage.getStoragePath();
         long free = Storage.getFree(this, f);
-        long sec = Storage.average(this, free);
+        long sec = Storage.average(this, Sound.DEFAULT_AUDIOFORMAT, free);
         TextView text = (TextView) findViewById(R.id.space_left);
         text.setText(CallApplication.formatFree(this, free, sec));
     }

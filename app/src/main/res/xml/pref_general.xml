@@ -8,7 +8,7 @@
             android:summary="/sdcard/some/"
             android:title="@string/pref_storage_title" />
 
-        <ListPreference
+        <com.github.axet.callrecorder.widgets.RecordingSourcePreferenceCompat
             android:defaultValue="-1"
             android:entries="@array/source_text"
             android:entryValues="@array/source_values"
@@ -18,7 +18,7 @@
             android:summary=""
             android:title="@string/pref_source_title" />
 
-        <ListPreference
+        <com.github.axet.audiolibrary.widgets.SampleRatePreferenceCompat
             android:defaultValue="16000"
             android:entries="@array/sample_rate_text"
             android:entryValues="@array/sample_rate_values"
@@ -28,7 +28,7 @@
             android:summary="44100"
             android:title="@string/pref_rate_title" />
 
-        <ListPreference
+        <com.github.axet.callrecorder.widgets.EncodingsPreferenceCompat
             android:defaultValue="ogg"
             android:entries="@array/encodings_text"
             android:entryValues="@array/encodings_values"

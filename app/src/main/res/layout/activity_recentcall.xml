@@ -17,13 +17,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/ic_star_border_black_24dp" />
+            android:src="@drawable/ic_star_border_black_24dp"
+            android:tint="?attr/colorAccent" />
 
         <EditText
             android:id="@+id/callrecent_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Test Test" />
+            android:text="Test Test"
+            android:textColor="?attr/colorAccent" />
     </LinearLayout>
 
     <LinearLayout
@@ -69,6 +71,7 @@
             android:id="@+id/callrecent_autosave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
             android:text="@string/callrecent_auto_save" />
 
         <ProgressBar

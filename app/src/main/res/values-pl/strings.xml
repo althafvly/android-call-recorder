@@ -1,0 +1,117 @@
+<resources>
+    <string name="app_name">Call Recorder</string>
+
+    <string-array name="source_text">
+        <item>Auto (domyślnie)</item>
+        <item>Linia Głosowa</item>
+        <item>Mikrofon</item>
+        <item>Domyślne Systemu</item>
+        <item>VoIP</item>
+        <item>Rozpoznawanie Głosu</item>
+        <item>Kamera</item>
+        <item>System RAW</item>
+    </string-array>
+
+    <string-array name="sample_rate_text">
+        <item>48 kHz</item>
+        <item>44.1 kHz (CD)</item>
+        <item>32 kHz</item>
+        <item>22 kHz</item>
+        <item>16 kHz (default)</item>
+        <item>11 kHz</item>
+        <item>8 kHz (telephone)</item>
+    </string-array>
+
+    <string-array name="delete_text">
+        <item>Zachowuj wszystkie nagrania</item>
+        <item>starsze niż dzień</item>
+        <item>starsze niż tydzień</item>
+        <item>starsze niż 1 miesiąc</item>
+        <item>starsze niż 3 miesiące</item>
+        <item>starsze niż 6 miesięcy</item>
+    </string-array>
+
+    <string-array name="format_text">
+        <item>2017-02-01 09.08.01.wav</item>
+        <item>20170201T090801.wav</item>
+        <item>1512340435 [Telefon].wav</item>
+        <item>2017-02-01 09.08.01 ↓↑ [ID rozmówcy].wav</item>
+    </string-array>
+
+    <string-array name="themes_text">
+        <item>Motyw biały</item>
+        <item>Motyw ciemny</item>
+    </string-array>
+
+    <string-array name="channels_text">
+        <item>Mono (domyślnie)</item>
+        <item>Stereo</item>
+    </string-array>
+
+    <string name="action_settings">Ustawienia</string>
+    <string name="call_recording">Nagrywanie połączeń</string>
+    <string name="no_folder_app">Brak zainstalowanej aplikacji do przeglądania folderów</string>
+    <string name="hold_by_call">pauza (zawieszenie przez połączenie)</string>
+    <string name="encoding">kodowanie</string>
+    <string name="pause">pauza</string>
+    <string name="edit">edycja</string>
+    <string name="recording">nagrywanie</string>
+    <string name="encoding_title">Kodowanie...</string>
+    <string name="recording_title">Nagrywanie</string>
+    <string name="title_header">%1$s wolnej przestrzeni ~ %2$s pozostało</string>
+    <string name="open_recording_folder">Otwórz folder nagrywania</string>
+    <string name="recording_list_is_empty">Lista nagrań jest pusta\n\nZaznacz \'Nagrywanie Połączeń\' aby Rozpocząć Nagrywanie Połączeń</string>
+
+    <string name="source_default">(Domyślne)</string>
+    <string name="source_mic">(Mikrofon)</string>
+    <string name="source_line">(Linia Głosowa)</string>
+
+    <string name="call_recordings_support">Obsługa Nagrywania Połączeń</string>
+    <string name="call_recordings_support_text">Większość telefonów nie obsługuje nagrywania rozmów w wysokiej jakości (linia telefoniczna). Aby włączyć nagrywanie rozmów, zainstaluj oprogramowanie układowe typu open source, wybierz różne opcje kodowania (ogg, MediaRecorder…), różne źródła dźwięku (linia telefoniczna, mikrofon, VoIP…) lub zrootuj telefon.</string>
+    <string name="recordings_quality">Jakość Nagrań</string>
+    <string name="recordings_quality_text">Jeśli Twój telefon nie obsługuje nagrywania rozmów w wysokiej jakości, aplikacja spróbuje nagrywania rozmów przez mikrofon (możesz usłyszeć tylko jedną stronę: siebie lub rozmówcę).</string>
+    <string name="task_managers">Menedżery zadań</string>
+    <string name="task_managers_text">Jeśli Twój telefon ma włączoną optymalizację baterii lub menedżery zadań, rozważ ich wyłączenie, aby aplikacja działała w tle (opcjonalnie)</string>
+
+    <string name="recording_enabled">Nagrywanie włączone</string>
+    <string name="recording_disabled">Nagrywanie wyłączone</string>
+    <string name="callrecent_auto_save">Autozapis w (%1$d)</string>
+    <string name="calls_out">Wych</string>
+    <string name="calls_in">Przych</string>
+    <string name="save_button">Zapisz</string>
+    <string name="mixer_paths_done">Mikser systemowy skonfigurowany. Proszę zrestartować!</string>
+    <string name="mixer_paths_failed">Nie można skonfigurować miksera systemowego</string>
+
+    <string name="pref_storage_title">Ścieżka przechowywania</string>
+    <string name="pref_rate_title">Częstotliwość Próbkowania</string>
+    <string name="pref_encoding_title">Format</string>
+    <string name="pref_encoding_summary">Formaty pliku wyjściowego (.wav, .m4a, ...)</string>
+    <string name="pref_mode_title">Tryb</string>
+    <string name="pref_mode_summary">Kanały nagrywania</string>
+    <string name="pref_delete_title">Usuwaj Nagrania</string>
+    <string name="pref_nameformat_title">Format Nazwy</string>
+    <string name="pref_calldialog_title">Okno Dialogowe Ostatniego Połączenia</string>
+    <string name="pref_calldialog_summary">Pokaż okno dialogowe zmiany nazwy / dodania do ulubionych po zakończeniu połączenia</string>
+    <string name="pref_optimization_title">Wyłącz optymalizację baterii</string>
+    <string name="pref_optimization_summary">Zapobiegaj usuwaniu aplikacji z pamięci</string>
+    <string name="pref_theme_title">Motyw Aplikacji</string>
+    <string name="pref_theme_summary">Ustaw motyw aplikacji (ciemny / jasny)</string>
+    <string name="pref_mixerpaths_title">Nagrywanie Połączeń przez Mikser Systemowy</string>
+    <string name="pref_mixerpaths_summary">Zezwól mikserowi systemowemu na nagrywanie połączeń dla zwykłych aplikacji</string>
+    <string name="pref_recordings">Nagrania</string>
+    <string name="pref_advanced">Zaawansowane</string>
+    <string name="pref_application">Aplikacja</string>
+    <string name="menu_search">Szukaj</string>
+    <string name="send_survey">Wyślij ankietę</string>
+    <string name="survey_know_issues">Znane Problemy:</string>
+    <string name="survey_none">Brak ankiet</string>
+    <string name="survey_bad">Nie działa</string>
+    <string name="survey_good">Działa</string>
+    <string name="survey_few_issues">Kilka problemów</string>
+    <string name="survey_view">Wyświetl Ankiety</string>
+    <string name="survey_status">Stan:</string>
+    <string name="sort_by_contact_z_a">Kontakt Z-A</string>
+    <string name="sort_by_contact_a_z">Kontakt A-Z</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
+</resources>

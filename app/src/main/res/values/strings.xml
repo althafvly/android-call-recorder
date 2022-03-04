@@ -48,6 +48,9 @@
         <item>Stereo</item>
     </string-array>
 
+    <string name="accessibility_service_label">Calls Recording accesibility service</string>
+    <string name="accessibility_service_description">To allow call recording on Android 10+ in the background, enable this service.</string>
+
     <string name="action_settings">Settings</string>
     <string name="call_recording">Calls Recording</string>
     <string name="no_folder_app">No folder view application installed</string>
@@ -112,4 +115,6 @@
     <string name="survey_status">Status:</string>
     <string name="sort_by_contact_z_a">Contact Z-A</string>
     <string name="sort_by_contact_a_z">Contact A-Z</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
 </resources>

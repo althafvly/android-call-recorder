@@ -34,7 +34,9 @@ import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.app.CallApplication;
 import com.github.axet.callrecorder.app.Storage;
 import com.github.axet.callrecorder.services.RecordingService;
+import com.github.axet.callrecorder.widgets.EncodingsPreferenceCompat;
 import com.github.axet.callrecorder.widgets.MixerPathsPreferenceCompat;
+import com.github.axet.callrecorder.widgets.RecordingSourcePreferenceCompat;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -168,26 +170,6 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             }
             bindPreferenceSummaryToValue(format);
 
-            final ListPreference enc = (ListPreference) manager.findPreference(CallApplication.PREFERENCE_ENCODING);
-            String v = enc.getValue();
-            CharSequence[] ee = Storage.getEncodingTexts(context);
-            CharSequence[] vv = Storage.getEncodingValues(context);
-            if (ee.length > 1) {
-                enc.setEntries(ee);
-                enc.setEntryValues(vv);
-
-                int i = enc.findIndexOfValue(v);
-                if (i == -1) {
-                    enc.setValueIndex(0);
-                } else {
-                    enc.setValueIndex(i);
-                }
-
-                bindPreferenceSummaryToValue(enc);
-            } else {
-                enc.setVisible(false);
-            }
-
             OptimizationPreferenceCompat optimization = (OptimizationPreferenceCompat) manager.findPreference(CallApplication.PREFERENCE_OPTIMIZATION);
             optimization.enable(RecordingService.class);
 
@@ -197,36 +179,17 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_DELETE));
             bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_SOURCE));
 
-            final PreferenceCategory filters = (PreferenceCategory) manager.findPreference("filters");
             Preference vol = manager.findPreference(CallApplication.PREFERENCE_VOLUME);
-            String encoder = enc.getValue();
-            onResumeVol(filters, encoder);
-            enc.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    onResumeVol(filters, (String) newValue);
-                    return sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, newValue);
-                }
-            });
             bindPreferenceSummaryToValue(vol);
+
+            final EncodingsPreferenceCompat enc = (EncodingsPreferenceCompat) manager.findPreference(CallApplication.PREFERENCE_ENCODING);
+            enc.onResume();
 
             StoragePathPreferenceCompat s = (StoragePathPreferenceCompat) manager.findPreference(CallApplication.PREFERENCE_STORAGE);
             s.setStorage(new Storage(getContext()));
             s.setPermissionsDialog(this, Storage.PERMISSIONS_RW, RESULT_FILE);
             if (Build.VERSION.SDK_INT >= 21)
                 s.setStorageAccessFramework(this, RESULT_FILE);
-        }
-
-        void onResumeVol(PreferenceCategory vol, String encoder) {
-            boolean b;
-            if (Storage.isMediaRecorder(encoder))
-                b = false;
-            else
-                b = true;
-            for (int i = 0; i < vol.getPreferenceCount(); i++) {
-                vol.getPreference(i).setVisible(b);
-            }
-            vol.setVisible(b);
         }
 
         @Override
@@ -243,6 +206,8 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             optimization.onResume();
             MixerPathsPreferenceCompat mix = (MixerPathsPreferenceCompat) findPreference(CallApplication.PREFERENCE_MIXERPATHS);
             mix.onResume();
+            RecordingSourcePreferenceCompat source = (RecordingSourcePreferenceCompat) findPreference(CallApplication.PREFERENCE_SOURCE);
+            source.onResume();
         }
 
         @Override

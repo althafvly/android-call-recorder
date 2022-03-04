@@ -70,7 +70,7 @@ public class RecentCallActivity extends AppCompatActivity {
     }
 
     int getAppTheme() {
-        return CallApplication.getTheme(this, R.style.AppThemeDialogLight, R.style.Theme_AppCompat_DayNight_Dialog);
+        return CallApplication.getTheme(this, R.style.AppThemeDialogLight, R.style.AppThemeDialogDark);
     }
 
     @Override
