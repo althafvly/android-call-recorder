@@ -122,6 +122,9 @@ public class RecordingSourcePreferenceCompat extends ListPreference {
 
     public void create() {
         setWidgetLayoutResource(R.layout.accessibilityservice);
+        LinkedHashMap<String, String> mm = getSources();
+        mm = filter(mm);
+        setValues(mm);
     }
 
     @Override
@@ -129,10 +132,6 @@ public class RecordingSourcePreferenceCompat extends ListPreference {
         super.onBindViewHolder(holder);
         // https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/layout/preference.xml
         View view = holder.findViewById(android.R.id.widget_frame);
-        LinkedHashMap<String, String> mm = getSources();
-        mm = filter(mm);
-        setValues(mm);
-
         String v = getValue();
         int source = Integer.parseInt(v);
         if (Build.VERSION.SDK_INT >= 29 && findService(getContext(), VoiceRecognitionService.class) && source == MediaRecorder.AudioSource.VOICE_RECOGNITION) {
