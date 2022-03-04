@@ -14,7 +14,7 @@ import android.view.accessibility.AccessibilityEvent;
  * With this service enabled, app is able to record sound in background
  * on devices with Android 10+ (sdk 29+)
  */
-public class VoiceRecognitionAccessibilityService extends AccessibilityService {
+public class VoiceRecognitionService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {

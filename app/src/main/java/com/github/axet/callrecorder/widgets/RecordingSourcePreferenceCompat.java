@@ -18,7 +18,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.github.axet.callrecorder.R;
-import com.github.axet.callrecorder.services.VoiceRecognitionAccessibilityService;
+import com.github.axet.callrecorder.services.VoiceRecognitionService;
 
 public class RecordingSourcePreferenceCompat extends ListPreference {
     public static final String TAG = RecordingSourcePreferenceCompat.class.getSimpleName();
@@ -81,7 +81,7 @@ public class RecordingSourcePreferenceCompat extends ListPreference {
         View view = holder.findViewById(android.R.id.widget_frame);
         String v = getValue();
         int source = Integer.parseInt(v);
-        if (Build.VERSION.SDK_INT >= 29 && findService(getContext(), VoiceRecognitionAccessibilityService.class) && source == MediaRecorder.AudioSource.VOICE_RECOGNITION) {
+        if (Build.VERSION.SDK_INT >= 29 && findService(getContext(), VoiceRecognitionService.class) && source == MediaRecorder.AudioSource.VOICE_RECOGNITION) {
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
