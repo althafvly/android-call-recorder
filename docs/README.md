@@ -1,10 +1,22 @@
-# Permissions
+# Calls recording
 
-Some devices may require adb command to Call Recorder app to work:
+Here are few ways to record calls:
+
+1. By default (your device works from the box, no additional configuration required)
+
+2. Installing magisk module (https://github.com/topjohnwu/Magisk)
+
+3. Using Accesibility service and 'Voice Recognition' as source.
+
+Few more options:
+
+* Some devices may require adb command to Call Recorder app to work:
 
     adb shell pm grant com.github.axet.callrecorder android.permission.CAPTURE_AUDIO_OUTPUT
 
 Some devices need Call Recorder by be signed with system keys and build within system image.
+
+* android.permission.CAPTURE_AUDIO_OUTPUT system permission, some devices may require app to be signed with system keys and build within system image (/system/app folder). Using Magisk module giving the same result.
 
 # Filenames
 
@@ -20,3 +32,4 @@ the predefined ones or by setting your own format:
 
 Don't bother with withe spaces when information can't be found, _all_ double
 spaces are replaced by a single one.
+
