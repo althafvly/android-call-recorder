@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 
-public class EncodingsPreferenceCompat extends ListPreference {
+public class EncodingsPreferenceCompat extends com.github.axet.audiolibrary.widgets.EncodingsPreferenceCompat {
 
     ArrayList<String> fencoders = new ArrayList<>(Arrays.asList(Factory.ENCODERS));
     ArrayList<String> sencoders = new ArrayList<>(Arrays.asList(Storage.ENCODERS));
@@ -33,19 +33,6 @@ public class EncodingsPreferenceCompat extends ListPreference {
 
     public EncodingsPreferenceCompat(Context context) {
         super(context);
-    }
-
-    @Override
-    public boolean callChangeListener(Object newValue) {
-        update(newValue);
-        return super.callChangeListener(newValue);
-    }
-
-    @Override
-    protected Object onGetDefaultValue(TypedArray a, int index) {
-        Object def = super.onGetDefaultValue(a, index);
-        update(def);
-        return def;
     }
 
     public boolean isEncoderSupported(String v) {
