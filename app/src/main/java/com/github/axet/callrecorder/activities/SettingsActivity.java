@@ -173,7 +173,6 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             OptimizationPreferenceCompat optimization = (OptimizationPreferenceCompat) manager.findPreference(CallApplication.PREFERENCE_OPTIMIZATION);
             optimization.enable(RecordingService.class);
 
-            bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_RATE));
             bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_THEME));
             bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_CHANNELS));
             bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_DELETE));
