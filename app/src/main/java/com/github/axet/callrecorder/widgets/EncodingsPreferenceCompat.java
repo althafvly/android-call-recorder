@@ -16,7 +16,6 @@ import java.util.LinkedHashMap;
 
 public class EncodingsPreferenceCompat extends com.github.axet.audiolibrary.widgets.EncodingsPreferenceCompat {
 
-    ArrayList<String> fencoders = new ArrayList<>(Arrays.asList(Factory.ENCODERS));
     ArrayList<String> sencoders = new ArrayList<>(Arrays.asList(Storage.ENCODERS));
 
     public EncodingsPreferenceCompat(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
@@ -35,6 +34,7 @@ public class EncodingsPreferenceCompat extends com.github.axet.audiolibrary.widg
         super(context);
     }
 
+    @Override
     public boolean isEncoderSupported(String v) {
         if (v.equals(Storage.EXT_3GP))
             return true; // MediaRecorder AMRNB 8kHz
@@ -54,18 +54,12 @@ public class EncodingsPreferenceCompat extends com.github.axet.audiolibrary.widg
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
         super.onSetInitialValue(restoreValue, defaultValue);
-        CharSequence[] text = getEntries();
-        CharSequence[] values = getEntryValues();
-        LinkedHashMap<String, String> mm = new LinkedHashMap<>();
-        for (int i = 0; i < values.length; i++) {
-            String v = values[i].toString();
-            String t = text[i].toString();
-            mm.put(v, t);
-        }
+        LinkedHashMap<String, String> mm = getSources();
+        mm = filter3gp(mm);
         for (int i = 0; i < Storage.ENCODERS.length; i++) {
             String v = Storage.ENCODERS[i];
             String t = "." + v;
-            if (!fencoders.contains(v) && !Storage.isMediaRecorder(v))
+            if (!mm.containsKey(v) && !Storage.isMediaRecorder(v))
                 continue;
             mm.put(v, t);
         }
@@ -83,6 +77,17 @@ public class EncodingsPreferenceCompat extends com.github.axet.audiolibrary.widg
             setVisible(false);
         }
         update(v); // defaultValue null after defaults set
+    }
+
+    public LinkedHashMap<String, String> filter3gp(LinkedHashMap<String, String> mm) {
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        for (String v : mm.keySet()) {
+            String t = mm.get(v);
+            if (Storage.isMediaRecorder(v))
+                continue;
+            map.put(v, t);
+        }
+        return map;
     }
 
     public LinkedHashMap<String, String> filter(LinkedHashMap<String, String> mm) {

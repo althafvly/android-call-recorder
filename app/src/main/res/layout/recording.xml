@@ -90,6 +90,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="24dp"
                             android:layout_gravity="right"
+                            android:alpha="0.3"
                             android:tint="?android:attr/colorForeground" />
 
                         <ProgressBar
@@ -97,6 +98,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_gravity="center"
+                            android:alpha="0.3"
                             android:indeterminate="true" />
                     </FrameLayout>
 
