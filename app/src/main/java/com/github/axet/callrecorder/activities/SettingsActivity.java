@@ -119,13 +119,6 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
         if (key.equals(CallApplication.PREFERENCE_STORAGE)) {
             storage.migrateLocalStorageDialog(this);
         }
-        if (key.equals(CallApplication.PREFERENCE_SOURCE)) {
-            String source = sharedPreferences.getString(CallApplication.PREFERENCE_SOURCE, "-1");
-            if (source.equals(Integer.toString(MediaRecorder.AudioSource.UNPROCESSED))) {
-                if (!Sound.isUnprocessedSupported(this))
-                    Toast.Text(this, "Raw is not supported");
-            }
-        }
     }
 
     @Override
@@ -176,9 +169,6 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_THEME));
             bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_CHANNELS));
             bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_DELETE));
-
-            Preference vol = manager.findPreference(CallApplication.PREFERENCE_VOLUME);
-            bindPreferenceSummaryToValue(vol);
 
             final EncodingsPreferenceCompat enc = (EncodingsPreferenceCompat) manager.findPreference(CallApplication.PREFERENCE_ENCODING);
             enc.onResume();
