@@ -177,7 +177,6 @@ public class SettingsActivity extends AppCompatSettingsThemeActivity implements 
             bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_THEME));
             bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_CHANNELS));
             bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_DELETE));
-            bindPreferenceSummaryToValue(manager.findPreference(CallApplication.PREFERENCE_SOURCE));
 
             Preference vol = manager.findPreference(CallApplication.PREFERENCE_VOLUME);
             bindPreferenceSummaryToValue(vol);
