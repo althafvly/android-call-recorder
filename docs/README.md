@@ -8,6 +8,8 @@ Here are few ways to record calls:
 
 3. Using Accesibility service and 'Voice Recognition' as source.
 
+4. Enabling System Mixer
+
 Few more options:
 
 * Some devices may require adb command to Call Recorder app to work:
