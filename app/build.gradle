@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.github.axet.dxplugin'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.github.axet.callrecorder"
         minSdkVersion 9
-        targetSdkVersion 29
-        versionCode 223
-        versionName "1.8.2"
+        targetSdkVersion 30
+        versionCode 224
+        versionName "1.8.3"
     }
     signingConfigs {
         release {
@@ -65,7 +65,7 @@ clean.doLast {
 preBuild.dependsOn fetch
 
 dependencies {
-    implementation 'com.github.axet:android-audio-library:1.1.9' // implementation project(':android-audio-library')
+    implementation 'com.github.axet:android-audio-library:1.1.13' // implementation project(':android-audio-library')
     implementation "org.apache.commons:commons-csv:1.5"
     assets('com.google.android.exoplayer:exoplayer:2.7.3') { exclude group: 'com.android.support' }
 }
