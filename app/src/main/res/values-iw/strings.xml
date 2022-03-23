@@ -39,6 +39,7 @@
     </string-array>
 
     <string-array name="themes_text">
+        <item>@string/system_default</item>
         <item>ערכת עיצוב בהירה</item>
         <item>ערכת עיצוב כהה</item>
     </string-array>

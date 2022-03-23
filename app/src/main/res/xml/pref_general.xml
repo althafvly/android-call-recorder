@@ -109,7 +109,7 @@
             android:title="@string/pref_calldialog_title" />
 
         <ListPreference
-            android:defaultValue="@string/Theme_Light"
+            android:defaultValue="@string/Theme_System"
             android:entries="@array/themes_text"
             android:entryValues="@array/themes_values"
             android:key="theme"

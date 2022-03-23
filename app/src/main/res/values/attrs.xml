@@ -47,6 +47,7 @@
     </string-array>
 
     <string-array name="themes_values" translatable="false">
+        <item>@string/Theme_System</item>
         <item>@string/Theme_Light</item>
         <item>@string/Theme_Dark</item>
     </string-array>
