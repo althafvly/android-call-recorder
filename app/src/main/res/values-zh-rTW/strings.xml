@@ -38,12 +38,6 @@
         <item>2017-02-01 09.08.01 ↓↑ [Caller ID].wav</item>
     </string-array>
 
-    <string-array name="themes_text">
-        <item>@string/system_default</item>
-        <item>亮色佈景主題</item>
-        <item>暗色佈景主題</item>
-    </string-array>
-
     <string-array name="channels_text">
         <item>單聲道（預設）</item>
         <item>立體聲</item>

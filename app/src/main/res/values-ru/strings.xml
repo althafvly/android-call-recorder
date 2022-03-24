@@ -12,12 +12,6 @@
         <item>Необработанный</item>
     </string-array>
 
-    <string-array name="themes_text">
-        <item>@string/system_default</item>
-        <item>Тема Светлая</item>
-        <item>Тема Темная</item>
-    </string-array>
-
     <string-array name="sample_rate_text">
         <item>48 kHz</item>
         <item>44.1 kHz (CD)</item>
