@@ -38,11 +38,6 @@
         <item>2017-02-01 09.08.01 ↓↑ [מספר מחייג].wav</item>
     </string-array>
 
-    <string-array name="themes_text">
-        <item>ערכת עיצוב בהירה</item>
-        <item>ערכת עיצוב כהה</item>
-    </string-array>
-
     <string-array name="channels_text">
         <item>מונו (ברירת מחדל)</item>
         <item>סטריאו</item>
