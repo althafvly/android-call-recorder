@@ -1,0 +1,102 @@
+[
+  {
+    "group": "com.google.android.exoplayer",
+    "id": "exoplayer",
+    "v": "2.7.3",
+    "asset": "exoplayer-2.7.3.dex",
+    "file": "exoplayer-2.7.3.aar",
+    "size": 876,
+    "md5": "ec7d053c11dea6312d1777c851d3e90d",
+    "deps": [
+      {
+        "group": "com.google.android.exoplayer",
+        "id": "exoplayer-dash",
+        "v": "2.7.3",
+        "asset": "exoplayer-dash-2.7.3.dex",
+        "file": "exoplayer-dash-2.7.3.aar",
+        "size": 117264,
+        "md5": "c7656f8e42be2322f9a593c6149b37a0",
+        "deps": [
+          {
+            "group": "com.google.android.exoplayer",
+            "id": "exoplayer-core",
+            "v": "2.7.3",
+            "asset": "exoplayer-core-2.7.3.dex",
+            "file": "exoplayer-core-2.7.3.aar",
+            "size": 1053168,
+            "md5": "b4da66dba94bff777c93aa56e823650a"
+          }
+        ]
+      },
+      {
+        "group": "com.google.android.exoplayer",
+        "id": "exoplayer-hls",
+        "v": "2.7.3",
+        "asset": "exoplayer-hls-2.7.3.dex",
+        "file": "exoplayer-hls-2.7.3.aar",
+        "size": 92920,
+        "md5": "985269f69205303e68f029bb43f188d9",
+        "deps": [
+          {
+            "group": "com.google.android.exoplayer",
+            "id": "exoplayer-core",
+            "v": "2.7.3",
+            "asset": "exoplayer-core-2.7.3.dex",
+            "file": "exoplayer-core-2.7.3.aar",
+            "size": 1053168,
+            "md5": "b4da66dba94bff777c93aa56e823650a"
+          }
+        ]
+      },
+      {
+        "group": "com.google.android.exoplayer",
+        "id": "exoplayer-smoothstreaming",
+        "v": "2.7.3",
+        "asset": "exoplayer-smoothstreaming-2.7.3.dex",
+        "file": "exoplayer-smoothstreaming-2.7.3.aar",
+        "size": 48912,
+        "md5": "802c0282bea5941a917ae6d09e63ead9",
+        "deps": [
+          {
+            "group": "com.google.android.exoplayer",
+            "id": "exoplayer-core",
+            "v": "2.7.3",
+            "asset": "exoplayer-core-2.7.3.dex",
+            "file": "exoplayer-core-2.7.3.aar",
+            "size": 1053168,
+            "md5": "b4da66dba94bff777c93aa56e823650a"
+          }
+        ]
+      },
+      {
+        "group": "com.google.android.exoplayer",
+        "id": "exoplayer-ui",
+        "v": "2.7.3",
+        "asset": "exoplayer-ui-2.7.3.dex",
+        "file": "exoplayer-ui-2.7.3.aar",
+        "size": 70548,
+        "md5": "cb975ccaa1318f77222b153dd9d46c54",
+        "deps": [
+          {
+            "group": "com.google.android.exoplayer",
+            "id": "exoplayer-core",
+            "v": "2.7.3",
+            "asset": "exoplayer-core-2.7.3.dex",
+            "file": "exoplayer-core-2.7.3.aar",
+            "size": 1053168,
+            "md5": "b4da66dba94bff777c93aa56e823650a"
+          }
+        ]
+      },
+      {
+        "group": "com.google.android.exoplayer",
+        "id": "exoplayer-core",
+        "v": "2.7.3",
+        "asset": "exoplayer-core-2.7.3.dex",
+        "file": "exoplayer-core-2.7.3.aar",
+        "size": 1053168,
+        "md5": "b4da66dba94bff777c93aa56e823650a"
+      }
+    ]
+  }
+]
