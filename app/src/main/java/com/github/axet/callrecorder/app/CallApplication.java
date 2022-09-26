@@ -70,7 +70,7 @@ public class CallApplication extends com.github.axet.audiolibrary.app.MainApplic
     public void onCreate() {
         super.onCreate();
 
-        channelPersistent = new NotificationChannelCompat(this, "icon", "Persistent Icon", NotificationManagerCompat.IMPORTANCE_LOW);
+        channelPersistent = new NotificationChannelCompat(this, "icon", "Persistent Notifications", NotificationManagerCompat.IMPORTANCE_LOW);
         channelStatus = new NotificationChannelCompat(this, "status", "Status", NotificationManagerCompat.IMPORTANCE_LOW);
 
         OptimizationPreferenceCompat.setPersistentServiceIcon(this, true);
