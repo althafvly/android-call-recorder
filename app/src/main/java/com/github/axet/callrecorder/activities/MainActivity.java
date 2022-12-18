@@ -17,6 +17,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -331,6 +332,14 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
                 }
             });
             d.show();
+        }
+
+        if (shared.getString(CallApplication.PREFERENCE_SOURCE, null) == null) {
+            String source = "-1";
+            if (Build.VERSION.SDK_INT >= 31) {
+                source = String.valueOf(MediaRecorder.AudioSource.VOICE_RECOGNITION);
+            }
+            shared.edit().putString(CallApplication.PREFERENCE_SOURCE, source).apply();
         }
 
         if (OptimizationPreferenceCompat.needKillWarning(this, CallApplication.PREFERENCE_NEXT))
