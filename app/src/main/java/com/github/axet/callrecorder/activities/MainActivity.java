@@ -8,11 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -35,7 +31,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,38 +38,22 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.axet.androidlibrary.activities.AppCompatThemeActivity;
 import com.github.axet.androidlibrary.app.SuperUser;
-import com.github.axet.androidlibrary.preferences.AboutPreferenceCompat;
 import com.github.axet.androidlibrary.preferences.OptimizationPreferenceCompat;
 import com.github.axet.androidlibrary.services.StorageProvider;
 import com.github.axet.androidlibrary.widgets.ErrorDialog;
 import com.github.axet.audiolibrary.app.Sound;
-import com.github.axet.audiolibrary.encoders.Format3GP;
-import com.github.axet.audiolibrary.encoders.FormatFLAC;
-import com.github.axet.audiolibrary.encoders.FormatM4A;
-import com.github.axet.audiolibrary.encoders.FormatMP3;
-import com.github.axet.audiolibrary.encoders.FormatOGG;
-import com.github.axet.audiolibrary.encoders.FormatOPUS;
-import com.github.axet.audiolibrary.encoders.FormatWAV;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.app.CallApplication;
 import com.github.axet.callrecorder.app.MixerPaths;
 import com.github.axet.callrecorder.app.Recordings;
 import com.github.axet.callrecorder.app.Storage;
-import com.github.axet.callrecorder.app.SurveysReader;
 import com.github.axet.callrecorder.services.RecordingService;
 import com.github.axet.callrecorder.widgets.MixerPathsPreferenceCompat;
-
-import org.apache.commons.csv.CSVRecord;
-
-import java.util.Arrays;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatThemeActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     public final static String TAG = MainActivity.class.getSimpleName();
@@ -83,9 +62,6 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
     public static String SET_PROGRESS = MainActivity.class.getCanonicalName() + ".SET_PROGRESS";
     public static String SHOW_LAST = MainActivity.class.getCanonicalName() + ".SHOW_LAST";
     public static String ENABLE = MainActivity.class.getCanonicalName() + ".ENABLE";
-
-    public static String SURVEY_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdNWW4nmCXTrGFKbd_9_bPrxwlrfyPyzKtRESsGeaKist06VA/viewform?usp=pp_url&entry.1823308770=%MANUFACTURER%&entry.856269988=%MODEL%&entry.2054570575=%OSVERSION%&entry.1549394127=%ROOT%&entry.2121261645=%BASEBAND%&entry.648583455=%ENCODER%&entry.1739416324=%SOURCE%&entry.1221822567=%QUALITY%&entry.533092626=%INSTALLED%&entry.992467367=%VERSION%";
-    public static String SURVEY_URL_VIEW = "https://axet.gitlab.io/android-call-recorder/?m=%MANUFACTURER%&d=%MODEL%";
 
     public static final int RESULT_CALL = 1;
 
@@ -438,135 +414,6 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
             case R.id.action_show_folder:
                 Intent intent = item.getIntent();
                 startActivity(intent);
-                return true;
-            case R.id.action_about:
-                final Runnable survey = new Runnable() {
-                    @Override
-                    public void run() {
-                        String url = SURVEY_URL;
-                        url = url.replaceAll("%MANUFACTURER%", Build.MANUFACTURER);
-                        url = url.replaceAll("%MODEL%", android.os.Build.MODEL);
-                        String ver = "Android: " + Build.VERSION.RELEASE;
-                        String cm = CallApplication.getprop("ro.cm.version");
-                        if (cm != null && !cm.isEmpty())
-                            ver += "; " + cm;
-                        ver += "; " + System.getProperty("os.version");
-                        url = url.replaceAll("%OSVERSION%", ver);
-                        try {
-                            PackageManager pm = getPackageManager();
-                            PackageInfo pInfo = pm.getPackageInfo(getPackageName(), 0);
-                            String version = pInfo.versionName;
-                            url = url.replaceAll("%VERSION%", version);
-                        } catch (PackageManager.NameNotFoundException e) {
-                            Log.d(TAG, "unable to get version", e);
-                        }
-                        url = url.replaceAll("%ROOT%", SuperUser.isRooted() ? "Yes" : "No");
-                        url = url.replaceAll("%BASEBAND%", Build.VERSION.SDK_INT < 14 ? Build.RADIO : Build.getRadioVersion());
-                        String encoder = shared.getString(CallApplication.PREFERENCE_ENCODING, "-1");
-                        if (Storage.isMediaRecorder(encoder))
-                            encoder = join(", ", Format3GP.EXT, Storage.EXT_AAC);
-                        else
-                            encoder = join(", ", FormatOGG.EXT, FormatWAV.EXT, FormatFLAC.EXT, FormatM4A.EXT, FormatMP3.EXT, FormatOPUS.EXT);
-                        url = url.replaceAll("%ENCODER%", encoder);
-                        String source = shared.getString(CallApplication.PREFERENCE_SOURCE, "-1");
-                        String[] vv = CallApplication.getStrings(MainActivity.this, new Locale("en"), R.array.source_values);
-                        String[] ss = CallApplication.getStrings(MainActivity.this, new Locale("en"), R.array.source_text);
-                        int i = Arrays.asList(vv).indexOf(source);
-                        url = url.replaceAll("%SOURCE%", ss[i]);
-                        url = url.replaceAll("%QUALITY%", "");
-                        boolean system = (getApplicationInfo().flags & ApplicationInfo.FLAG_SYSTEM) == ApplicationInfo.FLAG_SYSTEM;
-                        url = url.replaceAll("%INSTALLED%", system ? "System Preinstalled" : "User Installed");
-                        AboutPreferenceCompat.openUrl(MainActivity.this, url);
-                    }
-                };
-                AlertDialog.Builder b = AboutPreferenceCompat.buildDialog(this, R.raw.about);
-                LayoutInflater inflater = LayoutInflater.from(this);
-                LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.survey_title, null);
-                ImageView icon = (ImageView) ll.findViewById(R.id.survey_image);
-                TextView status = (TextView) ll.findViewById(R.id.survey_status);
-                TextView text = (TextView) ll.findViewById(R.id.survey_text);
-                final Drawable drawable = icon.getDrawable();
-
-                int raw = getResources().getIdentifier("surveys", "raw", getPackageName()); // R.raw.surveys
-                if (raw == 0) {
-                    setSolid(drawable, Color.GRAY);
-                    status.setText(R.string.survey_none);
-                } else {
-                    SurveysReader reader = new SurveysReader(getResources().openRawResource(raw), new String[]{null, null, Build.MANUFACTURER, android.os.Build.MODEL});
-                    CSVRecord review = reader.getApproved();
-                    if (review != null) {
-                        text.setText(getString(R.string.survey_know_issues) + "\n" + review.get(SurveysReader.INDEX_MSG));
-                        switch (reader.getStatus(review)) {
-                            case UNKNOWN:
-                                setSolid(drawable, Color.GRAY);
-                                break;
-                            case RED:
-                                setSolid(drawable, Color.RED);
-                                status.setText(R.string.survey_bad);
-                                break;
-                            case GREEN:
-                                setSolid(drawable, Color.GREEN);
-                                status.setText(R.string.survey_good);
-                                break;
-                            case YELLOW:
-                                setSolid(drawable, Color.YELLOW);
-                                status.setText(R.string.survey_few_issues);
-                                break;
-                        }
-                    } else {
-                        text.setVisibility(View.GONE);
-                        switch (reader.getStatus()) {
-                            case UNKNOWN:
-                                setSolid(drawable, Color.GRAY);
-                                status.setText(R.string.survey_none);
-                                break;
-                            case RED:
-                                setSolid(drawable, Color.RED);
-                                status.setText(R.string.survey_bad);
-                                break;
-                            case GREEN:
-                                setSolid(drawable, Color.GREEN);
-                                status.setText(R.string.survey_good);
-                                break;
-                            case YELLOW:
-                                setSolid(drawable, Color.YELLOW);
-                                status.setText(R.string.survey_few_issues);
-                                break;
-                        }
-                    }
-                }
-
-                View surveyButton = ll.findViewById(R.id.survey_button);
-                surveyButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String url = SURVEY_URL_VIEW;
-                        url = url.replaceAll("%MANUFACTURER%", Build.MANUFACTURER);
-                        url = url.replaceAll("%MODEL%", android.os.Build.MODEL);
-                        AboutPreferenceCompat.openUrl(MainActivity.this, url);
-                    }
-                });
-                ll.addView(AboutPreferenceCompat.buildTitle(this), 0);
-                b.setCustomTitle(ll);
-                b.setNeutralButton(R.string.send_survey, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-                final AlertDialog d = b.create();
-                d.setOnShowListener(new DialogInterface.OnShowListener() {
-                    @Override
-                    public void onShow(DialogInterface dialog) {
-                        Button b = d.getButton(DialogInterface.BUTTON_NEUTRAL);
-                        b.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                survey.run();
-                            }
-                        });
-                    }
-                });
-                d.show();
                 return true;
         }
         return super.onOptionsItemSelected(item);

@@ -96,14 +96,6 @@
     <string name="pref_advanced">Дополнительно</string>
     <string name="pref_application">Приложение</string>
     <string name="menu_search">Поиск</string>
-    <string name="send_survey">Отправить Отзыв</string>
-    <string name="survey_know_issues">Известные неисправности:</string>
-    <string name="survey_none">Нет отзывов</string>
-    <string name="survey_bad">Не работает</string>
-    <string name="survey_good">Работает</string>
-    <string name="survey_few_issues">Некоторые проблемы</string>
-    <string name="survey_view">Посмотреть отзывы</string>
-    <string name="survey_status">Статус:</string>
     <string name="sort_by_contact_z_a">Контакты Я-А</string>
     <string name="sort_by_contact_a_z">Контакты А-Я</string>
     <string name="enabled">Enabled</string>

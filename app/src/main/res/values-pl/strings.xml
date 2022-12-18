@@ -97,14 +97,6 @@
     <string name="pref_advanced">Zaawansowane</string>
     <string name="pref_application">Aplikacja</string>
     <string name="menu_search">Szukaj</string>
-    <string name="send_survey">Wyślij ankietę</string>
-    <string name="survey_know_issues">Znane Problemy:</string>
-    <string name="survey_none">Brak ankiet</string>
-    <string name="survey_bad">Nie działa</string>
-    <string name="survey_good">Działa</string>
-    <string name="survey_few_issues">Kilka problemów</string>
-    <string name="survey_view">Wyświetl Ankiety</string>
-    <string name="survey_status">Stan:</string>
     <string name="sort_by_contact_z_a">Kontakt Z-A</string>
     <string name="sort_by_contact_a_z">Kontakt A-Z</string>
     <string name="enabled">Włączony</string>

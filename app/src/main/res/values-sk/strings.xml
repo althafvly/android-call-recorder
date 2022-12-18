@@ -97,14 +97,6 @@
     <string name="pref_advanced">Pokročilé</string>
     <string name="pref_application">Aplikácia</string>
     <string name="menu_search">Vyhľadať</string>
-    <string name="send_survey">Odoslať dotazník</string>
-    <string name="survey_know_issues">Známe chyby:</string>
-    <string name="survey_none">Žiadny dotazník</string>
-    <string name="survey_bad">Nefunguje</string>
-    <string name="survey_good">Funguje</string>
-    <string name="survey_few_issues">Zopár chýb</string>
-    <string name="survey_view">Zobraziť dotazník</string>
-    <string name="survey_status">Stav:</string>
     <string name="sort_by_contact_z_a">Kontakt Z-A</string>
     <string name="sort_by_contact_a_z">Kontakt A-Z</string>
     <string name="enabled">Enabled</string>

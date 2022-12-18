@@ -97,14 +97,6 @@
     <string name="pref_advanced">Avançado</string>
     <string name="pref_application">Aplicativo</string>
     <string name="menu_search">Pesquisar</string>
-    <string name="send_survey">Enviar pesquisa</string>
-    <string name="survey_know_issues">Problemas conhecidos:</string>
-    <string name="survey_none">Nenhuma pesquisa</string>
-    <string name="survey_bad">Não está funcionando</string>
-    <string name="survey_good">Funcionando</string>
-    <string name="survey_few_issues">Alguns problemas</string>
-    <string name="survey_view">Ver pesquisa</string>
-    <string name="survey_status">Status:</string>
     <string name="sort_by_contact_z_a">Contato Z-A</string>
     <string name="sort_by_contact_a_z">Contato A-Z</string>
     <string name="enabled">Enabled</string>

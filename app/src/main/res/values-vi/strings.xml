@@ -97,14 +97,6 @@
     <string name="pref_advanced">Nâng cao</string>
     <string name="pref_application">Ứng dụng</string>
     <string name="menu_search">Tìm kiếm</string>
-    <string name="send_survey">Gửi khảo sát</string>
-    <string name="survey_know_issues">Vấn đề đã biết:</string>
-    <string name="survey_none">Chưa khảo sát</string>
-    <string name="survey_bad">Không làm việc</string>
-    <string name="survey_good">Làm việc</string>
-    <string name="survey_few_issues">Vài vấn đề</string>
-    <string name="survey_view">Xem khảo sát</string>
-    <string name="survey_status">Trạng thái:</string>
     <string name="sort_by_contact_z_a">Contact Z-A</string>
     <string name="sort_by_contact_a_z">Contact A-Z</string>
     <string name="enabled">Enabled</string>
