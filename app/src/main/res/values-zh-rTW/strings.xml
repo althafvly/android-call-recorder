@@ -61,13 +61,6 @@
     <string name="source_mic">（麥克風）</string>
     <string name="source_line">(Voice Line)</string>
 
-    <string name="call_recordings_support">通話錄音支援</string>
-    <string name="call_recordings_support_text">大部分的手機不支援高品質 (phone line) 通話錄音。要啟用通話錄音，請安裝開放原始碼韌體、選擇不同的編碼選項 (ogg, MediaRecorder…)、不同的音訊來源（phone line、麥克風、VoIP…），或是 root 您的手機。</string>
-    <string name="recordings_quality">錄音品質</string>
-    <string name="recordings_quality_text">如果您的手機不支援高品質通話錄音，這個應用程式會嘗試麥克風通話錄音（你可能只聽到一邊的聲音：你或是你的對話者）。</string>
-    <string name="task_managers">工作管理員</string>
-    <string name="task_managers_text">如果您的手機有電池最佳化或啟用工作管理員，請考慮停用它們，來讓應用程式持續在背景執行（可選）</string>
-
     <string name="recording_enabled">錄音已啟用</string>
     <string name="recording_disabled">錄音已停用</string>
     <string name="callrecent_auto_save">在 (%1$d) 自動儲存</string>

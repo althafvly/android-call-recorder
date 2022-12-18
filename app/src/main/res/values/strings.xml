@@ -64,13 +64,6 @@
     <string name="source_mic">(Mic)</string>
     <string name="source_line">(Voice Line)</string>
 
-    <string name="call_recordings_support">Call Recordings support</string>
-    <string name="call_recordings_support_text">Most phones do not support high-quality (phone line) call recording. To enable call recording, install open-source firmware, choose different encoding options (ogg, MediaRecorder…), different audio sources (phone line, microphone, VoIP…), or root your phone.</string>
-    <string name="recordings_quality">Recordings Quality</string>
-    <string name="recordings_quality_text">If your phone does not support high quality call recording, the application will try MIC call recording (you may hear only one side: your or your interlocutor).</string>
-    <string name="task_managers">Task Managers</string>
-    <string name="task_managers_text">If your phone has battery optimization or task managers enabled, consider disabling them to keep the application running in the background (optional)</string>
-
     <string name="recording_enabled">Recording enabled</string>
     <string name="recording_disabled">Recording disabled</string>
     <string name="callrecent_auto_save">Auto save in (%1$d)</string>

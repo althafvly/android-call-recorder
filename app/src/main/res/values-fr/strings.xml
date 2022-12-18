@@ -61,13 +61,6 @@
     <string name="source_mic">(Micro)</string>
     <string name="source_line">(Voix)</string>
 
-    <string name="call_recordings_support">Support de l\'enregistrement des appels</string>
-    <string name="call_recordings_support_text">La plupart des téléphones ne permettent pas l\'enregistrement des appels, pour l\'activer installez un firmware open-source. Différentes options d\'encodage (ogg, MediaRecorder), différentes sources (line de téléphone, micro, VoIP). Ou ROOTez votre téléphone.</string>
-    <string name="recordings_quality">Qualité des enregistrements</string>
-    <string name="recordings_quality_text">Si votre téléphone ne permet pas d\'enregistrer des appels en haute qualité, l\'application essayera l\'enregistrement du micro (vous pourriez entendre seulement vous, ou votre correspondant).</string>
-    <string name="task_managers">Gestionnaire de tâches</string>
-    <string name="task_managers_text">Si votre téléphone supporte l\'optimisation de batterie ou un gestionnaire de tâches, vous devriez les désactiver pour permettre à l\'application de tourner en tâche de fond (facultatif)</string>
-
     <string name="recording_enabled">Enregistrement activé</string>
     <string name="recording_disabled">Enregistrement désactivé</string>
     <string name="callrecent_auto_save">Enregistrement automatique dans (%1$d)</string>

@@ -61,13 +61,6 @@
     <string name="source_mic">(麦克风)</string>
     <string name="source_line">(Voice Line)</string>
 
-    <string name="call_recordings_support">通话录音支持</string>
-    <string name="call_recordings_support_text">许多手机不支持高品质（phone line）通话录音。要启用通话录音，请安装开源固件，尝试选择不同的编码选项（ogg、MediaRecorder 等），不同的音频源（phone line、麦克风、VoIP 等），或尝试 root 你的手机。</string>
-    <string name="recordings_quality">录音品质</string>
-    <string name="recordings_quality_text">如果您的手机不支持高品质的通话录音，本应用程序将尝试通过麦克风（MIC）录音。（您可能只能听到一方的声音）</string>
-    <string name="task_managers">任务管理器</string>
-    <string name="task_managers_text">如果您的手机启用了“电池优化”或某些任务管理器，考虑禁用它们以确保本应用程序在后台运行。（可选）</string>
-
     <string name="recording_enabled">录音已启用</string>
     <string name="recording_disabled">录音已禁用</string>
     <string name="callrecent_auto_save">当 %1$d 时自动保存</string>

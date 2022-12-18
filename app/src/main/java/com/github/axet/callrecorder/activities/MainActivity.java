@@ -28,16 +28,12 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,11 +45,9 @@ import com.github.axet.androidlibrary.widgets.ErrorDialog;
 import com.github.axet.audiolibrary.app.Sound;
 import com.github.axet.callrecorder.R;
 import com.github.axet.callrecorder.app.CallApplication;
-import com.github.axet.callrecorder.app.MixerPaths;
 import com.github.axet.callrecorder.app.Recordings;
 import com.github.axet.callrecorder.app.Storage;
 import com.github.axet.callrecorder.services.RecordingService;
-import com.github.axet.callrecorder.widgets.MixerPathsPreferenceCompat;
 
 public class MainActivity extends AppCompatThemeActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     public final static String TAG = MainActivity.class.getSimpleName();
@@ -231,85 +225,6 @@ public class MainActivity extends AppCompatThemeActivity implements SharedPrefer
         recordings.setToolbar((ViewGroup) findViewById(R.id.recording_toolbar));
 
         final SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(this);
-        if (shared.getBoolean("warning", true)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setView(R.layout.warning);
-            builder.setCancelable(false);
-            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    SharedPreferences.Editor edit = shared.edit();
-                    edit.putBoolean("warning", false);
-                    edit.commit();
-                }
-            });
-            final AlertDialog d = builder.create();
-            d.setOnShowListener(new DialogInterface.OnShowListener() {
-                Button b;
-                SwitchCompat sw1, sw2, sw3, sw4;
-
-                @Override
-                public void onShow(DialogInterface dialog) {
-                    b = d.getButton(DialogInterface.BUTTON_POSITIVE);
-                    b.setEnabled(false);
-                    Window w = d.getWindow();
-                    sw1 = (SwitchCompat) w.findViewById(R.id.recording);
-                    sw1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            if (isChecked)
-                                sw1.setClickable(false);
-                            update();
-                        }
-                    });
-                    sw2 = (SwitchCompat) w.findViewById(R.id.quality);
-                    sw2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            if (isChecked)
-                                sw2.setClickable(false);
-                            update();
-                        }
-                    });
-                    sw3 = (SwitchCompat) w.findViewById(R.id.taskmanagers);
-                    sw3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            if (isChecked) {
-                                sw3.setClickable(false);
-                            }
-                            update();
-                        }
-                    });
-                    sw4 = (SwitchCompat) w.findViewById(R.id.mixedpaths_switch);
-                    final MixerPaths m = new MixerPaths();
-                    if (!m.isCompatible() || m.isEnabled()) {
-                        View v = w.findViewById(R.id.mixedpaths);
-                        v.setVisibility(View.GONE);
-                        sw4.setChecked(true);
-                    } else {
-                        sw4.setChecked(m.isEnabled());
-                        sw4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                            @Override
-                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                if (isChecked)
-                                    sw4.setClickable(false);
-                                m.load();
-                                if (isChecked && !m.isEnabled())
-                                    MixerPathsPreferenceCompat.show(MainActivity.this);
-                                update();
-                            }
-                        });
-                    }
-                }
-
-                void update() {
-                    b.setEnabled(sw1.isChecked() && sw2.isChecked() && sw3.isChecked() && sw4.isChecked());
-                }
-            });
-            d.show();
-        }
-
         if (shared.getString(CallApplication.PREFERENCE_SOURCE, null) == null) {
             String source = "-1";
             if (Build.VERSION.SDK_INT >= 31) {

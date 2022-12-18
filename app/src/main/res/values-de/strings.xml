@@ -61,13 +61,6 @@
     <string name="source_mic">(Mic)</string>
     <string name="source_line">(Voice Line)</string>
 
-    <string name="call_recordings_support">Call Recordings-Support</string>
-    <string name="call_recordings_support_text">Die meisten Smartphones unterstützen keine Anrufaufzeichnugen, um Anrufaufzeichnung zu aktivieren, bitte Open-Source-Firmware installieren. Verschiedene Kodierungsoptionen (ogg,  MediaRecorder), verschiedene Quellen (phone line, mic, VoIP) auswählen. Oder Smartphone rooten.</string>
-    <string name="recordings_quality">Anrufaufzeichnungs-Qualität</string>
-    <string name="recordings_quality_text">Wenn das Smartphone keine hochwertige Anrufaufzeichnung unterstützt, wird die Anwendung die Mikrofonaufzeichnung versuchen (möglicherweise ist nur eine Seite zu hören: Ihre oder die Ihres Gesprächpartners).</string>
-    <string name="task_managers">Task-Manager</string>
-    <string name="task_managers_text">Wenn das Smartphone über eine Batterieoptimierung oder Task-Manager verfügt, versuchen Sie diese zu deaktivieren, um die Anwendung im Hintergrund laufen zu lassen (optional)</string>
-
     <string name="recording_enabled">Aufzeichnung aktiviert</string>
     <string name="recording_disabled">Aufzeichnung deaktiviert</string>
     <string name="callrecent_auto_save">Automatisch in (%1$d) speichern</string>

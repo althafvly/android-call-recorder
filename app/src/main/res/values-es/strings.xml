@@ -61,13 +61,6 @@
     <string name="source_mic">(Mic)</string>
     <string name="source_line">(Línea de Voz)</string>
 
-    <string name="call_recordings_support">Soporte para Grabar Llamadas</string>
-    <string name="call_recordings_support_text">La mayoría de los teléfonos no son compatibles con la grabación de llamadas de alta calidad (línea telefónica). Para habilitar la grabación de llamadas, instale firmware de código abierto, elija diferentes opciones de codificación (ogg, MediaRecorder ...), diferentes fuentes de audio (línea telefónica, micrófono, VoIP ...) o aplique permisos root a su teléfono.</string>
-    <string name="recordings_quality">Calidad de Grabación</string>
-    <string name="recordings_quality_text">Si su teléfono no es compatible con la grabación de llamadas de alta calidad, la aplicación usará la grabación de llamadas MIC (puede escuchar solo un lado: su interlocutor o su interlocutor).</string>
-    <string name="task_managers">Administración de tareas</string>
-    <string name="task_managers_text">Si su teléfono tiene activado la optimización de la batería o administradores de tareas habilitados, considere deshabilitarlos para mantener ejecutando la aplicación en segundo plano (opcional)</string>
-
     <string name="recording_enabled">Grabación activada</string>
     <string name="recording_disabled">Grabación desactivada</string>
     <string name="callrecent_auto_save">Guardado auto en (%1$d)</string>

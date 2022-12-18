@@ -61,13 +61,6 @@
     <string name="source_mic">(Mikrofon)</string>
     <string name="source_line">(Ses Hattı)</string>
 
-    <string name="call_recordings_support">Çağrı Kayıtları desteği</string>
-    <string name="call_recordings_support_text">Çoğu telefon çağrı kaydetmeyi desteklemez, Çağrı Kaydetmeyi etkinleştirmek için açık kaynaklı donanım yazılımı yükleyin. Başka kodlama seçeneklerini (ogg, MediaRecorder), başka kaynakları (telefon hattı, mikrofon, VoIP) deneyin. Veya telefonunuzda KÖK iznine sahip olun.</string>
-    <string name="recordings_quality">Kayıt Niteliği</string>
-    <string name="recordings_quality_text">Eğer telefonunuz yüksek nitelikli çağrı kaydında başarısız olursa, uygulama çağrı kaydını mikrofondan yapmayı deneyecektir (yalnızca tek tarafı duyabilirsiniz: kendinizi veya karşınızdakini).</string>
-    <string name="task_managers">Görev Yöneticileri</string>
-    <string name="task_managers_text">Eğer telefonunuzun Pil İyileştirme veya Görev Yöneticileri varsa, uygulamanın arka planda çalışmasına devam etmesi için onları kapatmayı düşünün (isteğe bağlı).</string>
-
     <string name="recording_enabled">Kaydetme etkinleştirildi</string>
     <string name="recording_disabled">Kaydetme devre dışı bırakıldı</string>
     <string name="callrecent_auto_save">(%1$d) içinde kendiliğinden kaydet</string>

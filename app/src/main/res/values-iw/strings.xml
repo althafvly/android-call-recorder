@@ -61,13 +61,6 @@
     <string name="source_mic">(מיקרופון)</string>
     <string name="source_line">(קו קול)</string>
 
-    <string name="call_recordings_support">תמיכה בהקלטת שיחה</string>
-    <string name="call_recordings_support_text">רוב הטלפונים אינם תומכים בהקלטת שיחות, כדי לאפשר את הקלטת השיחות להתקין קושחה בקוד פתוח. אפשרויות קידוד שונות (ogg, MediaRecorder), מקורות שונים (קו טלפון, מיקרופון, VoIP). או ROOT לטלפון שלך.</string>
-    <string name="recordings_quality">איכות הקלטה</string>
-    <string name="recordings_quality_text">אם הטלפון נכשל לתמוך באיכות גבוהה של הקלטת שיחה, היישום ינסה להקליט באמצעות מיקרופון (תוכל לשמוע רק צד אחד: שלך או את המשוחח).</string>
-    <string name="task_managers">מנהלי המשימות</string>
-    <string name="task_managers_text">אם לטלפון שלך יש אופטימיזציה של הסוללה או מנהלי המשימות, שקול להשבית אותם, כדי לשמור על היישום פועל ברקע (אופציונלי)</string>
-
     <string name="recording_enabled">הקלטה מופעלת</string>
     <string name="recording_disabled">הקלטה מופסקת</string>
     <string name="callrecent_auto_save">נשמר אוטומטית ב(%1$d)</string>

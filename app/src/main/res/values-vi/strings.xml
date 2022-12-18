@@ -61,13 +61,6 @@
     <string name="source_mic">(Mic)</string>
     <string name="source_line">(Voice Line)</string>
 
-    <string name="call_recordings_support">Hỗ trợ ghi âm cuộc gọi</string>
-    <string name="call_recordings_support_text">Hầu hết các điện thoại không hỗ trợ ghi âm cuộc gọi chất lượng cao (đường dây điện thoại) . Để bật ghi âm cuộc gọi, cài đặt firmware mã nguồn mở, chọn tùy chọn mã hóa khác nhau (OGG, MediaRecorder...), các nguồn âm thanh khác nhau (đường dây điện thoại, microphone, VoIP...), hoặc root điện thoại của bạn.</string>
-    <string name="recordings_quality">Chất lượng ghi âm</string>
-    <string name="recordings_quality_text">Nếu điện thoại của bạn không hỗ trợ ghi âm cuộc gọi chất lượng cao, ứng dụng sẽ thử ghi âm cuộc gọi MIC (bạn có thể nghe chỉ có một bên: bạn hoặc đối tác của bạn).</string>
-    <string name="task_managers">Quản lý tác vụ</string>
-    <string name="task_managers_text">Nếu điện thoại của bạn đã bật chức năng tối ưu hóa pin hoặc trình quản lý tác vụ, hãy xem xét tắt chúng để giữ ứng dụng chạy ẩn (tùy chọn)</string>
-
     <string name="recording_enabled">Đã bật ghi âm</string>
     <string name="recording_disabled">Đã tắt ghi âm</string>
     <string name="callrecent_auto_save">Tự động lưu trong (%1$d)</string>

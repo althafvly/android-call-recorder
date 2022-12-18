@@ -61,13 +61,6 @@
     <string name="source_mic">(Mikrofón)</string>
     <string name="source_line">(Hlasová linka)</string>
 
-    <string name="call_recordings_support">Podpora nahrávania hovorov</string>
-    <string name="call_recordings_support_text">Väčšina telefónov nepodporuje nahrávanie hovorov vo vysokej kvalite (telefónna linka). Ak chcete povoliť nahrávanie hovorov, nainštalujte firmvér s otvoreným zdrojovým kódom, vyberte rôzne možnosti kódovania (ogg, MediaRecorder...), rôzne zdroje zvuku (telefónna linka, mikrofón, VoIP...) alebo rootnite telefón.</string>
-    <string name="recordings_quality">Kvalita nahrávania</string>
-    <string name="recordings_quality_text">Ak váš telefón nepodporuje nahrávanie hovorov vo vysokej kvalite, aplikácia sa pokúsi o nahrávanie hovoru cez MIC (môžete počuť len jednu stranu: vašu alebo druhého účastníka hovoru).</string>
-    <string name="task_managers">Správcovia úloh</string>
-    <string name="task_managers_text">Ak máte v telefóne zapnutú optimalizáciu batérie alebo správcu úloh, zvážte ich vypnutie, aby aplikácia bežala na pozadí (voliteľné).</string>
-
     <string name="recording_enabled">Nahrávanie povolené</string>
     <string name="recording_disabled">Nahrávanie zakázané</string>
     <string name="callrecent_auto_save">Automaticky ukladať (%1$d)</string>

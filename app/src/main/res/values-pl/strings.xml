@@ -61,13 +61,6 @@
     <string name="source_mic">(Mikrofon)</string>
     <string name="source_line">(Linia Głosowa)</string>
 
-    <string name="call_recordings_support">Obsługa Nagrywania Połączeń</string>
-    <string name="call_recordings_support_text">Większość telefonów nie obsługuje nagrywania rozmów w wysokiej jakości (linia telefoniczna). Aby włączyć nagrywanie rozmów, zainstaluj oprogramowanie układowe typu open source, wybierz różne opcje kodowania (ogg, MediaRecorder…), różne źródła dźwięku (linia telefoniczna, mikrofon, VoIP…) lub zrootuj telefon.</string>
-    <string name="recordings_quality">Jakość Nagrań</string>
-    <string name="recordings_quality_text">Jeśli Twój telefon nie obsługuje nagrywania rozmów w wysokiej jakości, aplikacja spróbuje nagrywania rozmów przez mikrofon (możesz usłyszeć tylko jedną stronę: siebie lub rozmówcę).</string>
-    <string name="task_managers">Menedżery zadań</string>
-    <string name="task_managers_text">Jeśli Twój telefon ma włączoną optymalizację baterii lub menedżery zadań, rozważ ich wyłączenie, aby aplikacja działała w tle (opcjonalnie)</string>
-
     <string name="recording_enabled">Nagrywanie włączone</string>
     <string name="recording_disabled">Nagrywanie wyłączone</string>
     <string name="callrecent_auto_save">Autozapis w (%1$d)</string>

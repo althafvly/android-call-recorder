@@ -61,12 +61,7 @@
     <string name="source_mic">(Mikrofon)</string>
     <string name="source_line">(Stemmelinje)</string>
 
-    <string name="call_recordings_support">Støtte for samtaleopptak</string>
-    <string name="call_recordings_support_text">De fleste telefoner støtter ikke høykvalitets samtaleopptak gjennom telefonlinjen. For å aktivere samtaleopptak, installer åpenkildet programvare, velg forskjellige kodingsalternativer (ogg, MediaRecorder…), forskjellige lydkilder (telefonlinje, mikrofon, VoIP…), or root your phone..</string>.
-    <string name="recordings_quality">Opptakenes kvalitet</string>
-    <string name="recordings_quality_text">Dersom telefonen din ikke støtter høykvalitets samtaleopptak, vil appen prøve med MIKROFON-samtaleopptak (Du kan bare høre én av sidene: Din eller til den du prater med).</string>
-    <string name="task_managers">Oppgavebehandlere</string>
-    <string name="task_managers_text">Dersom telefonen din har batterioptimalisering eller oppgavebehandlere skrudd på, tenk over å skru dem av for å holde denne appen kjørende i bakgrunnen. (Valgfritt)</string>
+    .
 
     <string name="recording_enabled">Opptaking er skrudd på</string>
     <string name="recording_disabled">Opptaking av skrudd av</string>
